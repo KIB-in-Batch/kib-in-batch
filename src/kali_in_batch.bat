@@ -90,6 +90,21 @@ cls
 set "username=%USERNAME%"
 title Kali in Batch
 if not exist "%APPDATA%\kali_in_batch" (
+
+    for /f "tokens=2,*" %%a in ('reg query "HKCU\Software\GitForWindows" /v InstallPath 2^>nul') do set GIT_PATH=%%b
+    if not defined GIT_PATH (
+        for /f "tokens=2,*" %%a in ('reg query "HKLM\Software\GitForWindows" /v InstallPath 2^>nul') do set GIT_PATH=%%b
+    )
+    if not defined GIT_PATH (
+        echo Press any key to go to https://git-scm.com/downloads/win and download Git for Windows, also ensure you get Git Bash too...
+        pause >nul
+        start https://git-scm.com/downloads/win
+        exit
+    )
+
+    set "bash_path=!GIT_PATH!\bin\bash.exe"
+
+    rem The check above is so we can write some parts of the script in bash.
     
     echo !COLOR_INFO!Welcome to Kali in Batch Installer!COLOR_RESET!
     echo !COLOR_BG_BLUE!
@@ -109,10 +124,10 @@ if not exist "%APPDATA%\kali_in_batch" (
             pause >nul
             exit
         )
-        echo Testing if it is empty...
         rem Check if it is empty
-        dir "!install_part!\" >nul 2>nul
-        if !errorlevel! neq 1 (
+        cd /d "%~dp0"
+        !bash_path! .\bash\check_drive_empty.sh "!install_part!"
+        if !errorlevel! neq 0 (
             echo !COLOR_ERROR!Error: Drive is not empty. Please try again.!COLOR_RESET!
             pause >nul
             exit
@@ -151,15 +166,6 @@ if not exist "%APPDATA%\kali_in_batch" (
         pause >nul
         exit
     )
-    for /f "tokens=2,*" %%a in ('reg query "HKCU\Software\GitForWindows" /v InstallPath 2^>nul') do set GIT_PATH=%%b
-    if not defined GIT_PATH (
-        for /f "tokens=2,*" %%a in ('reg query "HKLM\Software\GitForWindows" /v InstallPath 2^>nul') do set GIT_PATH=%%b
-    )
-    if not defined GIT_PATH (
-        echo Press any key to go to https://git-scm.com/downloads/win and download Git for Windows, also ensure you get Git Bash too...
-        pause >nul
-        start https://git-scm.com/downloads/win
-    )
     mkdir "%APPDATA%\kali_in_batch" >nul 2>nul
     @echo on
     echo !install_part!>"%APPDATA%\kali_in_batch\install_part.txt"
@@ -187,14 +193,16 @@ exit
 
 
 :boot
+rem This boot process is actually needed to make the script work properly, unlike some other Batch programs that
+rem just add artificial delays to make it look like it's booting.
 
 rem Check if %APPDATA%\kali_in_batch\powershell exists and delete it if it does
 if exist "%APPDATA%\kali_in_batch\powershell" (
     rmdir /s /q "%APPDATA%\kali_in_batch\powershell"
 )
-rem Create powershell directory
+rem So if the user runs git pull on the local repository to get updates, they can get the latest version of the PowerShell scripts.
 mkdir "%APPDATA%\kali_in_batch\powershell"
-cd /d "%~dp0"
+cd /d "%~dp0" & rem Needed incase the user is using a Windows Terminal profile or something that changes the current directory
 rem Copy .\powershell\* to %APPDATA%\kali_in_batch\powershell
 xcopy .\powershell\* "%APPDATA%\kali_in_batch\powershell" /s /y
 
@@ -301,16 +309,10 @@ if exist !kalirc! (
     set bash_current_dir=!bash_current_dir:Z:=/z! >nul 2>&1
     !bash_path! -c "cd !bash_current_dir!; source .kalirc" 2>&1
     echo.
-    if not exist "!home_dir!\.no_help_startup" (
-        echo Hello !username!, welcome to Kali in Batch!
-        echo If you want to disable this message, create a file called .no_help_startup in your home directory.
-        echo.
-    )
     goto shell
 ) else (
-    echo No .kalirc file found. Try creating one, it is a bash script that runs on startup.
+    echo No .kalirc file found. Try creating one! It is a bash script that runs on startup.
     echo.
-    echo Hello !username!, welcome to Kali in Batch!
     goto shell
 )
 
@@ -321,8 +323,6 @@ if !current_dir!==!home_dir! (
 ) else (
     set current_dir=!cd!
 )
-
-::title Kali in Batch at !current_dir!
 
 rem Replace backslashes with forward slashes in !current_dir!
 set current_dir=!current_dir:\=/!
@@ -351,8 +351,6 @@ set current_dir=!current_dir:W:=!
 set current_dir=!current_dir:X:=!
 set current_dir=!current_dir:Y:=!
 set current_dir=!current_dir:Z:=!
-
-::title Kali in Batch at !current_dir! & rem Moved down here to fix it being a Windows path
 
 goto new_shell_prompt
 

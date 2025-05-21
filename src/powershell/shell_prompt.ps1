@@ -8,7 +8,6 @@ $colorBlue = 'Blue'
 $colorCyan = 'Cyan'
 $colorRed = 'Red'
 $colorBlack = 'Black'
-$colorReset = 'White'
 
 <# shell_prompt.ps1
     * Shell prompt for the Kali in Batch project.
@@ -66,7 +65,7 @@ function Invoke-Pkg {
 
             Write-Host "Checking if package $package is installed..." -ForegroundColor $colorCyan
 
-            $packagePath = Join-Path $InstallPart "bin\$package.sh"
+            $packagePath = Join-Path $installpart "bin\$package.sh"
 
             if (Test-Path $packagePath) {
                 Write-Host "Package $package is already installed." -ForegroundColor $colorRed
@@ -80,7 +79,7 @@ function Invoke-Pkg {
             try {
                 $scriptContent = Invoke-WebRequest -Uri $packageUrl -UseBasicParsing -ErrorAction Stop | Select-Object -ExpandProperty Content
                 Write-Host "First 100 chars of script:" -ForegroundColor $colorCyan
-                Write-Host ($scriptContent.Substring(0, [Math]::Min(100, $scriptContent.Length))) -ForegroundColor $colorReset -BackgroundColor $colorBlack
+                Write-Host ($scriptContent.Substring(0, [Math]::Min(100, $scriptContent.Length))) -BackgroundColor $colorBlack
             } catch {
                 Write-Host "Failed to download package $package." -ForegroundColor $colorRed
                 return
@@ -166,7 +165,7 @@ function Invoke-Pkg {
             try {
                 $latestContent = Invoke-WebRequest -Uri $packageUrl -UseBasicParsing -ErrorAction Stop | Select-Object -ExpandProperty Content
                 Write-Host "First 100 chars of script:" -ForegroundColor $colorCyan
-                Write-Host ($latestContent.Substring(0, [Math]::Min(100, $latestContent.Length))) -ForegroundColor $colorReset -BackgroundColor $colorBlack
+                Write-Host ($latestContent.Substring(0, [Math]::Min(100, $latestContent.Length))) -BackgroundColor $colorBlack
             } catch {
                 Write-Host "Failed to download latest package $package." -ForegroundColor $colorRed
                 return
@@ -297,15 +296,15 @@ function Get-UnameHelp {
 function Get-Command {
     while ($true) {
         $kaliPath = Convert-ToKaliPath -path (Get-Location).Path
+        $kaliPathtwo = "$kaliPath"
+        # Replace /home/$env:USERNAME in kalipathtwo with ~
+        $kaliPathtwo = $kaliPathtwo.Replace("/home/$env:USERNAME", "~")
         # Set title to kali path
         $host.ui.RawUI.WindowTitle = "Kali in Batch - $kaliPath"
-        Write-Host '╔══(' -NoNewline -ForegroundColor $colorGreen
-        Write-Host "$env:USERNAME@$env:COMPUTERNAME" -NoNewline -ForegroundColor $colorBlue
-        Write-Host ')-[' -NoNewline -ForegroundColor $colorGreen
-        Write-Host $kaliPath -NoNewline -ForegroundColor $colorReset
-        Write-Host ']' -ForegroundColor $colorGreen
-        Write-Host '╚══' -NoNewline -ForegroundColor $colorGreen
-        Write-Host '$ ' -ForegroundColor $colorBlue -NoNewline
+        Write-Host "$env:USERNAME@$env:COMPUTERNAME" -ForegroundColor $colorRed -NoNewline
+        Write-Host ":" -NoNewline
+        Write-Host "$kaliPathtwo" -NoNewline -ForegroundColor $colorBlue
+        Write-Host "$ " -NoNewline
 
         $inputLine = Read-Host
 
@@ -365,6 +364,7 @@ function Get-Command {
                     # Execute the script
                     $bashBinPath = Convert-ToBashPath -path "$installpart\bin\$args.sh"
                     $bashExe = $bashexepath
+                    $bashPath = Convert-ToBashPath -path (Get-Location).Path # Just to make sure it's defined
                     & "$bashExe" -c "cd $bashPath; source $bashBinPath"
                 } else {
                     Write-Host "Package not found: $args"
