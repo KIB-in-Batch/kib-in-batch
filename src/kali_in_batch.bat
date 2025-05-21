@@ -2,8 +2,34 @@
 chcp 65001 >nul
 setlocal enabledelayedexpansion
 
-rem * kali_in_batch.bat
-rem * License: MIT
+rem kali_in_batch.bat
+rem    * Main script for the Kali in Batch project.
+rem    * Handles installation, boot process, and passes variables to the PowerShell scripts used in the software.
+rem    * License:
+rem
+rem ======================================================================================
+rem MIT License
+rem
+rem Copyright (c) 2025 benja2998
+rem
+rem Permission is hereby granted, free of charge, to any person obtaining a copy
+rem of this software and associated documentation files (the "Software"), to deal
+rem in the Software without restriction, including without limitation the rights
+rem to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+rem copies of the Software, and to permit persons to whom the Software is
+rem furnished to do so, subject to the following conditions:
+rem
+rem The above copyright notice and this permission notice shall be included in all
+rem copies or substantial portions of the Software.
+rem
+rem THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+rem IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+rem FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+rem AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+rem LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+rem OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+rem SOFTWARE.
+rem =======================================================================================
 
 rem Color Definitions
 set "COLOR_RESET=[0m"
@@ -344,7 +370,5 @@ if !errorlevel!==0 (
     exit /b
 )
 
-rem The shell has been moved to a PowerShell script because of the limitations of the original shell that was written in batch.
-rem This happened as of version 2.0.0.
-rem It is a major version since this is a major rewrite of the shell.
+rem As of v2.0.0, the shell is now written in PowerShell due to batch limitations.
 pwsh.exe -noprofile -executionpolicy bypass -file "%APPDATA%\kali_in_batch\powershell\shell_prompt.ps1" -bashexepath !bash_path! -installpart !install_part!
