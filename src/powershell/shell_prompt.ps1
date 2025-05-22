@@ -308,167 +308,193 @@ function Get-Command {
 
         $inputLine = Read-Host
 
-        # Parse the input line into command and arguments
-        $tokens = $inputLine -split '\s+'
-        $command = if ($tokens.Count -gt 0) { $tokens[0] } else { '' }
-        $args = if ($tokens.Count -gt 1) { $tokens[1..($tokens.Count - 1)] } else { @() }
+        # Split the input line into command groups separated by ';'
+        $commandGroups = $inputLine -split ';'
 
-        # Execute the command
-        switch ($command) {
-            'exit' {
-                exit
-            }
-            'echo' {
-                Write-Host $args
-            }
-            'clear' {
-                Clear-Host
-            }
-            'pwd' {
-                Write-Host $kaliPath
-            }
-            'cd' {
-                $cdPath = "$args"
-                # Block Windows paths by checking if the second character is a colon
-                if ($cdPath -match '^[A-Za-z]:') {
-                    Write-Host "Cannot change directory to Windows path: $cdPath"
-                    continue
-                }
+        foreach ($group in $commandGroups) {
+            $group = $group.Trim()
+            if (-not $group) { continue }
 
-                # If the path starts with /, prepend installPart
-                if ($cdPath -match '^/') {
-                    $cdPath = "$installpart$cdPath" -replace '//+', '/'
-                }
+            # Split each group into subcommands separated by '&&' and '&'
+            $subCommands = $group -split '\s*&&\s*'
+            $subCommands = $subCommands -split '\s*&\s*'
+            $success = $true
 
-                # If the path starts with ~, replace with home dir
-                if ($cdPath -match '^~') {
-                    $homeDir = "$installpart\home\$env:USERNAME"
-                    $cdPath = $homeDir + $cdPath.Substring(1)
-                }
-                # If the path is empty, change to home dir
-                if ($cdPath -eq '') {
-                    $cdPath = "$installpart\home\$env:USERNAME"
-                }
+            foreach ($subCmd in $subCommands) {
+                if (-not $success) { break }
 
-                # Replace forward slashes with backslashes
-                $cdPath = $cdPath.Replace('/', '\')
+                $tokens = $subCmd.Trim() -split '\s+'
+                if ($tokens.Count -eq 0) { continue }
 
-                Set-Location -Path $cdPath
-            }
-            'pkg' {
-                Invoke-Pkg -PkgArgs $args -InstallPart $installpart
-            }
-            'pkg-exec' {
-                # Check if $installpart\bin\$args.sh exists
-                if (Test-Path "$installpart\bin\$args.sh") {
-                    # Execute the script
-                    $bashBinPath = Convert-ToBashPath -path "$installpart\bin\$args.sh"
-                    $bashExe = $bashexepath
-                    $bashPath = Convert-ToBashPath -path (Get-Location).Path # Just to make sure it's defined
-                    & "$bashExe" -c "cd $bashPath; source $bashBinPath"
-                } else {
-                    Write-Host "Package not found: $args"
-                }
-            }
-            'wsl' {
-                Write-Host "Please install the elf-exec package using pkg install elf-exec, then run it here by doing pkg-exec elf-exec."
-            }
-            'uname' {
-                if ($args.Count -eq 0) {
-                    Get-Kernel
-                } else {
-                    if ($args -eq '-a' -or $args -eq '--all') {
-                        Write-Host "OS: " -NoNewline
-                        Get-OperatingSystem
-                        Write-Host "Kernel: " -NoNewline
-                        Get-Kernel
-                        Write-Host "Architecture: " -NoNewline
-                        Get-Architecture
-                        Write-Host "Version: " -NoNewline
-                        Get-UnameVersion
-                    }
-                    if ($args -eq '-o' -or $args -eq '--operating-system') {
-                        Get-OperatingSystem
-                    }
-                    if ($args -eq '-s' -or $args -eq '--kernel-name') {
-                        Get-Kernel
-                    }
-                    if ($args -eq '-p' -or $args -eq '--processor') {
-                        Get-Architecture
-                    }
-                    if ($args -eq '--version') {
-                        Get-UnameVersion
-                    }
-                    if ($args -eq '-h' -or $args -eq '--help') {
-                        Get-UnameHelp
-                    }
-                    # Check if the argument is unrecognized
-                    if ($args -ne '-a' -and $args -ne '--all' -and $args -ne '-o' -and $args -ne '--operating-system' -and $args -ne '-s' -and $args -ne '--kernel-name' -and $args -ne '-p' -and $args -ne '--processor' -and $args -ne '--version' -and $args -ne '-h' -and $args -ne '--help') {
-                        Write-Host "Unrecognized argument: $args"
-                        Write-Host "Run uname --help for usage information."
-                    }
-                }
-            }
-            default {
-                if ($command -eq '') {
-                    # No command
-                    # Loop automatically will continue, so we don't need the continue statement.
-                } else {
-                    $bashPath = Convert-ToBashPath -path (Get-Location).Path
+                $command = $tokens[0]
+                $args = if ($tokens.Count -gt 1) { $tokens[1..($tokens.Count - 1)] } else { @() }
 
-                    # Fallback to git bash with full per-argument path conversion
-                    $bashExe = $bashexepath
+                $commandSuccess = $false
 
-                    # Convert each arg separately
-                    $convertedArgs = @()
-                    foreach ($arg in $args) {
-                        # Block Windows absolute paths
-                        if ($arg -match '^[A-Za-z]:') {
-                            Write-Host "Cannot access Windows path: $arg" -ForegroundColor $colorRed
+                switch ($command) {
+                    'exit' {
+                        exit
+                        $commandSuccess = $true
+                    }
+                    'echo' {
+                        Write-Host $args
+                        $commandSuccess = $?
+                    }
+                    'clear' {
+                        Clear-Host
+                        $commandSuccess = $?
+                    }
+                    'pwd' {
+                        Write-Host $kaliPath
+                        $commandSuccess = $?
+                    }
+                    'cd' {
+                        $cdPath = "$args"
+                        if ($cdPath -match '^[A-Za-z]:') {
+                            Write-Host "Cannot change directory to Windows path: $cdPath"
+                            $commandSuccess = $false
                             continue
                         }
 
-                        # Normalize slashes
-                        $conv = $arg.Replace('\', '/')
-
-                        # If it’s an absolute Kali path, prepend install part
-                        if ($conv -match '^/') {
-                            $conv = "$installpart$conv" -replace '//+', '/'
+                        if ($cdPath -match '^/') {
+                            $cdPath = "$installpart$cdPath" -replace '//+', '/'
                         }
 
-                        # Handle ~ → home dir
-                        if ($conv -match '^~') {
+                        if ($cdPath -match '^~') {
                             $homeDir = "$installpart\home\$env:USERNAME"
-                            $bashifiedHome = Convert-ToBashPath -path $homeDir
-                            $conv = $conv -replace '^~', $bashifiedHome
+                            $cdPath = $homeDir + $cdPath.Substring(1)
                         }
 
-                        $convertedArgs += $conv
+                        if ($cdPath -eq '') {
+                            $cdPath = "$installpart\home\$env:USERNAME"
+                        }
+
+                        $cdPath = $cdPath.Replace('/', '\')
+
+                        try {
+                            Set-Location -Path $cdPath -ErrorAction Stop
+                            $commandSuccess = $true
+                        } catch {
+                            Write-Host "Error changing directory: $_" -ForegroundColor $colorRed
+                            $commandSuccess = $false
+                        }
                     }
-
-                    # Run the command and capture output
-                    $commandLine = "cd '$bashPath'; $command $($convertedArgs -join ' ')"
-                    if ($command -eq 'ls' -or $command -eq 'dir') {
-                        $output = & $bashExe -c $commandLine
-
-                        # Filter out the directories
-                        $output | ForEach-Object {
-                            $_ -replace 'System\\ Volume\\ Information', '' `
-                            -replace '\$RECYCLE\.BIN', '' `
-                            -replace 'System Volume Information', '' `
-                        } | ForEach-Object {
-                            # Trim to clean up trailing spaces after removal
-                            $_.Trim()
-                        } | Where-Object {
-                            # Skip empty lines
-                            $_ -ne ''
-                        } | ForEach-Object {
-                            Write-Host $_
+                    'pkg' {
+                        Invoke-Pkg -PkgArgs $args -InstallPart $installpart
+                        $commandSuccess = $?
+                    }
+                    'pkg-exec' {
+                        if (Test-Path "$installpart\bin\$args.sh") {
+                            $bashBinPath = Convert-ToBashPath -path "$installpart\bin\$args.sh"
+                            $bashExe = $bashexepath
+                            $bashPath = Convert-ToBashPath -path (Get-Location).Path
+                            & "$bashExe" -c "cd $bashPath; source $bashBinPath"
+                            $commandSuccess = ($LASTEXITCODE -eq 0)
+                        } else {
+                            Write-Host "Package not found: $args"
+                            $commandSuccess = $false
                         }
-                    } else {
-                        & $bashExe -c $commandLine # To not break things like vim or nvim
+                    }
+                    'wsl' {
+                        Write-Host "Please install the elf-exec package using pkg install elf-exec, then run it here by doing pkg-exec elf-exec."
+                        $commandSuccess = $true
+                    }
+                    'uname' {
+                        if ($args.Count -eq 0) {
+                            Get-Kernel
+                            $commandSuccess = $true
+                        } else {
+                            if ($args -eq '-a' -or $args -eq '--all') {
+                                Write-Host "OS: " -NoNewline
+                                Get-OperatingSystem
+                                Write-Host "Kernel: " -NoNewline
+                                Get-Kernel
+                                Write-Host "Architecture: " -NoNewline
+                                Get-Architecture
+                                Write-Host "Version: " -NoNewline
+                                Get-UnameVersion
+                                $commandSuccess = $true
+                            }
+                            if ($args -eq '-o' -or $args -eq '--operating-system') {
+                                Get-OperatingSystem
+                                $commandSuccess = $true
+                            }
+                            if ($args -eq '-s' -or $args -eq '--kernel-name') {
+                                Get-Kernel
+                                $commandSuccess = $true
+                            }
+                            if ($args -eq '-p' -or $args -eq '--processor') {
+                                Get-Architecture
+                                $commandSuccess = $true
+                            }
+                            if ($args -eq '--version') {
+                                Get-UnameVersion
+                                $commandSuccess = $true
+                            }
+                            if ($args -eq '-h' -or $args -eq '--help') {
+                                Get-UnameHelp
+                                $commandSuccess = $true
+                            }
+                            # Check if the argument is unrecognized
+                            if ($args -ne '-a' -and $args -ne '--all' -and $args -ne '-o' -and $args -ne '--operating-system' -and $args -ne '-s' -and $args -ne '--kernel-name' -and $args -ne '-p' -and $args -ne '--processor' -and $args -ne '--version' -and $args -ne '-h' -and $args -ne '--help') {
+                                Write-Host "Unrecognized argument: $args"
+                                Write-Host "Run uname --help for usage information."
+                                $commandSuccess = $false
+                            }
+                        }
+                    }
+                    default {
+                        if ($command -eq '') {
+                            $commandSuccess = $true
+                            continue
+                        }
+
+                        $bashPath = Convert-ToBashPath -path (Get-Location).Path
+                        $bashExe = $bashexepath
+                        $convertedArgs = @()
+
+                        foreach ($arg in $args) {
+                            if ($arg -match '^[A-Za-z]:') {
+                                Write-Host "Cannot access Windows path: $arg" -ForegroundColor $colorRed
+                                $commandSuccess = $false
+                                continue
+                            }
+
+                            $conv = $arg.Replace('\', '/')
+
+                            if ($conv -match '^/') {
+                                $conv = "$installpart$conv" -replace '//+', '/'
+                            }
+
+                            if ($conv -match '^~') {
+                                $homeDir = "$installpart\home\$env:USERNAME"
+                                $bashifiedHome = Convert-ToBashPath -path $homeDir
+                                $conv = $conv -replace '^~', $bashifiedHome
+                            }
+
+                            $convertedArgs += $conv
+                        }
+
+                        $commandLine = "cd '$bashPath'; $command $($convertedArgs -join ' ')"
+
+                        if ($command -in 'ls', 'dir') {
+                            $output = & $bashExe -c $commandLine
+                            $output | ForEach-Object {
+                                $_ -replace 'System\\ Volume\\ Information', '' `
+                                   -replace '\$RECYCLE\.BIN', '' `
+                                   -replace 'System Volume Information', '' `
+                            } | ForEach-Object { $_.Trim() } | Where-Object { $_ } | ForEach-Object {
+                                Write-Host $_
+                            }
+                            $commandSuccess = ($LASTEXITCODE -eq 0)
+                        } else {
+                            & $bashExe -c $commandLine
+                            $commandSuccess = ($LASTEXITCODE -eq 0)
+                        }
                     }
                 }
+
+                $success = $commandSuccess
             }
         }
     }
