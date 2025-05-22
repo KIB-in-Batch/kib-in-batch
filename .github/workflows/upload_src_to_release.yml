@@ -1,0 +1,30 @@
+# This workflow is used to upload the ./src folder to the release by archiving it in both .zip and .tar.gz formats.
+# It is triggered when a release is created or updated.
+
+name: Upload src to release
+
+on:
+  release:
+    types: [published, released]
+
+jobs:
+  upload_src:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install zip tar -y
+      - name: src.zip
+        run: |
+          zip -r src.zip src
+      - name: src.tar.gz
+        run: |
+          tar -czf src.tar.gz src
+      - name: Upload the assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            src.zip
+            src.tar.gz
