@@ -1,4 +1,6 @@
 name: Notify Discord on GitHub Events
+permissions:
+  contents: read
 
 on:
   push:
