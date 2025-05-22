@@ -247,7 +247,7 @@ if !errorlevel! neq 0 (
     exit
 )
 echo Checking for updates...
-curl -# https://codeberg.org/Kali-in-Batch/kali-in-batch/raw/branch/master/VERSION.txt >"!install_part!\tmp\VERSION.txt"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/kali-in-batch/refs/heads/master/VERSION.txt >"!install_part!\tmp\VERSION.txt"
 rem Check if the version is the same
 set /p remote_version=<"!install_part!\tmp\VERSION.txt"
 set /p local_version=<"%APPDATA%\kali_in_batch\VERSION.txt"
