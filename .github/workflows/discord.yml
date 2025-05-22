@@ -30,17 +30,25 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
           COMMIT_URL: ${{ github.event.head_commit.url || '' }}
         run: |
-          # Build the message based on the event
           if [[ "$EVENT_NAME" == "push" ]]; then
-            MESSAGE="🔨 **Push** by $Pusher to $REF\nCommit: $COMMIT_SHA\n$COMMIT_URL"
+            MESSAGE="🔨 **Push** by $Pusher to $REF
+          Commit: $COMMIT_SHA
+          $COMMIT_URL"
           elif [[ "$EVENT_NAME" == "release" ]]; then
-            MESSAGE="🏷️ **Release Published:** $RELEASE_NAME\n$RELEASE_URL"
+            MESSAGE="🏷️ **Release Published:** $RELEASE_NAME
+          $RELEASE_URL"
           elif [[ "$EVENT_NAME" == "issues" ]]; then
-            MESSAGE="🐛 **Issue $ACTION** by $Pusher\nTitle: $ISSUE_TITLE\n$ISSUE_URL"
+            MESSAGE="🐛 **Issue $ACTION** by $Pusher
+          Title: $ISSUE_TITLE
+          $ISSUE_URL"
           elif [[ "$EVENT_NAME" == "pull_request" ]]; then
-            MESSAGE="🔀 **Pull Request $ACTION** by $Pusher\nTitle: $ISSUE_TITLE\n$ISSUE_URL"
+            MESSAGE="🔀 **Pull Request $ACTION** by $Pusher
+          Title: $ISSUE_TITLE
+          $ISSUE_URL"
           elif [[ "$EVENT_NAME" == "issue_comment" ]]; then
-            MESSAGE="💬 **Comment Created** by $Pusher\nOn Issue/PR: $ISSUE_TITLE\nComment: $COMMENT_BODY"
+            MESSAGE="💬 **Comment Created** by $Pusher
+          On Issue/PR: $ISSUE_TITLE
+          Comment: $COMMENT_BODY"
           else
             MESSAGE="❓ Unknown event $EVENT_NAME by $Pusher"
           fi
