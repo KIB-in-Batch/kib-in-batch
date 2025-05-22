@@ -2,6 +2,8 @@
 
 A simulated Kali Linux environment in Batch and PowerShell.
 
+[![Upload src to release](https://github.com/Kali-in-Batch/kali-in-batch/actions/workflows/upload_src_to_release.yml/badge.svg)](https://github.com/Kali-in-Batch/kali-in-batch/actions/workflows/upload_src_to_release.yml)
+
 ### Table of Contents
 - [Dependencies](#dependencies)
 - [Downloading Kali in Batch](#downloading-kali-in-batch)
