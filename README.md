@@ -2,6 +2,13 @@
 
 A simulated Kali Linux environment in Batch and PowerShell.
 
+### Table of Contents
+- [Dependencies](#dependencies)
+- [Downloading Kali in Batch](#downloading-kali-in-batch)
+- [Setting up Kali in Batch](#setting-up-kali-in-batch)
+- [Using Kali in Batch](#using-kali-in-batch)
+- [Features](#features)
+
 ### Dependencies
 
 - [Nmap](https://nmap.org/)
@@ -9,7 +16,7 @@ A simulated Kali Linux environment in Batch and PowerShell.
 - [Vim (optional)](https://www.vim.org/download.php)
 - [PowerShell 7+](https://github.com/PowerShell/PowerShell/releases) (or you can get it from Microsoft Store)
 
-### Usage
+### Downloading Kali in Batch
 
 Clone the repository:
 ```bash
@@ -18,22 +25,16 @@ git clone https://github.com/Kali-in-Batch/kali-in-batch.git
 ```bash	
 cd kali-in-batch
 ```
+Or if you don't want the entire repository and just want the code, you can click these buttons:
+
+[![zip](https://img.shields.io/badge/kali__in__batch.zip-blue?style=for-the-badge&logo=github)](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest/download/kali_in_batch.zip)
+[![tar.gz](https://img.shields.io/badge/kali__in__batch.tar.gz-green?style=for-the-badge&logo=github)](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest/download/kali_in_batch.tar.gz)
 
 Then, run `kali_in_batch.bat` inside the src directory. For proper functionality, don't move it out of the src directory.
 
 Do not run any of the PowerShell scripts manually, as they require special arguments given by `kali_in_batch.bat`.
 
-Once you have set up Kali in Batch, try installing this package in the Kali in Batch shell:
-```bash
-pkg install elf-exec
-```
-This package allows you to execute Linux binaries.
-Run it:
-```bash
-pkg-exec elf-exec
-```
-
-### Quick tutorial
+### Setting up Kali in Batch
 
 #### During the Kali in Batch installer
 
@@ -47,43 +48,64 @@ pkg-exec elf-exec
 
 #### After installation
 
-Try the following commands:
+You may want to run Linux binaries. For that, run this in the Kali in Batch shell:
+```bash
+pkg install elf-exec
+```
+You can then run it by:
+```bash
+pkg-exec elf-exec
+```
+If you're not familiar with Linux shells, see [Using Kali in Batch](#using-kali-in-batch).
+
+### Using Kali in Batch
+
+#### Quick introduction
+
+- ls - list files and directories
+- cd - change directory
+- cp - copy files
+- mv - move files
+- rm - remove files
+- mkdir - make directory
+- rmdir - remove directory
+- clear - clear the screen
+- exit - exit the shell
+
+#### Using nmap in Kali in Batch
+
+You can use it just like you would in a normal Kali Linux environment:
+```bash	
+nmap -v scanme.nmap.org
+```
+```bash
+nmap --help
+```
+#### Using Git in Kali in Batch
+
+You should be able to use Git normally. See the [Git documentation](https://git-scm.com/doc) for more information.
+
+
+#### Ping
+
+Since this uses the Windows ping command, it may differ from the Linux ping command.
+Run this:
+```bash
+ping --help
+```
+
+#### Editing files
+
+You can use any text editor, like you would anywhere. So if you want to use something like [MS Edit](https://github.com/microsoft/edit):
 
 ```bash
-ls
+edit file.txt
 ```
-```bash
-cd /
-```
-```bash
-cd ~
-```
-```bash
-pwd
-```
-```bash
-ls -l
-```
-```bash
-cd ..
-```
-```bash
-uname -a
-```
-```bash
-whoami
-```
-```bash
-git --version
-```
-```bash
-pkg install hello-world
-```
-```bash
-pkg-exec hello-world
-```
+Note that this requires edit installed on Windows. You can install it with the following command in the Kali in Batch shell:
 
-These should help you get familiar with the shell. If you're already familiar with Linux shells, only do the package manager commands.
+```bash
+winget install Microsoft.Edit
+```
 
 ### Features
 
