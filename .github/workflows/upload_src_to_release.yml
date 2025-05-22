@@ -18,15 +18,15 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update && sudo apt-get install zip tar -y
-      - name: src.zip
+      - name: kali_in_batch.zip
         run: |
           zip -r src.zip src
-      - name: src.tar.gz
+      - name: kali_in_batch.tar.gz
         run: |
           tar -czf src.tar.gz src
       - name: Upload the assets
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            src.zip
-            src.tar.gz
+            kali_in_batch.zip
+            kali_in_batch.tar.gz
