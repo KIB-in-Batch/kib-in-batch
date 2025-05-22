@@ -17,10 +17,9 @@ Reporting a Security Issue
 ==========================
 
 If you believe you have found a vulnerability, follow these steps:
-- Visit [new issue page](https://github.com/Kali-in-Batch/kali-in-batch/issues/new/choose).
-- Use the vulnerability issue template.
+- [Create a new vulnerability issue](https://github.com/Kali-in-Batch/kali-in-batch/issues/new?template=vulnerability.md).
 - Fill out the template.
-- If you believe this should be kept confidential to you and maintainers, [submit a security advisory](https://github.com/Kali-in-Batch/kali-in-batch/security/advisories/new).
+- If you believe this should be kept confidential to you and maintainers, [submit a security advisory instead](https://github.com/Kali-in-Batch/kali-in-batch/security/advisories/new).
 - If we don't respond within 24 hours, comment on the issue and mention **@benja2998**.
 - You may also submit a vulnerability report to [benja2998@duck.com](mailto:benja2998@duck.com).
 
