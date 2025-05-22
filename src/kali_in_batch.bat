@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 
 rem kali_in_batch.bat
 rem    * Main script for the Kali in Batch project.
-rem    * Handles installation, boot process, and passes variables to the PowerShell scripts used in the software.
+rem    * Handles installation, boot process, and passes variables to the pwsh scripts used in the software.
 rem    * License:
 rem
 rem ======================================================================================
@@ -126,7 +126,7 @@ if not exist "%APPDATA%\kali_in_batch" (
         )
         rem Check if it is empty
         cd /d "%~dp0"
-        !bash_path! .\bash\check_drive_empty.sh "!install_part!"
+        "!bash_path!" .\bash\check_drive_empty.sh "!install_part!"
         if !errorlevel! neq 0 (
             echo !COLOR_ERROR!Error: Drive is not empty. Please try again.!COLOR_RESET!
             pause >nul
@@ -152,17 +152,9 @@ if not exist "%APPDATA%\kali_in_batch" (
         pause >nul
         start https://www.vim.org/download.php
     )
-    where powershell >nul 2>nul
+    where pwsh >nul 2>nul
     if !errorlevel! neq 0 (
-        echo !COLOR_ERROR!CRITICAL ERROR: Powershell is not found. Please repair Windows installation. Your Windows installation may not be genuine.!COLOR_RESET!
-        echo You can install a genuine Windows 11 from https://www.microsoft.com/en-us/software-download/windows11 or Windows 10 from https://www.microsoft.com/en-us/software-download/windows10.
-        pause >nul
-        exit
-    )
-    where ping >nul 2>nul
-    if !errorlevel! neq 0 (
-        echo !COLOR_ERROR!CRITICAL ERROR: Ping is not found. Please repair Windows installation. Your Windows installation may not be genuine.!COLOR_RESET!
-        echo You can install a genuine Windows 11 from https://www.microsoft.com/en-us/software-download/windows11 or Windows 10 from https://www.microsoft.com/en-us/software-download/windows10.
+        echo !COLOR_ERROR!Error: PowerShell is not installed. Please try again.!COLOR_RESET!
         pause >nul
         exit
     )
@@ -200,7 +192,7 @@ rem Check if %APPDATA%\kali_in_batch\powershell exists and delete it if it does
 if exist "%APPDATA%\kali_in_batch\powershell" (
     rmdir /s /q "%APPDATA%\kali_in_batch\powershell"
 )
-rem So if the user runs git pull on the local repository to get updates, they can get the latest version of the PowerShell scripts.
+rem So if the user runs git pull on the local repository to get updates, they can get the latest version of the pwsh scripts.
 mkdir "%APPDATA%\kali_in_batch\powershell"
 cd /d "%~dp0" & rem Needed incase the user is using a Windows Terminal profile or something that changes the current directory
 rem Copy .\powershell\* to %APPDATA%\kali_in_batch\powershell
@@ -211,7 +203,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 2.2.1>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 2.2.2>"%APPDATA%\kali_in_batch\VERSION.txt"
 echo Starting services...
 where nmap >nul 2>nul
 if !errorlevel! neq 0 (
@@ -234,16 +226,15 @@ if not defined GIT_PATH (
 )
 
 if defined GIT_PATH (
-    set bash_path=!GIT_PATH!\bin\bash.exe
+    set "bash_path=!GIT_PATH!\bin\bash.exe"
 ) else (
     echo !COLOR_ERROR!Error: Failed to start Git Bash service: Git for Windows not found.!COLOR_RESET!
     echo Please install Git for Windows from https://git-scm.com/downloads/win
 )
-where powershell >nul 2>nul
+where pwsh >nul 2>nul
 if !errorlevel! neq 0 (
-    echo !COLOR_ERROR!CRITICAL ERROR: Powershell is not found. Please repair Windows installation. Your Windows installation may not be genuine.!COLOR_RESET!
-    echo You can install a genuine Windows 11 from https://www.microsoft.com/en-us/software-download/windows11 or Windows 10 from https://www.microsoft.com/en-us/software-download/windows10.
-    pause 
+    echo !COLOR_ERROR!Error: PowerShell is not installed. Please try again.!COLOR_RESET!
+    pause >nul
     exit
 )
 echo Checking for updates...
@@ -307,7 +298,7 @@ if exist !kalirc! (
     set bash_current_dir=!bash_current_dir:X:=/x! >nul 2>&1
     set bash_current_dir=!bash_current_dir:Y:=/y! >nul 2>&1
     set bash_current_dir=!bash_current_dir:Z:=/z! >nul 2>&1
-    !bash_path! -c "cd !bash_current_dir!; source .kalirc" 2>&1
+    "!bash_path!" -c "cd !bash_current_dir!; source .kalirc" 2>&1
     echo.
     goto shell
 ) else (
@@ -357,16 +348,16 @@ goto new_shell_prompt
 :new_shell_prompt
 
 rem Check if PS 7+ is installed
-rem PS 7+ uses pwsh.exe instead of powershell.exe
+rem PS 7+ uses pwsh.exe instead of pwsh.exe
 where pwsh.exe >nul 2>&1
 if !errorlevel!==0 (
     rem It is installed!
 ) else (
     rem It is not installed!
-    echo !COLOR_ERROR!Powershell is not installed.!COLOR_RESET!
+    echo !COLOR_ERROR!pwsh is not installed.!COLOR_RESET!
     echo !COLOR_INFO!You can install it from the MS Store.!COLOR_RESET!
     exit /b
 )
 
-rem As of v2.0.0, the shell is now written in PowerShell due to batch limitations.
-pwsh.exe -noprofile -executionpolicy bypass -file "%APPDATA%\kali_in_batch\powershell\shell_prompt.ps1" -bashexepath !bash_path! -installpart !install_part!
+rem As of v2.0.0, the shell is now written in pwsh due to batch limitations.
+pwsh.exe -noprofile -executionpolicy bypass -file "%APPDATA%\kali_in_batch\powershell\shell_prompt.ps1" -bashexepath "!bash_path! "-installpart !install_part!
