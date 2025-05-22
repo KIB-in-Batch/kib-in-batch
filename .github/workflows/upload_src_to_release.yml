@@ -5,7 +5,7 @@ name: Upload src to release
 
 on:
   release:
-    types: [published, released]
+    types: [released]
 
 jobs:
   upload_src:
