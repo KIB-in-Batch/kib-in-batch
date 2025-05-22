@@ -101,11 +101,6 @@ You can use any text editor, like you would anywhere. So if you want to use some
 ```bash
 edit file.txt
 ```
-Note that this requires edit installed on Windows. You can install it with the following command in the Kali in Batch shell:
-
-```bash
-winget install Microsoft.Edit
-```
 
 ### Features
 
