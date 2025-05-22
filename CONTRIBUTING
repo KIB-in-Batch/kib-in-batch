@@ -9,7 +9,7 @@ By contributing, you also agree to the following:
 * You will maintain the copyright of your code, meaning you must add a copyright header to your code, whether you are the original author or not.
 Example:
 ```batch
-rem Copyright (c) 2025 Your Name
+rem Copyright (c) 2025 Your Name or the Original Author's Name if included verbatim
 rem Licensed under the [something] License.
 echo Code
 ```
