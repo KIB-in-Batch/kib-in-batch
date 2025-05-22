@@ -34,6 +34,7 @@ We welcome contributions from the community, but they must follow these guidelin
     ```batch
     set foo=bar
     ```
+* Any issues must follow templates, otherwise they will be closed.
 
 By contributing, you also agree to the following:
 * You will maintain the copyright of your code, meaning you must add a copyright header to your code, whether you are the original author or not.

@@ -1,0 +1,87 @@
+name: Close Non-compliant issues
+
+permissions:
+  issues: write
+
+on:
+  issues:
+    types:
+      - opened
+      - reopened
+      - edited
+
+jobs:
+  close_non_compliant_issues:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check if the issue follows the template
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            if (!issue) {
+              core.setFailed("This workflow can only be triggered by issue events.");
+              return;
+            }
+
+            const body = issue.body || "";
+
+            // Top-level template detection
+            const isBugTemplate = body.includes("**Describe the bug**");
+            const isFeatureTemplate = body.includes("**Is your feature request related to a problem? Please describe.**");
+            const isVulnerabilityTemplate = body.includes("**Describe the vulnerability**");
+
+            let isCompliant = false;
+
+            if (isBugTemplate) {
+              const bugKeywords = [
+                "**To Reproduce**",
+                "**Expected behavior**",
+                "**Screenshots**",
+                "**Desktop (please complete the following information):**",
+                "**Smartphone (please complete the following information):**",
+                "**Additional context**"
+              ];
+              isCompliant = bugKeywords.every(k => body.includes(k));
+            } else if (isFeatureTemplate) {
+              const featureKeywords = [
+                "**Describe the solution you'd like**",
+                "**Describe alternatives you've considered**",
+                "**Additional context**"
+              ];
+              isCompliant = featureKeywords.every(k => body.includes(k));
+            } else if (isVulnerabilityTemplate) {
+              const vulnKeywords = [
+                "**Vulnerable Code**",
+                "**Suggested Fix**",
+                "**Additional context**"
+              ];
+              isCompliant = vulnKeywords.every(k => body.includes(k));
+            }
+
+            if (!isCompliant) {
+              // Close the issue
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: "closed"
+              });
+
+              // Add the spam label
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: ["spam"]
+              });
+
+              // And leave a comment
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: "This issue does not follow a template and has therefore been closed. Please see [CONTRIBUTING.md](https://github.com/Kali-in-Batch/Kali-in-Batch/blob/dev/CONTRIBUTING.md) for more information on how to contribute to this project."
+              });
+            }
