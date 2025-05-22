@@ -10,6 +10,9 @@ on:
 jobs:
   upload_src:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      releases: write
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
