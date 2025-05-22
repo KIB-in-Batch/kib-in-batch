@@ -13,7 +13,7 @@ A simulated Kali Linux environment in Batch and PowerShell.
 
 Clone the repository:
 ```bash
-git clone https://codeberg.org/Kali-in-Batch/kali-in-batch.git
+git clone https://github.com/Kali-in-Batch/kali-in-batch.git
 ```
 ```bash	
 cd kali-in-batch
