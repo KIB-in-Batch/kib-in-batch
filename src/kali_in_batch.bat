@@ -360,4 +360,4 @@ if !errorlevel!==0 (
 )
 
 rem As of v2.0.0, the shell is now written in pwsh due to batch limitations.
-pwsh.exe -noprofile -executionpolicy bypass -file "%APPDATA%\kali_in_batch\powershell\shell_prompt.ps1" -bashexepath "!bash_path! "-installpart !install_part!
+pwsh.exe -noprofile -executionpolicy bypass -file "%APPDATA%\kali_in_batch\powershell\shell_prompt.ps1" -bashexepath "!bash_path!" -installpart !install_part!
