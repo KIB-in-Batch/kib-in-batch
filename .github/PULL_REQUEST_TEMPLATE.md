@@ -7,3 +7,4 @@ I made sure that...
 - [ ] All checks pass
 - [ ] There are no syntax errors
 - [ ] The PR is mergeable
+- [ ] I read [CONTRIBUTING.md](../CONTRIBUTING.md) and followed the guidelines
