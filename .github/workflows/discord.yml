@@ -1,0 +1,49 @@
+name: Notify Discord on GitHub Events
+
+on:
+  push:
+  release:
+  issues:
+    types: [opened, closed, reopened, edited, deleted]
+  pull_request:
+    types: [opened, closed, reopened, edited]
+  issue_comment:
+    types: [created]
+
+jobs:
+  notify-discord:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord Notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          EVENT_NAME: ${{ github.event_name }}
+          ACTION: ${{ github.event.action }}
+          REPO: ${{ github.repository }}
+          Pusher: ${{ github.actor }}
+          ISSUE_TITLE: ${{ github.event.issue.title || github.event.pull_request.title || '' }}
+          ISSUE_URL: ${{ github.event.issue.html_url || github.event.pull_request.html_url || '' }}
+          COMMENT_BODY: ${{ github.event.comment.body || '' }}
+          RELEASE_NAME: ${{ github.event.release.name || '' }}
+          RELEASE_URL: ${{ github.event.release.html_url || '' }}
+          REF: ${{ github.ref }}
+          COMMIT_SHA: ${{ github.sha }}
+          COMMIT_URL: ${{ github.event.head_commit.url || '' }}
+        run: |
+          # Build the message based on the event
+          if [[ "$EVENT_NAME" == "push" ]]; then
+            MESSAGE="🔨 **Push** by $Pusher to $REF\nCommit: $COMMIT_SHA\n$COMMIT_URL"
+          elif [[ "$EVENT_NAME" == "release" ]]; then
+            MESSAGE="🏷️ **Release Published:** $RELEASE_NAME\n$RELEASE_URL"
+          elif [[ "$EVENT_NAME" == "issues" ]]; then
+            MESSAGE="🐛 **Issue $ACTION** by $Pusher\nTitle: $ISSUE_TITLE\n$ISSUE_URL"
+          elif [[ "$EVENT_NAME" == "pull_request" ]]; then
+            MESSAGE="🔀 **Pull Request $ACTION** by $Pusher\nTitle: $ISSUE_TITLE\n$ISSUE_URL"
+          elif [[ "$EVENT_NAME" == "issue_comment" ]]; then
+            MESSAGE="💬 **Comment Created** by $Pusher\nOn Issue/PR: $ISSUE_TITLE\nComment: $COMMENT_BODY"
+          else
+            MESSAGE="❓ Unknown event $EVENT_NAME by $Pusher"
+          fi
+
+          # Send to Discord
+          curl -H "Content-Type: application/json" -X POST "$DISCORD_WEBHOOK" -d "$(jq -n --arg content "$MESSAGE" '{content: $content}')"
