@@ -96,10 +96,8 @@ if not exist "%APPDATA%\kali_in_batch" (
         for /f "tokens=2,*" %%a in ('reg query "HKLM\Software\GitForWindows" /v InstallPath 2^>nul') do set GIT_PATH=%%b
     )
     if not defined GIT_PATH (
-        echo Press any key to go to https://git-scm.com/downloads/win and download Git for Windows, also ensure you get Git Bash too...
-        pause >nul
-        start https://git-scm.com/downloads/win
-        exit
+        echo Installing Git from winget...
+        winget install --id Git.Git -e --source winget 
     )
 
     set "bash_path=!GIT_PATH!\bin\bash.exe"
@@ -142,19 +140,18 @@ if not exist "%APPDATA%\kali_in_batch" (
     )
     where nmap >nul 2>nul
     if !errorlevel! neq 0 (
-        echo Press any key to go to https://nmap.org/download.html#windows and download Nmap for Windows...
-        pause >nul
-        start https://nmap.org/download.html#windows
+        echo Installing Nmap from winget...
+        winget install --id Insecure.Nmap -e --source winget
     )
     where vim >nul 2>nul
     if !errorlevel! neq 0 (
-        echo Press any key to go to https://www.vim.org/download.php and download Vim...
-        pause >nul
-        start https://www.vim.org/download.php
+        echo You may want Vim, which you can get from https://www.vim.org/download.php.
+        echo It is an optional dependency.
     )
     where pwsh >nul 2>nul
     if !errorlevel! neq 0 (
-        echo !COLOR_ERROR!Error: PowerShell is not installed. Please try again.!COLOR_RESET!
+        echo Installing PowerShell from winget...
+        winget install --id Microsoft.PowerShell -e --source winget
         pause >nul
         exit
     )
@@ -196,14 +193,14 @@ rem So if the user runs git pull on the local repository to get updates, they ca
 mkdir "%APPDATA%\kali_in_batch\powershell"
 cd /d "%~dp0" & rem Needed incase the user is using a Windows Terminal profile or something that changes the current directory
 rem Copy .\powershell\* to %APPDATA%\kali_in_batch\powershell
-xcopy .\powershell\* "%APPDATA%\kali_in_batch\powershell" /s /y
+xcopy .\powershell\* "%APPDATA%\kali_in_batch\powershell" /s /y >nul
 
 rem Check if VERSION.txt exists and delete it if it does
 if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 2.2.2>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 2.2.3>"%APPDATA%\kali_in_batch\VERSION.txt"
 echo Starting services...
 where nmap >nul 2>nul
 if !errorlevel! neq 0 (
@@ -258,7 +255,6 @@ rem DEV BRANCH FIX: Delete VERSION.txt in tmp folder
 del "!install_part!\tmp\VERSION.txt"
 echo.
 cls
-echo.
 goto startup
 
 :startup
@@ -299,11 +295,9 @@ if exist !kalirc! (
     set bash_current_dir=!bash_current_dir:Y:=/y! >nul 2>&1
     set bash_current_dir=!bash_current_dir:Z:=/z! >nul 2>&1
     "!bash_path!" -c "cd !bash_current_dir!; source .kalirc" 2>&1
-    echo.
     goto shell
 ) else (
-    echo No .kalirc file found. Try creating one! It is a bash script that runs on startup.
-    echo.
+    echo No .kalirc file found.
     goto shell
 )
 
