@@ -3,15 +3,16 @@ Kali in Batch Security Policy
 
 We maintain an End-Of-Life (EOL) system to ensure we can continue to provide support for our users.
 
-| Version | EOL            |
-| ------- | -------------- |
-| v2.2.x  | August 8, 2025 |
-| v2.1.x  | July 1, 2025   |
-| v2.0.x  | June 15, 2025  |
-| v1.3.x  | June 10, 2025  |
-| v1.2.x  | June 6, 2025   |
-| v1.1.x  | June 1, 2025   |
-| v1.0.x  | May 24, 2025   |
+| Version | EOL             |
+| ------- | --------------  |
+| v3.0.x  | August 14, 2025 |
+| v2.2.x  | August 8, 2025  |
+| v2.1.x  | July 1, 2025    |
+| v2.0.x  | June 15, 2025   |
+| v1.3.x  | June 10, 2025   |
+| v1.2.x  | June 6, 2025    |
+| v1.1.x  | June 1, 2025    |
+| v1.0.x  | May 24, 2025    |
 
 Reporting a Security Issue
 ==========================
