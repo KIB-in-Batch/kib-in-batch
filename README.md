@@ -9,6 +9,7 @@ A simulated Kali Linux environment in Batch and PowerShell.
 - [Downloading Kali in Batch](#downloading-kali-in-batch)
 - [Setting up Kali in Batch](#setting-up-kali-in-batch)
 - [Using Kali in Batch](#using-kali-in-batch)
+- [Uninstalling Kali in Batch](#uninstalling-kali-in-batch)
 - [Features](#features)
 
 ### Dependencies
@@ -17,6 +18,7 @@ A simulated Kali Linux environment in Batch and PowerShell.
 - [Git for Windows](https://git-scm.com/download/win) (make sure you get Git Bash and use a system-wide installation)
 - [Vim (optional)](https://www.vim.org/download.php)
 - [PowerShell 7+](https://github.com/PowerShell/PowerShell/releases) (or you can get it from Microsoft Store)
+The dependencies are automatically installed during the Kali in Batch installer, so you don't need to install them manually.
 
 ### Downloading Kali in Batch
 
