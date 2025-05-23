@@ -276,7 +276,7 @@ function Get-Architecture {
 }
 
 function Get-UnameVersion {
-    Write-Host "uname for Kali in Batch v2.2.4"
+    Write-Host "uname for Kali in Batch v3.0.0"
 }
 
 function Get-UnameHelp {
@@ -294,6 +294,7 @@ function Get-UnameHelp {
 
 function Get-Command {
     while ($true) {
+        $windowsPath = (Get-Location).Path
         $kaliPath = Convert-ToKaliPath -path (Get-Location).Path
         $kaliPathtwo = "$kaliPath"
         if ($kaliPathtwo -eq "$kaliroot") {
@@ -357,9 +358,10 @@ function Get-Command {
                     'cd' {
                         $cdPath = "$args"
                         if ($cdPath -match '..') {
-                            # Check if the current path is $kaliroot
-                            if ($kaliPath -eq $kaliroot) {
-                                Write-Host "Cannot change directory to Windows path: $cdPath"
+                            # Check if this .. equals to changing to C:\Users\$env:USERNAME
+                            $cdPathtest = Convert-Path (Join-Path $windowsPath "$cdPath")
+                            if ($cdPathtest -eq "C:\Users\$env:USERNAME") {
+                                Write-Host "Cannot change directory to Windows path: $cdPathtest"
                                 $commandSuccess = $false
                                 continue
                             }

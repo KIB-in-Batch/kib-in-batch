@@ -205,7 +205,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 2.2.4>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 3.0.0>"%APPDATA%\kali_in_batch\VERSION.txt"
 echo Starting services...
 where nmap >nul 2>&1
 if !errorlevel! neq 0 (
@@ -249,7 +249,6 @@ if !remote_version! neq !local_version! (
     echo !COLOR_WARNING!New version available!!COLOR_RESET!
     echo !COLOR_WARNING!Remote version: !remote_version!!COLOR_RESET!
     echo !COLOR_WARNING!Local version: !local_version!!COLOR_RESET!
-    echo Please run git pull in your cloned repository to update.
 ) else (
     echo !COLOR_SUCCESS!You are running the latest version.!COLOR_RESET!
     echo !COLOR_SUCCESS!Remote version: !remote_version!!COLOR_RESET!
