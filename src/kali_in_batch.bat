@@ -91,6 +91,15 @@ set "username=%USERNAME%"
 title Kali in Batch
 if not exist "%APPDATA%\kali_in_batch" (
 
+    where winget >nul 2>&1
+    if !errorlevel! neq 0 (
+        echo Winget is not installed.
+        echo Redirecting to the winget download page...
+        timeout /t 2 /nobreak >nul
+        start https://github.com/microsoft/winget-cli
+        exit /b
+    )
+
     for /f "tokens=2,*" %%a in ('reg query "HKCU\Software\GitForWindows" /v InstallPath 2^>nul') do set GIT_PATH=%%b
     if not defined GIT_PATH (
         for /f "tokens=2,*" %%a in ('reg query "HKLM\Software\GitForWindows" /v InstallPath 2^>nul') do set GIT_PATH=%%b
@@ -104,76 +113,72 @@ if not exist "%APPDATA%\kali_in_batch" (
 
     rem The check above is so we can write some parts of the script in bash.
     
+    cls
     echo !COLOR_INFO!Welcome to Kali in Batch Installer!COLOR_RESET!
     echo !COLOR_BG_BLUE!
-    echo - Press 1 to install Kali in Batch.
-    echo - Press 2 to exit.
+    echo -------------------------------------
+    echo - Press 1 to install Kali in Batch. ^|
+    echo - Press 2 to exit.                  ^|
+    echo -------------------------------------
     echo !COLOR_RESET!
     echo.
     choice /c 12 /n /m ""
     if errorlevel 2 exit
     if errorlevel 1 (
         cls
-        set /p "install_part=Choose a partitition or USB drive to install Kali in Batch on. Drive must be empty. Type the drive letter with a colon (e.g. E:) > "
-
-        echo Testing if it exists...
-        if not exist "!install_part!\" (
-            echo !COLOR_ERROR!Error: Drive does not exist. Please try again.!COLOR_RESET!
-            pause >nul
-            exit
+        if exist "C:\Users\!username!\kali" (
+            rmdir /s /q "C:\Users\!username!\kali" >nul 2>&1
+            echo Creating root filesystem...
+            mkdir "C:\Users\!username!\kali" >nul 2>&1
+        ) else (
+            echo Creating root filesystem...
+            mkdir "C:\Users\!username!\kali" >nul 2>&1
         )
-        rem Check if it is empty
-        cd /d "%~dp0"
-        "!bash_path!" .\bash\check_drive_empty.sh "!install_part!"
-        if !errorlevel! neq 0 (
-            echo !COLOR_ERROR!Error: Drive is not empty. Please try again.!COLOR_RESET!
-            pause >nul
-            exit
-        )
+        set "kaliroot=C:\Users\!username!\kali" & rem Changed to a directory in userprofile instead of a drive you create yourself.
         echo Creating directories...
-        mkdir "!install_part!\home" >nul 2>nul
-        mkdir "!install_part!\home\!username!" >nul 2>nul
-        mkdir "!install_part!\bin" >nul 2>nul
-        mkdir "!install_part!\tmp" >nul 2>nul
+        mkdir "!kaliroot!\home" >nul 2>&1
+        mkdir "!kaliroot!\home\!username!" >nul 2>&1
+        mkdir "!kaliroot!\bin" >nul 2>&1
+        mkdir "!kaliroot!\tmp" >nul 2>&1
         echo Creating files...
         echo Checking dependencies...
     )
-    where nmap >nul 2>nul
+    where nmap >nul 2>&1
     if !errorlevel! neq 0 (
         echo Installing Nmap from winget...
         winget install --id Insecure.Nmap -e --source winget
     )
-    where vim >nul 2>nul
+    where vim >nul 2>&1
     if !errorlevel! neq 0 (
         echo You may want Vim, which you can get from https://www.vim.org/download.php.
         echo It is an optional dependency.
     )
-    where pwsh >nul 2>nul
+    where pwsh >nul 2>&1
     if !errorlevel! neq 0 (
         echo Installing PowerShell from winget...
         winget install --id Microsoft.PowerShell -e --source winget
         pause >nul
         exit
     )
-    mkdir "%APPDATA%\kali_in_batch" >nul 2>nul
+    mkdir "%APPDATA%\kali_in_batch" >nul 2>&1
     @echo on
-    echo !install_part!>"%APPDATA%\kali_in_batch\install_part.txt"
+    echo !kaliroot!>"%APPDATA%\kali_in_batch\kaliroot.txt"
     @echo off
 	choice /c 12 /m "Done. Press 1 to continue booting, or press 2 to delete your kali rootfs and exit."
 	if errorlevel 2 goto wipe
 )
 rem Set install part to the txt file created in installer
-set /p install_part=<"%APPDATA%\kali_in_batch\install_part.txt"
+set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
 cls
 goto boot
 
 :wipe
 echo Wiping kali rootfs...
 echo.
-rmdir /s /q "!install_part!\home\!username!"
-rmdir /s /q "!install_part!\bin"
-rmdir /s /q "!install_part!\tmp"
-rmdir /s /q "!install_part!\home"
+rmdir /s /q "!kaliroot!\home\!username!"
+rmdir /s /q "!kaliroot!\bin"
+rmdir /s /q "!kaliroot!\tmp"
+rmdir /s /q "!kaliroot!\home"
 rmdir /s /q "%APPDATA%\kali_in_batch"
 echo Done, press any key to exit...
 pause >nul
@@ -200,16 +205,16 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 2.2.3>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 2.2.4>"%APPDATA%\kali_in_batch\VERSION.txt"
 echo Starting services...
-where nmap >nul 2>nul
+where nmap >nul 2>&1
 if !errorlevel! neq 0 (
     echo !COLOR_ERROR!Error: Failed to start Nmap service: Nmap not found.!COLOR_RESET!
     echo Please install Nmap from https://nmap.org/download.html
     pause
     exit
 )
-where vim >nul 2>nul
+where vim >nul 2>&1
 if !errorlevel! neq 0 (
     echo !COLOR_WARNING!Warning: Failed to start Vim service: Vim not found. While this is not critical, it is recommended to install it for better text editing experience.!COLOR_RESET!
     echo You can install it from https://www.vim.org/download.php
@@ -228,16 +233,16 @@ if defined GIT_PATH (
     echo !COLOR_ERROR!Error: Failed to start Git Bash service: Git for Windows not found.!COLOR_RESET!
     echo Please install Git for Windows from https://git-scm.com/downloads/win
 )
-where pwsh >nul 2>nul
+where pwsh >nul 2>&1
 if !errorlevel! neq 0 (
     echo !COLOR_ERROR!Error: PowerShell is not installed. Please try again.!COLOR_RESET!
     pause >nul
     exit
 )
 echo Checking for updates...
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/kali-in-batch/refs/heads/master/VERSION.txt >"!install_part!\tmp\VERSION.txt"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/kali-in-batch/refs/heads/master/VERSION.txt >"!kaliroot!\tmp\VERSION.txt"
 rem Check if the version is the same
-set /p remote_version=<"!install_part!\tmp\VERSION.txt"
+set /p remote_version=<"!kaliroot!\tmp\VERSION.txt"
 set /p local_version=<"%APPDATA%\kali_in_batch\VERSION.txt"
 if !remote_version! neq !local_version! (
     rem Outdated Kali in Batch installation
@@ -252,14 +257,14 @@ if !remote_version! neq !local_version! (
 )
 timeout /t 1 >nul
 rem DEV BRANCH FIX: Delete VERSION.txt in tmp folder
-del "!install_part!\tmp\VERSION.txt"
+del "!kaliroot!\tmp\VERSION.txt"
 echo.
 cls
 goto startup
 
 :startup
 rem Navigate to home directory
-cd /d "!install_part!\home\!username!"
+cd /d "!kaliroot!\home\!username!"
 if %errorlevel% neq 0 (
     echo error
     pause >nul
@@ -354,4 +359,4 @@ if !errorlevel!==0 (
 )
 
 rem As of v2.0.0, the shell is now written in pwsh due to batch limitations.
-pwsh.exe -noprofile -executionpolicy bypass -file "%APPDATA%\kali_in_batch\powershell\shell_prompt.ps1" -bashexepath "!bash_path!" -installpart !install_part!
+pwsh.exe -noprofile -executionpolicy bypass -file "%APPDATA%\kali_in_batch\powershell\shell_prompt.ps1" -bashexepath "!bash_path!" -kaliroot !kaliroot!

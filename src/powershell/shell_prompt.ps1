@@ -1,7 +1,10 @@
 param (
     [string]$bashexepath,
-    [string]$installpart
+    [string]$kaliroot
 )
+
+# Replace backslashes with slashes in $kaliroot
+$kaliroot = $kaliroot.Replace('\', '/')
 
 $colorGreen = 'Green'
 $colorBlue = 'Blue'
@@ -45,7 +48,7 @@ chcp 65001 >$null
 function Invoke-Pkg {
     param (
         [string[]]$PkgArgs,
-        [string]$InstallPart
+        [string]$kaliroot
     )
 
     if (-not $PkgArgs -or $PkgArgs.Count -eq 0) {
@@ -65,7 +68,7 @@ function Invoke-Pkg {
 
             Write-Host "Checking if package $package is installed..." -ForegroundColor $colorCyan
 
-            $packagePath = Join-Path $installpart "bin\$package.sh"
+            $packagePath = Join-Path $kaliroot "bin\$package.sh"
 
             if (Test-Path $packagePath) {
                 Write-Host "Package $package is already installed." -ForegroundColor $colorRed
@@ -128,7 +131,7 @@ function Invoke-Pkg {
                 return
             }
 
-            $packagePath = Join-Path $InstallPart "bin\$package.sh"
+            $packagePath = Join-Path $kaliroot "bin\$package.sh"
 
             Write-Host "Checking if package $package is installed..." -ForegroundColor $colorCyan
 
@@ -146,8 +149,8 @@ function Invoke-Pkg {
                 return
             }
 
-            $packagePath = Join-Path $InstallPart "bin\$package.sh"
-            $tempFile = Join-Path $InstallPart "tmp\output.txt"
+            $packagePath = Join-Path $kaliroot "bin\$package.sh"
+            $tempFile = Join-Path $kaliroot "tmp\output.txt"
 
             Write-Host "Checking if package $package is installed..." -ForegroundColor $colorCyan
 
@@ -220,7 +223,7 @@ function Invoke-Pkg {
         }
 
         'list' {
-            $binDir = Join-Path $InstallPart "bin"
+            $binDir = Join-Path $kaliroot "bin"
             if (Test-Path $binDir) {
                 Get-ChildItem -Path $binDir -Filter '*.sh' | ForEach-Object {
                     $_.BaseName
@@ -254,12 +257,8 @@ function Convert-ToKaliPath {
     param ([string]$path)
     # Replace backslashes with slashes
     $kaliPath = $path.Replace('\', '/')
-    # If it starts with DriveLetter + colon + slash, remove drive letter and colon, add leading slash
-    if ($kaliPath -match '^([A-Za-z]):/(.*)') {
-        $rest = $matches[2]
-        return "/$rest"
-    }
-    # 
+    # Replace occurrences of $kaliroot with /
+    $kaliPath = $kaliPath.Replace("$kaliroot/", "/")
     return $kaliPath
 }
 
@@ -277,7 +276,7 @@ function Get-Architecture {
 }
 
 function Get-UnameVersion {
-    Write-Host "uname for Kali in Batch v2.2.3"
+    Write-Host "uname for Kali in Batch v2.2.4"
 }
 
 function Get-UnameHelp {
@@ -297,6 +296,13 @@ function Get-Command {
     while ($true) {
         $kaliPath = Convert-ToKaliPath -path (Get-Location).Path
         $kaliPathtwo = "$kaliPath"
+        if ($kaliPathtwo -eq "$kaliroot") {
+            $kalipathtwo = "/"
+        }
+        $kaliPaththree = "$kaliPath"
+        if ($kaliPaththree -eq "$kaliroot") {
+            $kaliPaththree = "/"
+        }
         # Replace /home/$env:USERNAME in kalipathtwo with ~
         $kaliPathtwo = $kaliPathtwo.Replace("/home/$env:USERNAME", "~")
         # Set title to kali path
@@ -345,11 +351,19 @@ function Get-Command {
                         $commandSuccess = $?
                     }
                     'pwd' {
-                        Write-Host $kaliPath
+                        Write-Host $kaliPaththree
                         $commandSuccess = $?
                     }
                     'cd' {
                         $cdPath = "$args"
+                        if ($cdPath -match '..') {
+                            # Check if the current path is $kaliroot
+                            if ($kaliPath -eq $kaliroot) {
+                                Write-Host "Cannot change directory to Windows path: $cdPath"
+                                $commandSuccess = $false
+                                continue
+                            }
+                        }
                         if ($cdPath -match '^[A-Za-z]:') {
                             Write-Host "Cannot change directory to Windows path: $cdPath"
                             $commandSuccess = $false
@@ -357,16 +371,16 @@ function Get-Command {
                         }
 
                         if ($cdPath -match '^/') {
-                            $cdPath = "$installpart$cdPath" -replace '//+', '/'
+                            $cdPath = "$kaliroot$cdPath" -replace '//+', '/'
                         }
 
                         if ($cdPath -match '^~') {
-                            $homeDir = "$installpart\home\$env:USERNAME"
+                            $homeDir = "$kaliroot\home\$env:USERNAME"
                             $cdPath = $homeDir + $cdPath.Substring(1)
                         }
 
                         if ($cdPath -eq '') {
-                            $cdPath = "$installpart\home\$env:USERNAME"
+                            $cdPath = "$kaliroot\home\$env:USERNAME"
                         }
 
                         $cdPath = $cdPath.Replace('/', '\')
@@ -380,12 +394,12 @@ function Get-Command {
                         }
                     }
                     'pkg' {
-                        Invoke-Pkg -PkgArgs $args -InstallPart $installpart
+                        Invoke-Pkg -PkgArgs $args -kaliroot $kaliroot
                         $commandSuccess = $?
                     }
                     'pkg-exec' {
-                        if (Test-Path "$installpart\bin\$args.sh") {
-                            $bashBinPath = Convert-ToBashPath -path "$installpart\bin\$args.sh"
+                        if (Test-Path "$kaliroot\bin\$args.sh") {
+                            $bashBinPath = Convert-ToBashPath -path "$kaliroot\bin\$args.sh"
                             $bashExe = $bashexepath
                             $bashPath = Convert-ToBashPath -path (Get-Location).Path
                             & "$bashExe" -c "cd $bashPath; source $bashBinPath"
@@ -463,11 +477,11 @@ function Get-Command {
                             $conv = $arg.Replace('\', '/')
 
                             if ($conv -match '^/') {
-                                $conv = "$installpart$conv" -replace '//+', '/'
+                                $conv = "$kaliroot$conv" -replace '//+', '/'
                             }
 
                             if ($conv -match '^~') {
-                                $homeDir = "$installpart\home\$env:USERNAME"
+                                $homeDir = "$kaliroot\home\$env:USERNAME"
                                 $bashifiedHome = Convert-ToBashPath -path $homeDir
                                 $conv = $conv -replace '^~', $bashifiedHome
                             }

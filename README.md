@@ -40,13 +40,7 @@ Do not run any of the PowerShell scripts manually, as they require special argum
 
 #### During the Kali in Batch installer
 
-- Press Windows + R
-- Type diskmgmt.msc
-- Shrink any drive with any amount of space
-- Create a drive in the unallocated space
-- Type the drive letter of the new drive in the Kali in Batch installer
-- Press Enter
-- After this, Kali in Batch should be automatically set up
+- It will be automatically installed along with it's dependencies. Root filesystem for Kali in Batch is 'C:\Users\<username>\kali'.
 
 #### After installation
 
@@ -103,6 +97,10 @@ You can use any text editor, like you would anywhere. So if you want to use some
 ```bash
 edit file.txt
 ```
+
+### Uninstalling Kali in Batch
+
+You can just download [uninstall.bat](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest/download/uninstall.bat) and run it.
 
 ### Features
 

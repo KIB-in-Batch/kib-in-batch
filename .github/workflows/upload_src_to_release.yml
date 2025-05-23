@@ -30,3 +30,4 @@ jobs:
           files: |
             kali_in_batch.zip
             kali_in_batch.tar.gz
+            uninstall.bat
