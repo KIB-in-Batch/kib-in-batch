@@ -37,16 +37,7 @@ We welcome contributions from the community, but they must follow these guidelin
 * Any issues must follow templates, otherwise they will be closed.
 
 By contributing, you also agree to the following:
-* You will maintain the copyright of your code, meaning you must add a copyright header to your code, whether you are the original author or not.
-Example:
-```batch
-rem Copyright (c) 2025 Your Name or the Original Author's Name if included verbatim
-rem Licensed under the [MIT, apache, or any MIT compatible] License.
-echo Code
-```
 * You will not include any code verbatim that is licensed under a viral license, as that requires relicensing the Kali in Batch project.
-
-* You will agree to be responsible for legal issues caused by including code licensed under a viral license or a proprietary license, as per the first bullet point stating you keep the copyright.
 
 Where to start?
 ===============
