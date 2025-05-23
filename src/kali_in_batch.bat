@@ -205,7 +205,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 3.0.0>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 3.0.1>"%APPDATA%\kali_in_batch\VERSION.txt"
 echo Starting services...
 where nmap >nul 2>&1
 if !errorlevel! neq 0 (

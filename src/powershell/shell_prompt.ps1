@@ -180,7 +180,7 @@ function Invoke-Pkg {
             }
 
             # Check if the script contains rm -rf or curl
-            if ($scriptContent -match 'rm -rf' -or $scriptContent -match 'curl' -or $scriptContent -match 'http') {
+            if ($latestContent -match 'rm -rf' -or $latestContent -match 'curl' -or $latestContent -match 'http') {
                 Write-Host "Package $package contains potentially dangerous commands. Do you want to continue? (y/n)" -ForegroundColor $colorCyan
                 $confirmation = Read-Host
                 if ($confirmation -eq "y") {
@@ -192,10 +192,10 @@ function Invoke-Pkg {
             }
 
             # Check if the script tries to interact with other drives like /c/ or tries to interact with browsers
-            if ($scriptContent -match '/c/' -or $scriptContent -match 'chrome' -or $scriptContent -match 'firefox' -or $scriptContent -match 'C:' -or $scriptContent -match '/c') {
+            if ($latestContent -match '/c/' -or $latestContent -match 'chrome' -or $latestContent -match 'firefox' -or $latestContent -match 'C:' -or $latestContent -match '/c') {
                 Write-Host "Package $package is likely malicious. Aborting..." -ForegroundColor $colorRed
                 Write-Host "Malicious lines:" -ForegroundColor $colorRed
-                $maliciousLines = $scriptContent -split '\n' | Where-Object { $_ -match 'rm -rf' -or $_ -match 'curl' -or $_ -match 'http' -or $_ -match '/c/' -or $_ -match 'chrome' -or $_ -match 'firefox' -or $_ -match 'C:' }
+                $maliciousLines = $latestContent -split '\n' | Where-Object { $_ -match 'rm -rf' -or $_ -match 'curl' -or $_ -match 'http' -or $_ -match '/c/' -or $_ -match 'chrome' -or $_ -match 'firefox' -or $_ -match 'C:' }
                 Write-Host $maliciousLines
                 return
             }
@@ -276,7 +276,7 @@ function Get-Architecture {
 }
 
 function Get-UnameVersion {
-    Write-Host "uname for Kali in Batch v3.0.0"
+    Write-Host "uname for Kali in Batch v3.0.1"
 }
 
 function Get-UnameHelp {
@@ -357,10 +357,14 @@ function Get-Command {
                     }
                     'cd' {
                         $cdPath = "$args"
-                        if ($cdPath -match '..') {
+                        $kalirootwin = $kaliroot.Replace('/', '\')
+                        if ($cdPath -match '\.\.') {
                             # Check if this .. equals to changing to C:\Users\$env:USERNAME
                             $cdPathtest = Convert-Path (Join-Path $windowsPath "$cdPath")
-                            if ($cdPathtest -eq "C:\Users\$env:USERNAME") {
+                            # Check if $cdPathtest doesn't start with $kalirootwin
+                            if ($cdPathtest.StartsWith($kalirootwin)) {
+                                # Don't do anything
+                            } else {
                                 Write-Host "Cannot change directory to Windows path: $cdPathtest"
                                 $commandSuccess = $false
                                 continue
