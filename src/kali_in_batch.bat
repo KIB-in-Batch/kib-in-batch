@@ -115,14 +115,17 @@ if not exist "%APPDATA%\kali_in_batch" (
     
     cls
     echo !COLOR_INFO!Welcome to Kali in Batch Installer!COLOR_RESET!
-    echo !COLOR_BG_BLUE!
-    echo -------------------------------------
-    echo - Press 1 to install Kali in Batch. ^|
-    echo - Press 2 to exit.                  ^|
-    echo -------------------------------------
-    echo !COLOR_RESET!
+    echo !COLOR_BG_BLUE!---------------------------------------
+    echo ^| * Press 1 to install Kali in Batch. ^|
+    echo ^| * Press 2 to exit.                  ^|
+    echo ^| * Press 3 to visit the GitHub page. ^|
+    echo ---------------------------------------!COLOR_RESET!
     echo.
-    choice /c 12 /n /m ""
+    choice /c 123 /n /m ""
+    if errorlevel 3 (
+        start https://github.com/Kali-in-Batch/kali-in-batch
+        exit
+    )
     if errorlevel 2 exit
     if errorlevel 1 (
         cls
@@ -134,7 +137,22 @@ if not exist "%APPDATA%\kali_in_batch" (
             echo Creating root filesystem...
             mkdir "C:\Users\!username!\kali" >nul 2>&1
         )
-        set "kaliroot=C:\Users\!username!\kali" & rem Changed to a directory in userprofile instead of a drive you create yourself.
+        rem Ask for what drive letter to assign to the root filesystem.
+        set /p "driveletter=Enter the drive letter to assign to the root filesystem (e.g. Z:) >> "
+        echo Drive letter: !driveletter!
+        rem Make sure it isn't an existing drive letter.
+        if exist !driveletter! (
+            echo Drive letter already in use.
+            pause >nul
+            exit /b
+        )
+        subst !driveletter! "C:\Users\!username!\kali" >nul 2>&1
+        if errorlevel 1 (
+            echo Invalid drive letter.
+            pause >nul
+            exit /b
+        )
+        set "kaliroot=!driveletter!" & rem Changed to a directory in userprofile instead of a drive you create yourself.
         echo Creating directories...
         mkdir "!kaliroot!\home" >nul 2>&1
         mkdir "!kaliroot!\home\!username!" >nul 2>&1
@@ -175,11 +193,14 @@ goto boot
 :wipe
 echo Wiping kali rootfs...
 echo.
+rem Delete all files Kali in Batch creates
 rmdir /s /q "!kaliroot!\home\!username!"
 rmdir /s /q "!kaliroot!\bin"
 rmdir /s /q "!kaliroot!\tmp"
 rmdir /s /q "!kaliroot!\home"
 rmdir /s /q "%APPDATA%\kali_in_batch"
+rem Remove the drive letter assignment
+subst !kaliroot! /d
 echo Done, press any key to exit...
 pause >nul
 cls
@@ -205,7 +226,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 3.0.1>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 3.1.0>"%APPDATA%\kali_in_batch\VERSION.txt"
 echo Starting services...
 where nmap >nul 2>&1
 if !errorlevel! neq 0 (

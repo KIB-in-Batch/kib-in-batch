@@ -5,6 +5,7 @@ We maintain an End-Of-Life (EOL) system to ensure we can continue to provide sup
 
 | Version | EOL             |
 | ------- | --------------  |
+| v3.1.x  | August 21, 2025 |
 | v3.0.x  | August 14, 2025 |
 | v2.2.x  | August 8, 2025  |
 | v2.1.x  | July 1, 2025    |

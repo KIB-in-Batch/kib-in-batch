@@ -276,7 +276,7 @@ function Get-Architecture {
 }
 
 function Get-UnameVersion {
-    Write-Host "uname for Kali in Batch v3.0.1"
+    Write-Host "uname for Kali in Batch v3.1.0"
 }
 
 function Get-UnameHelp {
