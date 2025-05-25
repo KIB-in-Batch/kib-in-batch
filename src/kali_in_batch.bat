@@ -114,7 +114,7 @@ if not exist "%APPDATA%\kali_in_batch" (
     rem The check above is so we can write some parts of the script in bash.
     
     cls
-    echo !COLOR_INFO!Welcome to Kali in Batch Installer!COLOR_RESET!
+    echo !COLOR_INFO!Kali in Batch Installer!COLOR_RESET!
     echo !COLOR_BG_BLUE!---------------------------------------
     echo ^| * Press 1 to install Kali in Batch. ^|
     echo ^| * Press 2 to exit.                  ^|
@@ -152,7 +152,7 @@ if not exist "%APPDATA%\kali_in_batch" (
             pause >nul
             exit /b
         )
-        set "kaliroot=!driveletter!" & rem Changed to a directory in userprofile instead of a drive you create yourself.
+        set "kaliroot=!driveletter!"
         echo Creating directories...
         mkdir "!kaliroot!\home" >nul 2>&1
         mkdir "!kaliroot!\home\!username!" >nul 2>&1
@@ -208,8 +208,16 @@ exit
 
 
 :boot
-rem This boot process is actually needed to make the script work properly, unlike some other Batch programs that
-rem just add artificial delays to make it look like it's booting.
+rem Boot process for Kali in Batch
+rem It handles essential checks to make sure Kali in Batch can boot properly.
+
+rem Check if the !kaliroot! virtual drive letter is still assigned
+if exist !kaliroot! (
+    rem Nothing to do
+) else (
+    rem Fix for Kali in Batch not booting after a Windows reboot due to it deleting the virtual drive
+    subst !kaliroot! "C:\Users\!username!\kali" >nul 2>&1
+)
 
 rem Check if %APPDATA%\kali_in_batch\powershell exists and delete it if it does
 if exist "%APPDATA%\kali_in_batch\powershell" (
@@ -226,7 +234,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 3.1.0>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 3.1.1>"%APPDATA%\kali_in_batch\VERSION.txt"
 echo Starting services...
 where nmap >nul 2>&1
 if !errorlevel! neq 0 (
@@ -378,5 +386,4 @@ if !errorlevel!==0 (
     exit /b
 )
 
-rem As of v2.0.0, the shell is now written in pwsh due to batch limitations.
 pwsh.exe -noprofile -executionpolicy bypass -file "%APPDATA%\kali_in_batch\powershell\shell_prompt.ps1" -bashexepath "!bash_path!" -kaliroot !kaliroot!
