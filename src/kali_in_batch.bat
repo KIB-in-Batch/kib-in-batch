@@ -182,13 +182,107 @@ if not exist "%APPDATA%\kali_in_batch" (
     @echo on
     echo !kaliroot!>"%APPDATA%\kali_in_batch\kaliroot.txt"
     @echo off
-	choice /c 12 /m "Done. Press 1 to continue booting, or press 2 to delete your kali rootfs and exit."
-	if errorlevel 2 goto wipe
+    rem Set install part to the txt file created in installer
+    set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
+    rem Enter the preinstall shell
+    echo Welcome to the preinstall shell. Please type 'help' for the commands you'll need to finish setup. Type 'done' to boot into Kali in Batch.
+    goto preinstall
 )
 rem Set install part to the txt file created in installer
 set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
 cls
 goto boot
+
+:preinstall
+set /p "command=!COLOR_PROMPT!!COLOR_UNDERLINE!kali-in-batch-preinstall!COLOR_RESET! >> "
+if !command!==help (
+    echo Commands:
+    echo help - Displays this message.
+    echo done - Finishes setup and exits the preinstall shell.
+    echo wipe - Wipes the Kali in Batch root filesystem.
+    echo add-kalirc - Adds a .kalirc file to the home directory.
+    echo clear - Clears the screen.
+    echo add-kibprompt - Adds a .kibprompt file to the home directory.
+    echo edit-kalirc - Edits the .kalirc file.
+    echo edit-kibprompt - Edits the .kibprompt file.
+    goto preinstall
+) else if !command!==done (
+    echo Finishing setup...
+    cls
+    goto boot
+) else if !command!==wipe (
+    goto wipe
+) else if !command!==add-kalirc (
+    echo Adding .kalirc file...
+    echo echo "██   ██  █████  ██      ██     ██ ███    ██     ██████   █████  ████████  ██████ ██   ██" >> "!kaliroot!\home\!username!\.kalirc"
+    echo echo "██  ██  ██   ██ ██      ██     ██ ████   ██     ██   ██ ██   ██    ██    ██      ██   ██" >> "!kaliroot!\home\!username!\.kalirc"
+    echo echo "█████   ███████ ██      ██     ██ ██ ██  ██     ██████  ███████    ██    ██      ███████" >> "!kaliroot!\home\!username!\.kalirc"
+    echo echo "██  ██  ██   ██ ██      ██     ██ ██  ██ ██     ██   ██ ██   ██    ██    ██      ██   ██" >> "!kaliroot!\home\!username!\.kalirc"
+    echo echo "██   ██ ██   ██ ███████ ██     ██ ██   ████     ██████  ██   ██    ██     ██████ ██   ██" >> "!kaliroot!\home\!username!\.kalirc"
+    echo echo "" >> "!kaliroot!\home\!username!\.kalirc"
+    echo Done.
+    goto preinstall
+) else if !command!==clear (
+    cls
+    goto preinstall
+) else if !command!==add-kibprompt (
+    echo Adding .kibprompt file...
+    echo Write-Host "$env:USERNAME@$env:COMPUTERNAME" -ForegroundColor $colorRed -NoNewLine >> "!kaliroot!\home\!username!\.kibprompt"
+    echo Write-Host ":" -NoNewLine >> "!kaliroot!\home\!username!\.kibprompt"
+    echo Write-Host "$kaliPathtwo" -ForegroundColor $colorBlue -NoNewLine  >> "!kaliroot!\home\!username!\.kibprompt"
+    echo Write-Host "$ " -NoNewLine >> "!kaliroot!\home\!username!\.kibprompt"
+    echo Done.
+    goto preinstall
+) else if !command!==edit-kalirc (
+    rem Make sure the .kalirc file exists
+    if exist "!kaliroot!\home\!username!\.kalirc" (
+        rem Open the .kalirc file in Vim, Nvim or Notepad
+        vim --version >nul 2>&1
+        if !errorlevel!==0 (
+            vim "!kaliroot!\home\!username!\.kalirc"
+        ) else (
+            nvim --version >nul 2>&1
+            if !errorlevel!==0 (
+                nvim "!kaliroot!\home\!username!\.kalirc"
+            ) else (
+                notepad "!kaliroot!\home\!username!\.kalirc"
+            )
+        )
+        goto preinstall
+    ) else (
+        rem The .kalirc file doesn't exist!
+        echo Please run the 'add-kalirc' command first.
+        goto preinstall
+    )
+) else if !command!==edit-kibprompt (
+    rem Make sure the .kibprompt file exists
+    if exist "!kaliroot!\home\!username!\.kibprompt" (
+        rem Open the .kibprompt file in Vim, Nvim or Notepad
+        vim --version >nul 2>&1
+        if !errorlevel!==0 (
+            vim "!kaliroot!\home\!username!\.kibprompt"
+        ) else (
+            nvim --version >nul 2>&1
+            if !errorlevel!==0 (
+                nvim "!kaliroot!\home\!username!\.kibprompt"
+            ) else (
+                notepad "!kaliroot!\home\!username!\.kibprompt"
+            )
+        )
+        goto preinstall
+    ) else (
+        rem The .kibprompt file doesn't exist!
+        echo Please run the 'add-kibprompt' command first.
+        goto preinstall
+    )
+) else (
+    if "!command!"=="" (
+        rem Silently ignore empty commands
+        goto preinstall
+    )
+    echo Invalid command.
+    goto preinstall
+)
 
 :wipe
 echo Wiping kali rootfs...
@@ -234,7 +328,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 3.1.1>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 3.2.0>"%APPDATA%\kali_in_batch\VERSION.txt"
 echo Starting services...
 where nmap >nul 2>&1
 if !errorlevel! neq 0 (

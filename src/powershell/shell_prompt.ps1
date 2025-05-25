@@ -45,19 +45,40 @@ SOFTWARE.
 chcp 65001 >$null
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
+function Read-ShellPrompt {
+    param (
+        [string]$kaliPathtwo
+    )
+    # See if $kaliroot\home\$env:USERNAME\.kibprompt exists
+    $promptFile = Join-Path $kaliroot "home\$env:USERNAME\.kibprompt"
+    if (Test-Path $promptFile) {
+        # For writing .kibprompt files, just use powershell syntax.
+        # To get current path, use $kaliPathtwo
+        Get-Content $promptFile | ForEach-Object {
+            Invoke-Expression $_
+        }
+    } else {
+        # Write the default prompt
+        Write-Host "$env:USERNAME@$env:COMPUTERNAME" -ForegroundColor $colorRed -NoNewLine
+        Write-Host ":" -NoNewLine
+        Write-Host "$kaliPathtwo" -NoNewLine -ForegroundColor $colorBlue
+        Write-Host "$ " -NoNewLine
+    }
+}
+
 function Invoke-Pkg {
     param (
-        [string[]]$PkgArgs,
+        [string[]]$Pkgshellargs,
         [string]$kaliroot
     )
 
-    if (-not $PkgArgs -or $PkgArgs.Count -eq 0) {
+    if (-not $Pkgshellargs -or $Pkgshellargs.Count -eq 0) {
         Write-Host "Usage: pkg (install/remove/upgrade/search/list)" -ForegroundColor $colorCyan
         return
     }
 
-    $command = $PkgArgs[0]
-    $package = if ($PkgArgs.Count -gt 1) { $PkgArgs[1] } else { $null }
+    $command = $Pkgshellargs[0]
+    $package = if ($Pkgshellargs.Count -gt 1) { $Pkgshellargs[1] } else { $null }
 
     switch ($command) {
         'install' {
@@ -119,7 +140,7 @@ function Invoke-Pkg {
             # Save the script to file
             try {
                 $scriptContent | Out-File -FilePath $packagePath -Encoding UTF8
-                Write-Host "Package $package installed. Execute it by running: pkg-exec $package" -ForegroundColor $colorGreen
+                Write-Host "Package $package installed. Execute it by running: $package" -ForegroundColor $colorGreen
             } catch {
                 Write-Host "Failed to save package $package." -ForegroundColor $colorRed
             }
@@ -276,7 +297,7 @@ function Get-Architecture {
 }
 
 function Get-UnameVersion {
-    Write-Host "uname for Kali in Batch v3.1.1"
+    Write-Host "uname for Kali in Batch v3.2.0"
 }
 
 function Get-UnameHelp {
@@ -298,7 +319,7 @@ function Get-Command {
         $kaliPath = Convert-ToKaliPath -path (Get-Location).Path
         $kaliPathtwo = "$kaliPath"
         if ($kaliPathtwo -eq "$kaliroot") {
-            $kalipathtwo = "/"
+            $kaliPathtwo = "/"
         }
         $kaliPaththree = "$kaliPath"
         if ($kaliPaththree -eq "$kaliroot") {
@@ -308,10 +329,7 @@ function Get-Command {
         $kaliPathtwo = $kaliPathtwo.Replace("/home/$env:USERNAME", "~")
         # Set title to kali path
         $host.ui.RawUI.WindowTitle = "Kali in Batch - $kaliPath"
-        Write-Host "$env:USERNAME@$env:COMPUTERNAME" -ForegroundColor $colorRed -NoNewline
-        Write-Host ":" -NoNewline
-        Write-Host "$kaliPathtwo" -NoNewline -ForegroundColor $colorBlue
-        Write-Host "$ " -NoNewline
+        Read-ShellPrompt -kaliPathtwo $kaliPathtwo
 
         $inputLine = Read-Host
 
@@ -334,18 +352,54 @@ function Get-Command {
                 if ($tokens.Count -eq 0) { continue }
 
                 $command = $tokens[0]
-                $args = if ($tokens.Count -gt 1) { $tokens[1..($tokens.Count - 1)] } else { @() }
+                $shellargs = if ($tokens.Count -gt 1) { $tokens[1..($tokens.Count - 1)] } else { @() }
 
                 $commandSuccess = $false
 
+                # Check if $kaliroot\bin\$command.sh exists
+                if (Test-Path "$kaliroot\bin\$command.sh") {
+                    # Execute the script
+                    $bashBinPath = Convert-ToBashPath -path "$kaliroot\bin\$command.sh"
+                    $substPath = (Get-Location).Path
+                    # Workaround for WSL not mounting drives created with subst for some reason, which broke the elf-exec package
+                    $substPath = $substPath.Replace("$kaliroot", "")
+                    $substPath = Join-Path "$env:USERPROFILE\kali" "$substPath"
+                    $bashPath = Convert-ToBashPath -path "$substPath"
+                    $bashExe = $bashexepath
+                    $convertedshellargs = @()
+
+                    foreach ($arg in $shellargs) {
+                        if ($arg -match '^[A-Za-z]:') {
+                            Write-Host "Cannot access Windows path: $arg" -ForegroundColor $colorRed
+                            $commandSuccess = $false
+                            continue
+                        }
+
+                        $conv = $arg.Replace('\', '/')
+
+                        if ($conv -match '^/') {
+                            $conv = "$kaliroot$conv" -replace '//+', '/'
+                        }
+
+                        if ($conv -match '^~') {
+                            $homeDir = "$kaliroot\home\$env:USERNAME"
+                            $bashifiedHome = Convert-ToBashPath -path $homeDir
+                            $conv = $conv -replace '^~', $bashifiedHome
+                        }
+
+                        $convertedshellargs += $conv
+                    }
+
+                    $commandLine = "cd '$bashPath'; source $bashBinPath $convertedshellargs"
+                    & $bashExe -c $commandLine
+                    # Avoid running the switch statements
+                    $commandSuccess = $?
+                    continue
+                }
                 switch ($command) {
                     'exit' {
                         exit
                         $commandSuccess = $true
-                    }
-                    'echo' {
-                        Write-Host $args
-                        $commandSuccess = $?
                     }
                     'clear' {
                         Clear-Host
@@ -356,7 +410,7 @@ function Get-Command {
                         $commandSuccess = $?
                     }
                     'cd' {
-                        $cdPath = "$args"
+                        $cdPath = "$shellargs"
                         $kalirootwin = $kaliroot.Replace('/', '\')
                         if ($cdPath -match '\.\.') {
                             # Check if this .. equals to changing to C:\Users\$env:USERNAME
@@ -400,64 +454,52 @@ function Get-Command {
                         }
                     }
                     'pkg' {
-                        Invoke-Pkg -PkgArgs $args -kaliroot $kaliroot
+                        Invoke-Pkg -Pkgshellargs $shellargs -kaliroot $kaliroot
                         $commandSuccess = $?
                     }
-                    'pkg-exec' {
-                        if (Test-Path "$kaliroot\bin\$args.sh") {
-                            $bashBinPath = Convert-ToBashPath -path "$kaliroot\bin\$args.sh"
-                            $bashExe = $bashexepath
-                            $bashPath = Convert-ToBashPath -path (Get-Location).Path
-                            & "$bashExe" -c "cd $bashPath; source $bashBinPath"
-                            $commandSuccess = ($LASTEXITCODE -eq 0)
-                        } else {
-                            Write-Host "Package not found: $args"
-                            $commandSuccess = $false
-                        }
-                    }
                     'wsl' {
-                        Write-Host "Please install the elf-exec package using pkg install elf-exec, then run it here by doing pkg-exec elf-exec."
+                        Write-Host "Please install the elf-exec package using pkg install elf-exec, then run it here by running: elf-exec"
                         $commandSuccess = $true
                     }
                     'uname' {
-                        if ($args.Count -eq 0) {
+                        if ($shellargs.Count -eq 0) {
                             Get-Kernel
                             $commandSuccess = $true
                         } else {
-                            if ($args -eq '-a' -or $args -eq '--all') {
-                                Write-Host "OS: " -NoNewline
+                            if ($shellargs -eq '-a' -or $shellargs -eq '--all') {
+                                Write-Host "OS: " -NoNewLine
                                 Get-OperatingSystem
-                                Write-Host "Kernel: " -NoNewline
+                                Write-Host "Kernel: " -NoNewLine
                                 Get-Kernel
-                                Write-Host "Architecture: " -NoNewline
+                                Write-Host "Architecture: " -NoNewLine
                                 Get-Architecture
-                                Write-Host "Version: " -NoNewline
+                                Write-Host "Version: " -NoNewLine
                                 Get-UnameVersion
                                 $commandSuccess = $true
                             }
-                            if ($args -eq '-o' -or $args -eq '--operating-system') {
+                            if ($shellargs -eq '-o' -or $shellargs -eq '--operating-system') {
                                 Get-OperatingSystem
                                 $commandSuccess = $true
                             }
-                            if ($args -eq '-s' -or $args -eq '--kernel-name') {
+                            if ($shellargs -eq '-s' -or $shellargs -eq '--kernel-name') {
                                 Get-Kernel
                                 $commandSuccess = $true
                             }
-                            if ($args -eq '-p' -or $args -eq '--processor') {
+                            if ($shellargs -eq '-p' -or $shellargs -eq '--processor') {
                                 Get-Architecture
                                 $commandSuccess = $true
                             }
-                            if ($args -eq '--version') {
+                            if ($shellargs -eq '--version') {
                                 Get-UnameVersion
                                 $commandSuccess = $true
                             }
-                            if ($args -eq '-h' -or $args -eq '--help') {
+                            if ($shellargs -eq '-h' -or $shellargs -eq '--help') {
                                 Get-UnameHelp
                                 $commandSuccess = $true
                             }
                             # Check if the argument is unrecognized
-                            if ($args -ne '-a' -and $args -ne '--all' -and $args -ne '-o' -and $args -ne '--operating-system' -and $args -ne '-s' -and $args -ne '--kernel-name' -and $args -ne '-p' -and $args -ne '--processor' -and $args -ne '--version' -and $args -ne '-h' -and $args -ne '--help') {
-                                Write-Host "Unrecognized argument: $args"
+                            if ($shellargs -ne '-a' -and $shellargs -ne '--all' -and $shellargs -ne '-o' -and $shellargs -ne '--operating-system' -and $shellargs -ne '-s' -and $shellargs -ne '--kernel-name' -and $shellargs -ne '-p' -and $shellargs -ne '--processor' -and $shellargs -ne '--version' -and $shellargs -ne '-h' -and $shellargs -ne '--help') {
+                                Write-Host "Unrecognized argument: $shellargs"
                                 Write-Host "Run uname --help for usage information."
                                 $commandSuccess = $false
                             }
@@ -471,9 +513,9 @@ function Get-Command {
 
                         $bashPath = Convert-ToBashPath -path (Get-Location).Path
                         $bashExe = $bashexepath
-                        $convertedArgs = @()
+                        $convertedshellargs = @()
 
-                        foreach ($arg in $args) {
+                        foreach ($arg in $shellargs) {
                             if ($arg -match '^[A-Za-z]:') {
                                 Write-Host "Cannot access Windows path: $arg" -ForegroundColor $colorRed
                                 $commandSuccess = $false
@@ -492,10 +534,10 @@ function Get-Command {
                                 $conv = $conv -replace '^~', $bashifiedHome
                             }
 
-                            $convertedArgs += $conv
+                            $convertedshellargs += $conv
                         }
 
-                        $commandLine = "cd '$bashPath'; $command $($convertedArgs -join ' ')"
+                        $commandLine = "cd '$bashPath'; $command $($convertedshellargs -join ' ')"
 
                         if ($command -in 'ls', 'dir') {
                             $output = & $bashExe -c $commandLine
