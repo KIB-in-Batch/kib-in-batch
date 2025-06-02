@@ -34,7 +34,7 @@ SOFTWARE.
 #>
 
 
-if ($contents -eq 'Not found.') {
+if ($contents -eq '404: Not Found') {
     exit 1
 } else {
     exit 0

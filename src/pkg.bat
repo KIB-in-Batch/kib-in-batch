@@ -76,9 +76,9 @@ if exist "C:\Users\%USERNAME%\kali\bin\%2.sh" (
 rem Save package contents to C:\Users\%USERNAME%\kali\tmp\contents.txt
 
 echo Fetching package contents...
-curl -# https://codeberg.org/Kali-in-Batch/pkg/raw/branch/main/packages/%2/%2.sh >"C:\Users\%USERNAME%\kali\tmp\contents.txt"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/%2.sh >"C:\Users\%USERNAME%\kali\tmp\contents.txt"
 
-rem Check if the contents are "Not found."
+rem Check if the contents are "404: Not Found"
 
 set /p contents=<C:\Users\%USERNAME%\kali\tmp\contents.txt
 
@@ -93,7 +93,7 @@ if %errorlevel%==1 (
 
 rem Save package contents to C:\Users\%USERNAME%\kali\bin\%2.sh
 echo Installing package %2...
-curl -# https://codeberg.org/Kali-in-Batch/pkg/raw/branch/main/packages/%2/%2.sh >"C:\Users\%USERNAME%\kali\bin\%2.sh"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/%2.sh >"C:\Users\%USERNAME%\kali\bin\%2.sh"
 echo Package %2 installed successfully.
 del "C:\Users\%USERNAME%\kali\tmp\contents.txt"
 exit
@@ -120,11 +120,11 @@ if not exist "C:\Users\%USERNAME%\kali\bin\%2.sh" (
 )
 
 rem Compare the package contents
-curl -# https://codeberg.org/Kali-in-Batch/pkg/raw/branch/main/packages/%2/%2.sh >"C:\Users\%USERNAME%\kali\tmp\contents.txt"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/%2.sh >"C:\Users\%USERNAME%\kali\tmp\contents.txt"
 set /p contents=<C:\Users\%USERNAME%\kali\tmp\contents.txt
 set /p oldcontents=<C:\Users\%USERNAME%\kali\bin\%2.sh
 
-rem Check if the contents are "Not found."
+rem Check if the contents are "404: Not Found"
 
 pwsh -executionpolicy bypass -file "%~dp0\powershell\check_contents.ps1" -contents "%contents%" -package "%2"
 
@@ -138,7 +138,7 @@ if %errorlevel%==1 (
 rem Upgrade the package
 
 echo Upgrading package %2...
-curl -# https://codeberg.org/Kali-in-Batch/pkg/raw/branch/main/packages/%2/%2.sh >"C:\Users\%USERNAME%\kali\bin\%2.sh"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/%2.sh >"C:\Users\%USERNAME%\kali\bin\%2.sh"
 echo Package %2 upgraded successfully.
 
 del "C:\Users\%USERNAME%\kali\tmp\contents.txt"
@@ -155,7 +155,19 @@ exit
 
 :list
 
-rem List all packages using dir /b, filter out .sh. Only filter out the extension, not the entire filename.
-
-powershell -Command "Get-ChildItem -Path 'C:\Users\%USERNAME%\kali\bin' | Select-Object @{Name='Name'; Expression={ if ($_.Extension -eq '.sh') { $_.BaseName } else { $_.Name } }}"
+rem List all packages
+setlocal enabledelayedexpansion
+set /i count=0
+for /f "delims=" %%a in ('dir /b "C:\Users\%USERNAME%\kali\bin\*.sh"') do (
+    set /a count+=1
+    rem Remove .sh from noextension
+    set noextension=%%a
+    set noextension=!noextension:.sh=!
+    if !count!==1 (
+        rem Hide the error message at the top
+        <nul set /p=[1A[2K
+    )
+    echo Package !count! [1;37m- [3;36m!noextension![0m
+)
+endlocal
 exit
