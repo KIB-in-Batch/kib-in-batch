@@ -1,6 +1,8 @@
 param (
     [string]$bashexepath,
-    [string]$kaliroot
+    [string]$kaliroot,
+    [string]$echocommand,
+    [string]$pkgcommand
 )
 
 # Replace backslashes with slashes in $kaliroot
@@ -66,201 +68,6 @@ function Read-ShellPrompt {
     }
 }
 
-function Invoke-Pkg {
-    param (
-        [string[]]$Pkgshellargs,
-        [string]$kaliroot
-    )
-
-    if (-not $Pkgshellargs -or $Pkgshellargs.Count -eq 0) {
-        Write-Host "Usage: pkg (install/remove/upgrade/search/list)" -ForegroundColor $colorCyan
-        return
-    }
-
-    $command = $Pkgshellargs[0]
-    $package = if ($Pkgshellargs.Count -gt 1) { $Pkgshellargs[1] } else { $null }
-
-    switch ($command) {
-        'install' {
-            if (-not $package) {
-                Write-Host "Usage: pkg install package" -ForegroundColor $colorCyan
-                return
-            }
-
-            Write-Host "Checking if package $package is installed..." -ForegroundColor $colorCyan
-
-            $packagePath = Join-Path $kaliroot "bin\$package.sh"
-
-            if (Test-Path $packagePath) {
-                Write-Host "Package $package is already installed." -ForegroundColor $colorRed
-                return
-            }
-
-            # Check if package exists on the server by downloading script and checking content
-            $packageUrl = "https://codeberg.org/Kali-in-Batch/pkg/raw/branch/main/packages/$package/$package.sh"
-
-            Write-Host "Downloading package script for $package to check availability..." -ForegroundColor $colorCyan
-            try {
-                $scriptContent = Invoke-WebRequest -Uri $packageUrl -UseBasicParsing -ErrorAction Stop | Select-Object -ExpandProperty Content
-                Write-Host "First 100 chars of script:" -ForegroundColor $colorCyan
-                Write-Host ($scriptContent.Substring(0, [Math]::Min(100, $scriptContent.Length))) -BackgroundColor $colorBlack
-            } catch {
-                Write-Host "Failed to download package $package." -ForegroundColor $colorRed
-                return
-            }
-
-            if ($scriptContent.Trim() -eq "Not found.") {
-                Write-Host "Package $package is not available." -ForegroundColor $colorRed
-                return
-            }
-
-            # Check if the script contains rm -rf or curl
-            if ($scriptContent -match 'rm -rf' -or $scriptContent -match 'curl' -or $scriptContent -match 'http') {
-                Write-Host "Package $package contains potentially dangerous commands. Do you want to continue? (y/n)" -ForegroundColor $colorCyan
-                $confirmation = Read-Host
-                if ($confirmation -eq "y") {
-                    Write-Host "Continuing with installation of package $package..." -ForegroundColor $colorCyan
-                } else {
-                    Write-Host "Installation of package $package canceled." -ForegroundColor $colorRed
-                    return
-                }
-            }
-
-            # Check if the script tries to interact with other drives like /c/ or tries to interact with browsers
-            if ($scriptContent -match '/c/' -or $scriptContent -match 'chrome' -or $scriptContent -match 'firefox' -or $scriptContent -match 'C:' -or $scriptContent -match '/c') {
-                Write-Host "Package $package is likely malicious. Aborting..." -ForegroundColor $colorRed
-                Write-Host "Malicious lines:" -ForegroundColor $colorRed
-                $maliciousLines = $scriptContent -split '\n' | Where-Object { $_ -match 'rm -rf' -or $_ -match 'curl' -or $_ -match 'http' -or $_ -match '/c/' -or $_ -match 'chrome' -or $_ -match 'firefox' -or $_ -match 'C:' }
-                Write-Host $maliciousLines
-                return
-            }
-
-            Write-Host "Package $package is available. Installing..." -ForegroundColor $colorCyan
-
-            # Save the script to file
-            try {
-                $scriptContent | Out-File -FilePath $packagePath -Encoding UTF8
-                Write-Host "Package $package installed. Execute it by running: $package" -ForegroundColor $colorGreen
-            } catch {
-                Write-Host "Failed to save package $package." -ForegroundColor $colorRed
-            }
-        }
-
-        'remove' {
-            if (-not $package) {
-                Write-Host "Usage: pkg remove package" -ForegroundColor $colorCyan
-                return
-            }
-
-            $packagePath = Join-Path $kaliroot "bin\$package.sh"
-
-            Write-Host "Checking if package $package is installed..." -ForegroundColor $colorCyan
-
-            if (Test-Path $packagePath) {
-                Remove-Item $packagePath
-                Write-Host "Package $package removed." -ForegroundColor $colorGreen
-            } else {
-                Write-Host "Package $package is not installed." -ForegroundColor $colorRed
-            }
-        }
-
-        'upgrade' {
-            if (-not $package) {
-                Write-Host "Usage: pkg upgrade package" -ForegroundColor $colorCyan
-                return
-            }
-
-            $packagePath = Join-Path $kaliroot "bin\$package.sh"
-            $tempFile = Join-Path $kaliroot "tmp\output.txt"
-
-            Write-Host "Checking if package $package is installed..." -ForegroundColor $colorCyan
-
-            if (-not (Test-Path $packagePath)) {
-                Write-Host "Package $package is not installed." -ForegroundColor $colorRed
-                return
-            }
-
-            Write-Host "Checking if package is up to date..." -ForegroundColor $colorCyan
-
-            $packageUrl = "https://codeberg.org/Kali-in-Batch/pkg/raw/branch/main/packages/$package/$package.sh"
-
-            # Download latest package script
-            Write-Host "Downloading latest package script for $package..." -ForegroundColor $colorCyan
-            try {
-                $latestContent = Invoke-WebRequest -Uri $packageUrl -UseBasicParsing -ErrorAction Stop | Select-Object -ExpandProperty Content
-                Write-Host "First 100 chars of script:" -ForegroundColor $colorCyan
-                Write-Host ($latestContent.Substring(0, [Math]::Min(100, $latestContent.Length))) -BackgroundColor $colorBlack
-            } catch {
-                Write-Host "Failed to download latest package $package." -ForegroundColor $colorRed
-                return
-            }
-
-            if ($latestContent.Trim() -eq "Not found.") {
-                Write-Host "Package $package is not available remotely." -ForegroundColor $colorRed
-                return
-            }
-
-            # Check if the script contains rm -rf or curl
-            if ($latestContent -match 'rm -rf' -or $latestContent -match 'curl' -or $latestContent -match 'http') {
-                Write-Host "Package $package contains potentially dangerous commands. Do you want to continue? (y/n)" -ForegroundColor $colorCyan
-                $confirmation = Read-Host
-                if ($confirmation -eq "y") {
-                    Write-Host "Continuing with installation of package $package..." -ForegroundColor $colorCyan
-                } else {
-                    Write-Host "Installation of package $package canceled." -ForegroundColor $colorRed
-                    return
-                }
-            }
-
-            # Check if the script tries to interact with other drives like /c/ or tries to interact with browsers
-            if ($latestContent -match '/c/' -or $latestContent -match 'chrome' -or $latestContent -match 'firefox' -or $latestContent -match 'C:' -or $latestContent -match '/c') {
-                Write-Host "Package $package is likely malicious. Aborting..." -ForegroundColor $colorRed
-                Write-Host "Malicious lines:" -ForegroundColor $colorRed
-                $maliciousLines = $latestContent -split '\n' | Where-Object { $_ -match 'rm -rf' -or $_ -match 'curl' -or $_ -match 'http' -or $_ -match '/c/' -or $_ -match 'chrome' -or $_ -match 'firefox' -or $_ -match 'C:' }
-                Write-Host $maliciousLines
-                return
-            }
-
-            $localCode = Get-Content $packagePath -Raw
-
-            if ($latestContent -eq $localCode) {
-                Write-Host "Package $package is up to date." -ForegroundColor $colorCyan
-            } else {
-                Write-Host "Upgrading package $package..." -ForegroundColor $colorCyan
-                try {
-                    $latestContent | Out-File -FilePath $packagePath -Encoding UTF8
-                    Write-Host "Package $package upgraded." -ForegroundColor $colorGreen
-                } catch {
-                    Write-Host "Failed to save upgraded package $package." -ForegroundColor $colorRed
-                }
-            }
-
-            Remove-Item $tempFile -ErrorAction SilentlyContinue
-        }
-
-        'search' {
-            Write-Host "Opening package database in your browser..." -ForegroundColor $colorCyan
-            Start-Process "https://codeberg.org/Kali-in-Batch/pkg/src/branch/main/packages/"
-        }
-
-        'list' {
-            $binDir = Join-Path $kaliroot "bin"
-            if (Test-Path $binDir) {
-                Get-ChildItem -Path $binDir -Filter '*.sh' | ForEach-Object {
-                    $_.BaseName
-                }
-            } else {
-                Write-Host "No packages installed." -ForegroundColor $colorCyan
-            }
-        }
-
-        default {
-            Write-Host "Unknown command: $command" -ForegroundColor $colorRed
-            Write-Host "Usage: pkg (install/remove/upgrade/search/list)" -ForegroundColor $colorCyan
-        }
-    }
-}
-
 function Convert-ToBashPath {
     param ([string]$path)
     $bashPath = $path.Replace('\', '/')
@@ -297,7 +104,7 @@ function Get-Architecture {
 }
 
 function Get-UnameVersion {
-    Write-Host "uname for Kali in Batch v3.2.0"
+    Write-Host "uname for Kali in Batch v3.3.0"
 }
 
 function Get-UnameHelp {
@@ -398,8 +205,12 @@ function Get-Command {
                 }
                 switch ($command) {
                     'exit' {
-                        exit
-                        $commandSuccess = $true
+                        exit $shellargs
+                        $commandSuccess = $?
+                    }
+                    'echo' {
+                        & $echocommand $shellargs
+                        $commandSuccess = $?
                     }
                     'clear' {
                         Clear-Host
@@ -454,7 +265,7 @@ function Get-Command {
                         }
                     }
                     'pkg' {
-                        Invoke-Pkg -Pkgshellargs $shellargs -kaliroot $kaliroot
+                        & $pkgcommand $shellargs
                         $commandSuccess = $?
                     }
                     'wsl' {

@@ -328,7 +328,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 3.2.0>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 3.3.0>"%APPDATA%\kali_in_batch\VERSION.txt"
 echo Starting services...
 where nmap >nul 2>&1
 if !errorlevel! neq 0 (
@@ -476,8 +476,11 @@ if !errorlevel!==0 (
 ) else (
     rem It is not installed!
     echo !COLOR_ERROR!pwsh is not installed.!COLOR_RESET!
-    echo !COLOR_INFO!You can install it from the MS Store.!COLOR_RESET!
+    echo !COLOR_INFO!Installing pwsh...!COLOR_RESET!
+    winget install --id Microsoft.PowerShell -e --source winget
+    echo Press any key to exit...
+    pause >nul
     exit /b
 )
 
-pwsh.exe -noprofile -executionpolicy bypass -file "%APPDATA%\kali_in_batch\powershell\shell_prompt.ps1" -bashexepath "!bash_path!" -kaliroot !kaliroot!
+pwsh.exe -noprofile -executionpolicy bypass -file "%APPDATA%\kali_in_batch\powershell\shell_prompt.ps1" -bashexepath "!bash_path!" -kaliroot "!kaliroot!" -echocommand "%~dp0\echo.bat" -pkgcommand "%~dp0\pkg.bat"
