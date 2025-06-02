@@ -53,7 +53,7 @@ pkg install elf-exec
 ```
 You can then run it by:
 ```bash
-pkg-exec elf-exec
+elf-exec
 ```
 If you're not familiar with Linux shells, see [Using Kali in Batch](#using-kali-in-batch).
 
