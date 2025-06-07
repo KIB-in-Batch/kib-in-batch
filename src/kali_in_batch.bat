@@ -155,7 +155,7 @@ if not exist "%APPDATA%\kali_in_batch" (
         mkdir "!kaliroot!\bin"
         mkdir "!kaliroot!\tmp"
         mkdir "!kaliroot!\usr"
-        xcopy /y "%~dp0\bin" "!kaliroot!\usr\bin"
+        copy /Y "%~dp0\bin" "!kaliroot!\usr\bin"
         set "bash_path=!kaliroot!\usr\bin\bash.exe"
         echo Checking dependencies...
     )
@@ -333,11 +333,13 @@ if !errorlevel! neq 0 (
     echo !COLOR_ERROR!Error: Failed to start Neovim service: Neovim not found.!COLOR_RESET!
 )
 
-if not exist "%~dp0\bin\bash.exe" (
+if not exist "!kaliroot!\usr\bin\bash.exe" (
     echo !COLOR_ERROR!Error: Bash not found. Please try again.!COLOR_RESET!
     pause >nul
     exit
 )
+
+set "bash_path=!kaliroot!\usr\bin\bash.exe"
 
 where pwsh >nul 2>&1
 if !errorlevel! neq 0 (
@@ -380,30 +382,30 @@ set "home_dir=!cd!"
 if exist !kalirc! (
     set bash_current_dir=!cd! >nul 2>&1
     set bash_current_dir=!cd:\=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:C:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:D:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:E:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:F:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:G:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:H:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:I:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:J:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:K:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:L:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:M:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:N:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:O:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:P:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:Q:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:R:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:S:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:T:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:U:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:V:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:W:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:X:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:Y:=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:Z:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:C:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:D:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:E:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:F:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:G:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:H:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:I:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:J:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:K:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:L:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:M:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:N:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:O:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:P:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:Q:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:R:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:S:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:T:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:U:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:V:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:W:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:X:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:Y:=! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:Z:=! >nul 2>&1
     "!bash_path!" -c "cd !bash_current_dir!; source .kalirc" 2>&1
     goto shell
 ) else (

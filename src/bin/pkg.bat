@@ -68,7 +68,7 @@ if "%1"=="install" (
 rem Check if the package is already installed
 rem C:\Users\%USERNAME%\kali is the Kali in Batch root filesystem path.
 
-if exist "C:\Users\%USERNAME%\kali\bin\%2.sh" (
+if exist "C:\Users\%USERNAME%\kali\usr\bin\%2.sh" (
     echo Package %2 is already installed.
     exit /b
 )
@@ -82,7 +82,7 @@ rem Check if the contents are "404: Not Found"
 
 set /p contents=<C:\Users\%USERNAME%\kali\tmp\contents.txt
 
-pwsh -executionpolicy bypass -file "%~dp0\powershell\check_contents.ps1" -contents "%contents%" -package "%2"
+pwsh -executionpolicy bypass -file "%~dp0\..\powershell\check_contents.ps1" -contents "%contents%" -package "%2"
 
 if %errorlevel%==1 (
     echo Package %2 is not available.
@@ -91,9 +91,9 @@ if %errorlevel%==1 (
     echo Package %2 is available.
 )
 
-rem Save package contents to C:\Users\%USERNAME%\kali\bin\%2.sh
+rem Save package contents to C:\Users\%USERNAME%\kali\usr\bin\%2.sh
 echo Installing package %2...
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/%2.sh >"C:\Users\%USERNAME%\kali\bin\%2.sh"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/%2.sh >"C:\Users\%USERNAME%\kali\usr\bin\%2.sh"
 echo Package %2 installed successfully.
 del "C:\Users\%USERNAME%\kali\tmp\contents.txt"
 exit
@@ -101,20 +101,20 @@ exit
 :remove
 
 rem Check if the package is installed
-if not exist "C:\Users\%USERNAME%\kali\bin\%2.sh" (
+if not exist "C:\Users\%USERNAME%\kali\usr\bin\%2.sh" (
     echo Package %2 is not installed.
     exit /b
 )
 
 rem Remove the package
-del "C:\Users\%USERNAME%\kali\bin\%2.sh"
+del "C:\Users\%USERNAME%\kali\usr\bin\%2.sh"
 echo Package %2 removed successfully.
 exit
 
 :upgrade
 
 rem Check if the package is installed
-if not exist "C:\Users\%USERNAME%\kali\bin\%2.sh" (
+if not exist "C:\Users\%USERNAME%\kali\usr\bin\%2.sh" (
     echo Package %2 is not installed. Install it by running: pkg install %2
     exit /b
 )
@@ -122,11 +122,11 @@ if not exist "C:\Users\%USERNAME%\kali\bin\%2.sh" (
 rem Compare the package contents
 curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/%2.sh >"C:\Users\%USERNAME%\kali\tmp\contents.txt"
 set /p contents=<C:\Users\%USERNAME%\kali\tmp\contents.txt
-set /p oldcontents=<C:\Users\%USERNAME%\kali\bin\%2.sh
+set /p oldcontents=<C:\Users\%USERNAME%\kali\usr\bin\%2.sh
 
 rem Check if the contents are "404: Not Found"
 
-pwsh -executionpolicy bypass -file "%~dp0\powershell\check_contents.ps1" -contents "%contents%" -package "%2"
+pwsh -executionpolicy bypass -file "%~dp0\..\powershell\check_contents.ps1" -contents "%contents%" -package "%2"
 
 if %errorlevel%==1 (
     echo Package %2 is not available anymore. Sorry!
@@ -138,7 +138,7 @@ if %errorlevel%==1 (
 rem Upgrade the package
 
 echo Upgrading package %2...
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/%2.sh >"C:\Users\%USERNAME%\kali\bin\%2.sh"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/%2.sh >"C:\Users\%USERNAME%\kali\usr\bin\%2.sh"
 echo Package %2 upgraded successfully.
 
 del "C:\Users\%USERNAME%\kali\tmp\contents.txt"
@@ -158,7 +158,7 @@ exit
 rem List all packages
 setlocal enabledelayedexpansion
 set /i count=0
-for /f "delims=" %%a in ('dir /b "C:\Users\%USERNAME%\kali\bin\*.sh"') do (
+for /f "delims=" %%a in ('dir /b "C:\Users\%USERNAME%\kali\usr\bin\*.sh"') do (
     set /a count+=1
     rem Remove .sh from noextension
     set noextension=%%a

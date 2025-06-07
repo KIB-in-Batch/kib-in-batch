@@ -76,6 +76,17 @@ function Convert-ToKaliPath {
     return $kaliPath
 }
 
+function Convert-ToWindowsPath {
+    param ([string]$path)
+    # Replace slashes with backslashes
+    $windowsPath = $path.Replace('/', '\')
+    # If the first character is a slash, replace that with $kaliroot
+    if ($windowsPath[0] -eq '\') {
+        $windowsPath = "$kaliroot\$windowsPath"
+    }
+    return $windowsPath
+}
+
 function Get-OperatingSystem {
     Write-Host "Kali in Batch"
 }
@@ -150,9 +161,9 @@ function Get-Command {
                 $commandSuccess = $false
 
                 # Check if $kaliroot\bin\$command.sh exists
-                if (Test-Path "$kaliroot\bin\$command.sh") {
+                if (Test-Path "$kaliroot\usr\bin\$command.sh") {
                     # Execute the script
-                    $bashBinPath = Convert-ToKaliPath -path "$kaliroot\bin\$command.sh"
+                    $bashBinPath = Convert-ToKaliPath -path "$kaliroot\usr\bin\$command.sh"
                     $substPath = (Get-Location).Path
                     # Workaround for WSL not mounting drives created with subst for some reason, which broke the elf-exec package
                     $substPath = $substPath.Replace("$kaliroot", "")
@@ -209,6 +220,7 @@ function Get-Command {
                     'cd' {
                         $cdPath = "$shellargs"
                         $kalirootwin = $kaliroot.Replace('/', '\')
+
                         if ($cdPath -match '\.\.') {
                             # Check if this .. equals to changing to C:\Users\$env:USERNAME
                             $cdPathtest = Convert-Path (Join-Path $windowsPath "$cdPath")
@@ -263,12 +275,66 @@ function Get-Command {
                         $commandSuccess = $?
                     }
                     'ls' {
+                        # Check if the first two characters are a drive letter followed by a colon
+                        if ($shellargs -match '^[A-Za-z]:') {
+                            # No
+                            Write-Host "Cannot list Windows path: $shellargs"
+                            $commandSuccess = $false
+                            continue
+                        }
+
+                        if ($shellargs -match '^/') {
+                            $shellargs = "$kaliroot$shellargs" -replace '//+', '/'
+                        }
+
+                        if ($shellargs -match '^~') {
+                            $homeDir = "$kaliroot\home\$env:USERNAME"
+                            $shellargs = $homeDir + $shellargs.Substring(1)
+                        }
+
                         & $utils_path/ls.bat $shellargs
                         $commandSuccess = $?
                     }
                     'dir' {
                         & $utils_path/ls.bat $shellargs
                         $commandSuccess = $?
+                    }
+                    default {
+                        if ($command -eq '') {
+                            $commandSuccess = $true
+                            continue
+                        }
+
+                        $bashPath = Convert-ToKaliPath -path (Get-Location).Path
+                        $bashExe = $bashexepath
+                        $convertedshellargs = @()
+
+                        foreach ($arg in $shellargs) {
+                            if ($arg -match '^[A-Za-z]:') {
+                                Write-Host "Cannot access Windows path: $arg" -ForegroundColor $colorRed
+                                $commandSuccess = $false
+                                continue
+                            }
+
+                            $conv = $arg.Replace('\', '/')
+
+                            if ($conv -match '^/') {
+                                $conv = "$kaliroot$conv" -replace '//+', '/'
+                            }
+
+                            if ($conv -match '^~') {
+                                $homeDir = "$kaliroot\home\$env:USERNAME"
+                                $bashifiedHome = Convert-ToKaliPath -path $homeDir
+                                $conv = $conv -replace '^~', $bashifiedHome
+                            }
+
+                            $convertedshellargs += $conv
+                        }
+
+                        $commandLine = "export HOME='$kaliroot/home/$env:USERNAME'; cd '$bashPath'; $command $($convertedshellargs -join ' ')"
+                        
+                        & $bashExe -c $commandLine
+                        $commandSuccess = ($LASTEXITCODE -eq 0)
                     }
                 }
 
