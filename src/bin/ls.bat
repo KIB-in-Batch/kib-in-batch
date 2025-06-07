@@ -98,7 +98,7 @@ goto :eof
 
 :all_ls
 rem List all files (including hidden) in short format
-echo .
+echo ^.
 echo ..
 for /f "delims=" %%a in ('dir /b /a "%~1"') do (
     echo %%a

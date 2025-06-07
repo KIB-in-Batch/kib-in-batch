@@ -101,7 +101,7 @@ function Get-Architecture {
 }
 
 function Get-UnameVersion {
-    Write-Host "uname for Kali in Batch v4.0.0"
+    Write-Host "uname for Kali in Batch v4.0.3"
 }
 
 function Get-UnameHelp {
@@ -275,28 +275,51 @@ function Get-Command {
                         $commandSuccess = $?
                     }
                     'ls' {
-                        # Check if the first two characters are a drive letter followed by a colon
-                        if ($shellargs -match '^[A-Za-z]:') {
-                            # No
-                            Write-Host "Cannot list Windows path: $shellargs"
-                            $commandSuccess = $false
-                            continue
+                        # Loop for every word in $shellargs
+                        $convertedshellargs = @()
+                        foreach ($arg in $shellargs) {
+                            # Check if the first two characters of $arg are a drive letter
+                            if ($arg -match '^[A-Za-z]:') {
+                                Write-Host "Cannot list Windows path: $arg"
+                                $commandSuccess = $false
+                                continue
+                            }
+                            if ($arg -match '^/') {
+                                $arg = "$kaliroot$arg" -replace '//+', '/'
+                            }
+                            if ($arg -match '^~') {
+                                $homeDir = "$kaliroot\home\$env:USERNAME"
+                                $arg = $homeDir + $arg.Substring(1)
+                            }
+                            $arg.Replace('/', '\')
+                            $convertedshellargs += $arg
                         }
 
-                        if ($shellargs -match '^/') {
-                            $shellargs = "$kaliroot$shellargs" -replace '//+', '/'
-                        }
-
-                        if ($shellargs -match '^~') {
-                            $homeDir = "$kaliroot\home\$env:USERNAME"
-                            $shellargs = $homeDir + $shellargs.Substring(1)
-                        }
-
-                        & $utils_path/ls.bat $shellargs
+                        & $utils_path/ls.bat $convertedshellargs
                         $commandSuccess = $?
                     }
                     'dir' {
-                        & $utils_path/ls.bat $shellargs
+                        # Loop for every word in $shellargs
+                        $convertedshellargs = @()
+                        foreach ($arg in $shellargs) {
+                            # Check if the first two characters of $arg are a drive letter
+                            if ($arg -match '^[A-Za-z]:') {
+                                Write-Host "Cannot list Windows path: $arg"
+                                $commandSuccess = $false
+                                continue
+                            }
+                            if ($arg -match '^/') {
+                                $arg = "$kaliroot$arg" -replace '//+', '/'
+                            }
+                            if ($arg -match '^~') {
+                                $homeDir = "$kaliroot\home\$env:USERNAME"
+                                $arg = $homeDir + $arg.Substring(1)
+                            }
+                            $arg.Replace('/', '\')
+                            $convertedshellargs += $arg
+                        }
+
+                        & $utils_path/ls.bat $convertedshellargs
                         $commandSuccess = $?
                     }
                     default {

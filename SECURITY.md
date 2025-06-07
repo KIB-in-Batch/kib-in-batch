@@ -5,17 +5,18 @@ The EOL dates for each version are listed below:
 
 | Version | EOL             |
 | ------- | --------------  |
-| v3.3.x  | August 30, 2025 |
-| v3.2.x  | August 28, 2025 |
-| v3.1.x  | August 21, 2025 |
-| v3.0.x  | August 14, 2025 |
-| v2.2.x  | August 8, 2025  |
-| v2.1.x  | July 1, 2025    |
-| v2.0.x  | June 15, 2025   |
-| v1.3.x  | June 10, 2025   |
-| v1.2.x  | June 6, 2025    |
-| v1.1.x  | June 1, 2025    |
-| v1.0.x  | May 24, 2025    |
+| v4.0.x  | September 4, 2025
+| v3.3.x  | August 30, 2025 
+| v3.2.x  | August 28, 2025 
+| v3.1.x  | August 21, 2025 
+| v3.0.x  | August 14, 2025 
+| v2.2.x  | August 8, 2025  
+| v2.1.x  | July 1, 2025    
+| v2.0.x  | June 15, 2025   
+| v1.3.x  | June 10, 2025   
+| v1.2.x  | June 6, 2025    
+| v1.1.x  | June 1, 2025    
+| v1.0.x  | May 24, 2025    
 
 Only important security updates will be backported to older versions.
 
