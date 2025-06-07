@@ -31,11 +31,13 @@ Then, run `kali_in_batch.bat` inside the src directory. For proper functionality
 
 Do not run any of the PowerShell scripts manually, as they require special arguments given by `kali_in_batch.bat`.
 
+*Note that the archives in the releases are created with a GitHub workflow that adds the msys runtime and Bash to the archive, meaning you must package these manually if you want to use `git clone` instead of the archives. For the VERY latest features, you can try an unstable build that is created on every push to the dev branch. You can find it as an artifact [here](https://github.com/Kali-in-Batch/kali-in-batch/actions/workflows/build_unstable.yml).*
+
 ### Setting up Kali in Batch
 
 #### During the Kali in Batch installer
 
-- It will be automatically installed along with it's dependencies. Root filesystem for Kali in Batch is 'C:\Users\<username>\kali'.
+- It will be automatically installed along with it's dependencies. Root filesystem for Kali in Batch is '%USERPROFILE%\kali'.
 
 #### After installation
 
@@ -105,7 +107,6 @@ You can just download [uninstall.bat](https://github.com/Kali-in-Batch/kali-in-b
 - [x] Text editing with vim or any other text editor
 - [x] Terminal control with clear, exit, and help
 - [x] System information with uname and whoami
-- [x] Version control with Git
 
 ---
 
