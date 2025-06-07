@@ -23,14 +23,7 @@ A simulated Kali Linux environment in Batch and PowerShell.
 
 ### Downloading Kali in Batch
 
-Clone the repository:
-```bash
-git clone https://github.com/Kali-in-Batch/kali-in-batch.git
-```
-```bash	
-cd kali-in-batch
-```
-Or if you don't want the entire repository and just want the code, you can click these buttons:
+You should download the latest releases from these buttons:
 
 [![zip](https://img.shields.io/badge/kali__in__batch.zip-blue?style=for-the-badge&logo=github)](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest/download/kali_in_batch.zip)
 [![tar.gz](https://img.shields.io/badge/kali__in__batch.tar.gz-green?style=for-the-badge&logo=github)](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest/download/kali_in_batch.tar.gz)
@@ -38,6 +31,8 @@ Or if you don't want the entire repository and just want the code, you can click
 Then, run `kali_in_batch.bat` inside the src directory. For proper functionality, don't move it out of the src directory.
 
 Do not run any of the PowerShell scripts manually, as they require special arguments given by `kali_in_batch.bat`.
+
+#### With git clone
 
 ### Setting up Kali in Batch
 

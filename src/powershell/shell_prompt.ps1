@@ -1,8 +1,7 @@
 param (
     [string]$bashexepath,
     [string]$kaliroot,
-    [string]$echocommand,
-    [string]$pkgcommand
+    [string]$utils_path
 )
 
 # Replace backslashes with slashes in $kaliroot
@@ -104,7 +103,7 @@ function Get-Architecture {
 }
 
 function Get-UnameVersion {
-    Write-Host "uname for Kali in Batch v3.3.2"
+    Write-Host "uname for Kali in Batch v4.0.0"
 }
 
 function Get-UnameHelp {
@@ -209,7 +208,7 @@ function Get-Command {
                         $commandSuccess = $?
                     }
                     'echo' {
-                        & $echocommand $shellargs
+                        & $utils_path/echo.bat $shellargs
                         $commandSuccess = $?
                     }
                     'clear' {
@@ -265,7 +264,7 @@ function Get-Command {
                         }
                     }
                     'pkg' {
-                        & $pkgcommand $shellargs
+                        & $utils_path/pkg.bat $shellargs
                         $commandSuccess = $?
                     }
                     'wsl' {

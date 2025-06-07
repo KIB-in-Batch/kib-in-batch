@@ -328,7 +328,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 3.3.2>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 4.0.0>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 echo Starting services...
 where nmap >nul 2>&1
@@ -484,4 +484,4 @@ if !errorlevel!==0 (
     exit /b
 )
 
-pwsh.exe -noprofile -executionpolicy bypass -file "%APPDATA%\kali_in_batch\powershell\shell_prompt.ps1" -bashexepath "!bash_path!" -kaliroot "!kaliroot!" -echocommand "%~dp0\echo.bat" -pkgcommand "%~dp0\pkg.bat"
+pwsh.exe -noprofile -executionpolicy bypass -file "%APPDATA%\kali_in_batch\powershell\shell_prompt.ps1" -bashexepath "!bash_path!" -kaliroot "!kaliroot!" -utils_path "%~dp0bin"
