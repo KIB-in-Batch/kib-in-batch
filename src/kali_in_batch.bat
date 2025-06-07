@@ -315,12 +315,15 @@ cd /d "%~dp0" & rem Needed incase the user is using a Windows Terminal profile o
 rem Copy .\powershell\* to %APPDATA%\kali_in_batch\powershell
 xcopy .\powershell\* "%APPDATA%\kali_in_batch\powershell" /s /y >nul
 
+rem Copy %~dp0\bin\* to !kaliroot!\usr\bin
+xcopy .\bin\* "!kaliroot!\usr\bin" /s /y >nul
+
 rem Check if VERSION.txt exists and delete it if it does
 if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 4.0.3>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 4.0.4>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 echo Starting services...
 where nmap >nul 2>&1

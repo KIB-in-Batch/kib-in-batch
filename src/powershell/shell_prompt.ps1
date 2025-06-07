@@ -1,7 +1,6 @@
 param (
     [string]$bashexepath,
-    [string]$kaliroot,
-    [string]$utils_path
+    [string]$kaliroot
 )
 
 # Replace backslashes with slashes in $kaliroot
@@ -85,36 +84,6 @@ function Convert-ToWindowsPath {
         $windowsPath = "$kaliroot\$windowsPath"
     }
     return $windowsPath
-}
-
-function Get-OperatingSystem {
-    Write-Host "Kali in Batch"
-}
-
-function Get-Kernel {
-    Write-Host "KALI-IN-BATCH_WINNT"
-}
-
-function Get-Architecture {
-    $architecture = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture
-    Write-Host "$architecture"
-}
-
-function Get-UnameVersion {
-    Write-Host "uname for Kali in Batch v4.0.3"
-}
-
-function Get-UnameHelp {
-    Write-Host "Usage: uname [OPTION]..."
-    Write-Host "OPTIONS:"
-    Write-Host "  -a, --all: print all available information"
-    Write-Host "  -o, --operating-system: print operating system name"
-    Write-Host "  -s, --kernel-name, [no flag]: print kernel name"
-    Write-Host "  -p,  --processor: print processor type"
-    Write-Host "  --version: print uname version information"
-    Write-Host "  -h, --help: display this help"
-    Write-Host "====================================================="
-    Write-Host "This uname is not associated with any other uname programs. It is a custom implementation of the uname command for Kali in Batch."
 }
 
 function Get-Command {
@@ -206,7 +175,7 @@ function Get-Command {
                         $commandSuccess = $?
                     }
                     'echo' {
-                        & $utils_path/echo.bat $shellargs
+                        & $kaliroot/usr/bin/echo.bat $shellargs
                         $commandSuccess = $?
                     }
                     'clear' {
@@ -263,7 +232,7 @@ function Get-Command {
                         }
                     }
                     'pkg' {
-                        & $utils_path/pkg.bat $shellargs
+                        & "$kaliroot\usr\bin\pkg.bat" $shellargs
                         $commandSuccess = $?
                     }
                     'wsl' {
@@ -271,7 +240,11 @@ function Get-Command {
                         $commandSuccess = $true
                     }
                     'uname' {
-                        & $utils_path/uname.bat $shellargs
+                        & "$kaliroot\usr\bin\uname.bat" $shellargs
+                        $commandSuccess = $?
+                    }
+                    'whoami' {
+                        & "$kaliroot\usr\bin\whoami.bat" $shellargs
                         $commandSuccess = $?
                     }
                     'ls' {
@@ -295,7 +268,7 @@ function Get-Command {
                             $convertedshellargs += $arg
                         }
 
-                        & $utils_path/ls.bat $convertedshellargs
+                        & $kaliroot/usr/bin/ls.bat $convertedshellargs
                         $commandSuccess = $?
                     }
                     'dir' {
@@ -319,7 +292,7 @@ function Get-Command {
                             $convertedshellargs += $arg
                         }
 
-                        & $utils_path/ls.bat $convertedshellargs
+                        & $kaliroot/usr/bin/ls.bat $convertedshellargs
                         $commandSuccess = $?
                     }
                     default {
