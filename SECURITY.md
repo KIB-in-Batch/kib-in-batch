@@ -5,7 +5,7 @@ Kali in Batch Security Policy
 
 | Version  | Supported             |
 | -------  | --------------------- |
-| 4.0.x    | ✅                  
+| > 4.0.x    | ✅                  
 | < 4.0.x  | ❌              
 
 Reporting a Security Issue
