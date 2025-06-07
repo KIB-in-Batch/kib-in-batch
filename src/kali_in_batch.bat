@@ -155,7 +155,7 @@ if not exist "%APPDATA%\kali_in_batch" (
         mkdir "!kaliroot!\bin"
         mkdir "!kaliroot!\tmp"
         mkdir "!kaliroot!\usr"
-        copy /Y "%~dp0\bin" "!kaliroot!\usr\bin"
+        robocopy "%~dp0\bin" "!kaliroot!\usr\bin" /E /COPYALL /R:0 /W:0
         set "bash_path=!kaliroot!\usr\bin\bash.exe"
         echo Checking dependencies...
     )
