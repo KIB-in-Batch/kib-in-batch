@@ -84,7 +84,7 @@ rem Check if the contents are "404: Not Found"
 
 set /p contents=<C:\Users\%USERNAME%\kali\tmp\contents.txt
 
-if "%contents%"=="404: Not Found" (
+if "!contents!"=="404: Not Found" (
     echo Package %2 is not available.
     exit /b
 )
@@ -158,7 +158,7 @@ exit
 rem Open package database in browser
 
 echo Opening package database in browser...
-start https://codeberg.org/Kali-in-Batch/pkg/src/branch/main/packages/
+start https://github.com/Kali-in-Batch/pkg/tree/main/packages
 
 exit
 
