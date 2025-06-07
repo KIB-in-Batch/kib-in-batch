@@ -1,5 +1,7 @@
 @echo off
 
+setlocal enabledelayedexpansion
+
 rem pkg.bat
 rem    * Package manager for the Kali in Batch project.
 rem    * Manages packages.
@@ -82,7 +84,10 @@ rem Check if the contents are "404: Not Found"
 
 set /p contents=<C:\Users\%USERNAME%\kali\tmp\contents.txt
 
-pwsh -executionpolicy bypass -file "%~dp0\..\powershell\check_contents.ps1" -contents "%contents%" -package "%2"
+if "%contents%"=="404: Not Found" (
+    echo Package %2 is not available.
+    exit /b
+)
 
 if %errorlevel%==1 (
     echo Package %2 is not available.
@@ -126,7 +131,11 @@ set /p oldcontents=<C:\Users\%USERNAME%\kali\usr\bin\%2.sh
 
 rem Check if the contents are "404: Not Found"
 
-pwsh -executionpolicy bypass -file "%~dp0\..\powershell\check_contents.ps1" -contents "%contents%" -package "%2"
+if "!contents!"=="404: Not Found" (
+    echo Package %2 is not available anymore. Sorry!
+    exit /b
+)
+
 
 if %errorlevel%==1 (
     echo Package %2 is not available anymore. Sorry!
