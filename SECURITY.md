@@ -18,7 +18,7 @@ The EOL dates for each version are listed below:
 | v1.1.x  | June 1, 2025    
 | v1.0.x  | May 24, 2025    
 
-Only important security updates will be backported to older versions.
+Only important security updates will be backported to older versions that have not reached their EOL date.
 
 Reporting a Security Issue
 ==========================
