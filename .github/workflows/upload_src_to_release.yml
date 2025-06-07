@@ -1,6 +1,3 @@
-# This workflow is used to upload the ./src folder to the release by archiving it in both .zip and .tar.gz formats.
-# It is triggered when a release is created or updated.
-
 name: Upload src to release
 
 on:
@@ -49,15 +46,16 @@ jobs:
             uninstall.bat
 
   test_src:
-    runs-on: windows-latest # Since the script is for Windows, we use the Windows runner.
+    runs-on: windows-latest
     permissions:
       contents: read
+    needs: upload_src # This job depends on the 'upload_src' job since it needs the files from the release
     steps:
       - name: Set up GitHub CLI
         run: |
           echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
 
-      - name: Download the latest release # https://github.com/Kali-in-Batch/kali-in-batch/releases/latest/download/kali_in_batch.zip
+      - name: Download the latest release
         run: |
           gh release download --repo Kali-in-Batch/kali-in-batch --pattern "kali_in_batch.zip" --dir .
 
