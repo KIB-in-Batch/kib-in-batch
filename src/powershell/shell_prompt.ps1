@@ -67,19 +67,6 @@ function Read-ShellPrompt {
     }
 }
 
-function Convert-ToBashPath {
-    param ([string]$path)
-    $bashPath = $path.Replace('\', '/')
-    # Replace drive letters with drive letters in Bash format
-    if ($bashPath -match '^([A-Za-z]):/(.*)') {
-        $drive = $matches[1].ToLower()
-        $rest  = $matches[2]
-        return "/$drive/$rest"
-    }
-    # Give the bash path back
-    return $bashPath
-}
-
 function Convert-ToKaliPath {
     param ([string]$path)
     # Replace backslashes with slashes
@@ -165,12 +152,12 @@ function Get-Command {
                 # Check if $kaliroot\bin\$command.sh exists
                 if (Test-Path "$kaliroot\bin\$command.sh") {
                     # Execute the script
-                    $bashBinPath = Convert-ToBashPath -path "$kaliroot\bin\$command.sh"
+                    $bashBinPath = Convert-ToKaliPath -path "$kaliroot\bin\$command.sh"
                     $substPath = (Get-Location).Path
                     # Workaround for WSL not mounting drives created with subst for some reason, which broke the elf-exec package
                     $substPath = $substPath.Replace("$kaliroot", "")
                     $substPath = Join-Path "$env:USERPROFILE\kali" "$substPath"
-                    $bashPath = Convert-ToBashPath -path "$substPath"
+                    $bashPath = Convert-ToKaliPath -path "$substPath"
                     $bashExe = $bashexepath
                     $convertedshellargs = @()
 
@@ -189,7 +176,7 @@ function Get-Command {
 
                         if ($conv -match '^~') {
                             $homeDir = "$kaliroot\home\$env:USERNAME"
-                            $bashifiedHome = Convert-ToBashPath -path $homeDir
+                            $bashifiedHome = Convert-ToKaliPath -path $homeDir
                             $conv = $conv -replace '^~', $bashifiedHome
                         }
 
@@ -272,97 +259,16 @@ function Get-Command {
                         $commandSuccess = $true
                     }
                     'uname' {
-                        if ($shellargs.Count -eq 0) {
-                            Get-Kernel
-                            $commandSuccess = $true
-                        } else {
-                            if ($shellargs -eq '-a' -or $shellargs -eq '--all') {
-                                Write-Host "OS: " -NoNewLine
-                                Get-OperatingSystem
-                                Write-Host "Kernel: " -NoNewLine
-                                Get-Kernel
-                                Write-Host "Architecture: " -NoNewLine
-                                Get-Architecture
-                                Write-Host "Version: " -NoNewLine
-                                Get-UnameVersion
-                                $commandSuccess = $true
-                            }
-                            if ($shellargs -eq '-o' -or $shellargs -eq '--operating-system') {
-                                Get-OperatingSystem
-                                $commandSuccess = $true
-                            }
-                            if ($shellargs -eq '-s' -or $shellargs -eq '--kernel-name') {
-                                Get-Kernel
-                                $commandSuccess = $true
-                            }
-                            if ($shellargs -eq '-p' -or $shellargs -eq '--processor') {
-                                Get-Architecture
-                                $commandSuccess = $true
-                            }
-                            if ($shellargs -eq '--version') {
-                                Get-UnameVersion
-                                $commandSuccess = $true
-                            }
-                            if ($shellargs -eq '-h' -or $shellargs -eq '--help') {
-                                Get-UnameHelp
-                                $commandSuccess = $true
-                            }
-                            # Check if the argument is unrecognized
-                            if ($shellargs -ne '-a' -and $shellargs -ne '--all' -and $shellargs -ne '-o' -and $shellargs -ne '--operating-system' -and $shellargs -ne '-s' -and $shellargs -ne '--kernel-name' -and $shellargs -ne '-p' -and $shellargs -ne '--processor' -and $shellargs -ne '--version' -and $shellargs -ne '-h' -and $shellargs -ne '--help') {
-                                Write-Host "Unrecognized argument: $shellargs"
-                                Write-Host "Run uname --help for usage information."
-                                $commandSuccess = $false
-                            }
-                        }
+                        & $utils_path/uname.bat $shellargs
+                        $commandSuccess = $?
                     }
-                    default {
-                        if ($command -eq '') {
-                            $commandSuccess = $true
-                            continue
-                        }
-
-                        $bashPath = Convert-ToBashPath -path (Get-Location).Path
-                        $bashExe = $bashexepath
-                        $convertedshellargs = @()
-
-                        foreach ($arg in $shellargs) {
-                            if ($arg -match '^[A-Za-z]:') {
-                                Write-Host "Cannot access Windows path: $arg" -ForegroundColor $colorRed
-                                $commandSuccess = $false
-                                continue
-                            }
-
-                            $conv = $arg.Replace('\', '/')
-
-                            if ($conv -match '^/') {
-                                $conv = "$kaliroot$conv" -replace '//+', '/'
-                            }
-
-                            if ($conv -match '^~') {
-                                $homeDir = "$kaliroot\home\$env:USERNAME"
-                                $bashifiedHome = Convert-ToBashPath -path $homeDir
-                                $conv = $conv -replace '^~', $bashifiedHome
-                            }
-
-                            $convertedshellargs += $conv
-                        }
-
-                        $commandLine = "export HOME='$kaliroot/home/$env:USERNAME'; cd '$bashPath'; $command $($convertedshellargs -join ' ')"
-
-                        if ($command -in 'ls', 'dir') {
-                            $output = & $bashExe -c $commandLine
-                            $output | ForEach-Object {
-                                $_ -replace 'System\\ Volume\\ Information', '' `
-                                   -replace '\$RECYCLE\.BIN', '' `
-                                   -replace 'System Volume Information', '' `
-                            } | ForEach-Object { $_.Trim() } | Where-Object { $_ } | ForEach-Object {
-                                Write-Host $_
-                            }
-                            $commandSuccess = ($LASTEXITCODE -eq 0)
-                        } else {
-                            & $bashExe -c $commandLine
-                            $commandSuccess = ($LASTEXITCODE -eq 0)
-                        }
+                    'ls' {
+                        & $utils_path/ls.bat $shellargs
+                        $commandSuccess = $?
+                    }
+                    'dir' {
+                        & $utils_path/ls.bat $shellargs
+                        $commandSuccess = $?
                     }
                 }
 

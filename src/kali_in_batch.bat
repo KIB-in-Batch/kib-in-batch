@@ -100,16 +100,12 @@ if not exist "%APPDATA%\kali_in_batch" (
         exit /b
     )
 
-    for /f "tokens=2,*" %%a in ('reg query "HKCU\Software\GitForWindows" /v InstallPath 2^>nul') do set GIT_PATH=%%b
-    if not defined GIT_PATH (
-        for /f "tokens=2,*" %%a in ('reg query "HKLM\Software\GitForWindows" /v InstallPath 2^>nul') do set GIT_PATH=%%b
-    )
-    if not defined GIT_PATH (
-        echo Installing Git from winget...
-        winget install --id Git.Git -e --source winget 
+    if not exist "%~dp0\bin\bash.exe" (
+        echo Bash not found. Please get the latest version of Kali in Batch from https://github.com/Kali-in-Batch/kali-in-batch/releases/latest/download/kali_in_batch.zip.
+        exit /b
     )
 
-    set "bash_path=!GIT_PATH!\bin\bash.exe"
+    set "bash_path=%~dp0\bin\bash.exe"
 
     rem The check above is so we can write some parts of the script in bash.
     
@@ -154,11 +150,13 @@ if not exist "%APPDATA%\kali_in_batch" (
         )
         set "kaliroot=!driveletter!"
         echo Creating directories...
-        mkdir "!kaliroot!\home" >nul 2>&1
-        mkdir "!kaliroot!\home\!username!" >nul 2>&1
-        mkdir "!kaliroot!\bin" >nul 2>&1
-        mkdir "!kaliroot!\tmp" >nul 2>&1
-        echo Creating files...
+        mkdir "!kaliroot!\home"
+        mkdir "!kaliroot!\home\!username!"
+        mkdir "!kaliroot!\bin"
+        mkdir "!kaliroot!\tmp"
+        mkdir "!kaliroot!\usr"
+        xcopy /y "%~dp0\bin" "!kaliroot!\usr\bin"
+        set "bash_path=!kaliroot!\usr\bin\bash.exe"
         echo Checking dependencies...
     )
     where nmap >nul 2>&1
@@ -166,11 +164,12 @@ if not exist "%APPDATA%\kali_in_batch" (
         echo Installing Nmap from winget...
         winget install --id Insecure.Nmap -e --source winget
     )
-    where vim >nul 2>&1
+    where nvim >nul 2>&1
     if !errorlevel! neq 0 (
-        echo You may want Vim, which you can get from https://www.vim.org/download.php.
-        echo It is an optional dependency.
+        echo Installing Neovim from winget...
+        winget install --id Neovim.Neovim -e --source winget
     )
+
     where pwsh >nul 2>&1
     if !errorlevel! neq 0 (
         echo Installing PowerShell from winget...
@@ -236,17 +235,12 @@ if !command!==help (
 ) else if !command!==edit-kalirc (
     rem Make sure the .kalirc file exists
     if exist "!kaliroot!\home\!username!\.kalirc" (
-        rem Open the .kalirc file in Vim, Nvim or Notepad
-        vim --version >nul 2>&1
+        rem Open the .kalirc file in Nvim or Notepad
+        nvim --version >nul 2>&1
         if !errorlevel!==0 (
-            vim "!kaliroot!\home\!username!\.kalirc"
+            nvim "!kaliroot!\home\!username!\.kalirc"
         ) else (
-            nvim --version >nul 2>&1
-            if !errorlevel!==0 (
-                nvim "!kaliroot!\home\!username!\.kalirc"
-            ) else (
-                notepad "!kaliroot!\home\!username!\.kalirc"
-            )
+            notepad "!kaliroot!\home\!username!\.kalirc"
         )
         goto preinstall
     ) else (
@@ -257,17 +251,12 @@ if !command!==help (
 ) else if !command!==edit-kibprompt (
     rem Make sure the .kibprompt file exists
     if exist "!kaliroot!\home\!username!\.kibprompt" (
-        rem Open the .kibprompt file in Vim, Nvim or Notepad
-        vim --version >nul 2>&1
+        rem Open the .kibprompt file in Nvim or Notepad
+        nvim --version >nul 2>&1
         if !errorlevel!==0 (
-            vim "!kaliroot!\home\!username!\.kibprompt"
+            nvim "!kaliroot!\home\!username!\.kibprompt"
         ) else (
-            nvim --version >nul 2>&1
-            if !errorlevel!==0 (
-                nvim "!kaliroot!\home\!username!\.kibprompt"
-            ) else (
-                notepad "!kaliroot!\home\!username!\.kibprompt"
-            )
+            notepad "!kaliroot!\home\!username!\.kibprompt"
         )
         goto preinstall
     ) else (
@@ -292,6 +281,7 @@ rmdir /s /q "!kaliroot!\home\!username!"
 rmdir /s /q "!kaliroot!\bin"
 rmdir /s /q "!kaliroot!\tmp"
 rmdir /s /q "!kaliroot!\home"
+rmdir /s /q "!kaliroot!\usr"
 rmdir /s /q "%APPDATA%\kali_in_batch"
 rem Remove the drive letter assignment
 subst !kaliroot! /d
@@ -338,25 +328,17 @@ if !errorlevel! neq 0 (
     pause
     exit
 )
-where vim >nul 2>&1
+where nvim >nul 2>&1
 if !errorlevel! neq 0 (
-    echo !COLOR_WARNING!Warning: Failed to start Vim service: Vim not found. While this is not critical, it is recommended to install it for better text editing experience.!COLOR_RESET!
-    echo You can install it from https://www.vim.org/download.php
+    echo !COLOR_ERROR!Error: Failed to start Neovim service: Neovim not found.!COLOR_RESET!
 )
 
-rem Registry interactions in a batch file may make your Antivirus flag it.
-for /f "tokens=2,*" %%a in ('reg query "HKCU\Software\GitForWindows" /v InstallPath 2^>nul') do set GIT_PATH=%%b
-
-if not defined GIT_PATH (
-    for /f "tokens=2,*" %%a in ('reg query "HKLM\Software\GitForWindows" /v InstallPath 2^>nul') do set GIT_PATH=%%b
+if not exist "%~dp0\bin\bash.exe" (
+    echo !COLOR_ERROR!Error: Bash not found. Please try again.!COLOR_RESET!
+    pause >nul
+    exit
 )
 
-if defined GIT_PATH (
-    set "bash_path=!GIT_PATH!\bin\bash.exe"
-) else (
-    echo !COLOR_ERROR!Error: Failed to start Git Bash service: Git for Windows not found.!COLOR_RESET!
-    echo Please install Git for Windows from https://git-scm.com/downloads/win
-)
 where pwsh >nul 2>&1
 if !errorlevel! neq 0 (
     echo !COLOR_ERROR!Error: PowerShell is not installed. Please try again.!COLOR_RESET!
@@ -398,30 +380,30 @@ set "home_dir=!cd!"
 if exist !kalirc! (
     set bash_current_dir=!cd! >nul 2>&1
     set bash_current_dir=!cd:\=/! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:C:=/c! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:D:=/d! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:E:=/e! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:F:=/f! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:G:=/g! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:H:=/h! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:I:=/i! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:J:=/j! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:K:=/k! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:L:=/l! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:M:=/m! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:N:=/n! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:O:=/o! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:P:=/p! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:Q:=/q! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:R:=/r! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:S:=/s! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:T:=/t! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:U:=/u! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:V:=/v! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:W:=/w! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:X:=/x! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:Y:=/y! >nul 2>&1
-    set bash_current_dir=!bash_current_dir:Z:=/z! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:C:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:D:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:E:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:F:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:G:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:H:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:I:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:J:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:K:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:L:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:M:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:N:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:O:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:P:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:Q:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:R:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:S:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:T:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:U:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:V:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:W:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:X:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:Y:=/! >nul 2>&1
+    set bash_current_dir=!bash_current_dir:Z:=/! >nul 2>&1
     "!bash_path!" -c "cd !bash_current_dir!; source .kalirc" 2>&1
     goto shell
 ) else (

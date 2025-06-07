@@ -15,9 +15,8 @@ A simulated Kali Linux environment in Batch and PowerShell.
 ### Dependencies
 
 - [Nmap](https://nmap.org/)
-- [Git for Windows](https://git-scm.com/download/win) (make sure you get Git Bash and use a system-wide installation)
-- [Vim (optional)](https://www.vim.org/download.php)
-- [PowerShell 7+](https://github.com/PowerShell/PowerShell/releases) (or you can get it from Microsoft Store)
+- [Neovim](https://neovim.io/)
+- [PowerShell 7+](https://github.com/PowerShell/PowerShell/releases)
 
 *The dependencies are automatically installed during the Kali in Batch installer, so you don't need to install them manually.*
 
@@ -31,8 +30,6 @@ You should download the latest releases from these buttons:
 Then, run `kali_in_batch.bat` inside the src directory. For proper functionality, don't move it out of the src directory.
 
 Do not run any of the PowerShell scripts manually, as they require special arguments given by `kali_in_batch.bat`.
-
-#### With git clone
 
 ### Setting up Kali in Batch
 

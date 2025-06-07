@@ -67,4 +67,4 @@ jobs:
       
       - name: Run bash.exe
         run: |
-          ./src/bin/bash.exe --version
+          ./src/bin/bash.exe
