@@ -104,7 +104,7 @@ function Get-Architecture {
 }
 
 function Get-UnameVersion {
-    Write-Host "uname for Kali in Batch v3.3.1"
+    Write-Host "uname for Kali in Batch v3.3.2"
 }
 
 function Get-UnameHelp {
@@ -197,7 +197,7 @@ function Get-Command {
                         $convertedshellargs += $conv
                     }
 
-                    $commandLine = "cd '$bashPath'; source $bashBinPath $convertedshellargs"
+                    $commandLine = "export HOME='$kaliroot/home/$env:USERNAME'; cd '$bashPath'; source $bashBinPath $convertedshellargs"
                     & $bashExe -c $commandLine
                     # Avoid running the switch statements
                     $commandSuccess = $?
@@ -348,7 +348,7 @@ function Get-Command {
                             $convertedshellargs += $conv
                         }
 
-                        $commandLine = "cd '$bashPath'; $command $($convertedshellargs -join ' ')"
+                        $commandLine = "export HOME='$kaliroot/home/$env:USERNAME'; cd '$bashPath'; $command $($convertedshellargs -join ' ')"
 
                         if ($command -in 'ls', 'dir') {
                             $output = & $bashExe -c $commandLine
