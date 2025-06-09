@@ -6,7 +6,7 @@ Kali in Batch is a software that allows you to run a fake Kali Linux environment
 
 You can do two things:
 
-1. Download the latest kali_in_batch.zip or kali_in_batch.tar.gz from the [Releases](https://github.com/Kali-in-Batch/kali-in-batch/releases) page. These archives already bundle Busybox, Bash and the Msys runtime and are created using a [GitHub workflow](./.github/workflows/upload_src_to_release.yml)
+1. Download the latest kali_in_batch.zip or kali_in_batch.tar.gz from the [Releases](https://github.com/Kali-in-Batch/kali-in-batch/releases) page. These archives already bundle Busybox, Bash and the Msys runtime and are created using a [GitHub workflow](./.github/workflows/upload_src_to_release.yml).
 
 2. Clone the repository and run setup.bat.
 
@@ -15,9 +15,8 @@ You can do two things:
 Kali in Batch bundles portable versions of Busybox, Bash and the Msys runtime, allowing for a POSIX environment to run on Windows.
 
 Some commands, like `cat`, `ls`, `echo` and `ls` are reimplemented in pure Batch.
-<!-- Yes. ls is listed twice. You can make a pull request to fix that. -->
 
-The actual shell is written in PowerShell, and the bootloader and installer is written in Batch.
+The actual shell is written in PowerShell, and the bootloader and installer are written in Batch.
 
 ## Downloads
 
