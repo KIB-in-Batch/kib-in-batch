@@ -50,6 +50,4 @@ git clone git@github.com:your-username/kali-in-batch.git
 ```
 From there, you can make changes to the code.
 
-If you don't want to use a local repository, this is how to make a pull request:
-![image](./assets/edit.png)
-Click the edit button, which will automatically fork the repository and make a pull request once you are done making changes.
+You can also make changes directly in the GitHub web interface.
