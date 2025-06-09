@@ -64,7 +64,7 @@ goto :eof
 
 :release
 
-echo 4.1.1
+echo 4.2.0
 goto :eof
 
 :machine
@@ -84,7 +84,7 @@ goto :eof
 
 :version
 
-echo Uname for Kali in Batch 4.1.1
+echo Uname for Kali in Batch 4.2.0
 echo This is MIT licensed free software. There is NO WARRANTY.
 goto :eof
 
