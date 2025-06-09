@@ -113,7 +113,7 @@ goto :eof
 
 :long_ls
 rem List non-hidden files in long format
-for /f "tokens=1,2,3,*" %%a in ('dir "%~1" ^| findstr /v "^$"') do (
+for /f "tokens=1,2,3,*" %%a in ('dir /a "%~1"') do (
     set "line=%%a %%b %%c %%d"
     set "filename=%%d"
     if "!filename:~0,1!" NEQ "." (
@@ -124,7 +124,7 @@ goto :eof
 
 :long_all_ls
 rem List all files (including hidden) in long format
-for /f "tokens=1,2,3,*" %%a in ('dir "%~1" ^| findstr /v "^$"') do (
+for /f "tokens=1,2,3,*" %%a in ('dir /a "%~1"') do (
     set "line=%%a %%b %%c %%d"
     set "filename=%%d"
     echo !line!
