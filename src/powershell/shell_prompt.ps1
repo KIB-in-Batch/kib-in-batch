@@ -86,6 +86,32 @@ function Convert-ToWindowsPath {
     return $windowsPath
 }
 
+function Convert-ShellArgs {
+    param (
+        [string[]]$shellargs
+    )
+    # Loop for every word in $shellargs
+    $convertedshellargs = @()
+    foreach ($arg in $shellargs) {
+        # Check if the first two characters of $arg are a drive letter
+        if ($arg -match '^[A-Za-z]:') {
+            Write-Host "Cannot list Windows path: $arg"
+            return 1
+            continue
+        }
+        if ($arg -match '^/') {
+            $arg = "$kaliroot$arg" -replace '//+', '/'
+        }
+        if ($arg -match '^~') {
+            $homeDir = "$kaliroot\home\$env:USERNAME"
+            $arg = $homeDir + $arg.Substring(1)
+        }
+        $arg.Replace('/', '\')
+        $convertedshellargs += $arg
+    }
+    return $convertedshellargs
+}
+
 function Get-Command {
     while ($true) {
         $windowsPath = (Get-Location).Path
@@ -244,55 +270,165 @@ function Get-Command {
                         $commandSuccess = $?
                     }
                     'whoami' {
-                        & "$kaliroot\usr\bin\whoami.bat" $shellargs
+                        & "$kaliroot\usr\bin\whoami.bat"
+                        $commandSuccess = $?
+                    }
+                    'touch' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\touch.bat" $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'wget' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" wget $convertedshellargs
                         $commandSuccess = $?
                     }
                     'ls' {
-                        # Loop for every word in $shellargs
-                        $convertedshellargs = @()
-                        foreach ($arg in $shellargs) {
-                            # Check if the first two characters of $arg are a drive letter
-                            if ($arg -match '^[A-Za-z]:') {
-                                Write-Host "Cannot list Windows path: $arg"
-                                $commandSuccess = $false
-                                continue
-                            }
-                            if ($arg -match '^/') {
-                                $arg = "$kaliroot$arg" -replace '//+', '/'
-                            }
-                            if ($arg -match '^~') {
-                                $homeDir = "$kaliroot\home\$env:USERNAME"
-                                $arg = $homeDir + $arg.Substring(1)
-                            }
-                            $arg.Replace('/', '\')
-                            $convertedshellargs += $arg
-                        }
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
 
-                        & $kaliroot/usr/bin/ls.bat $convertedshellargs
+                        & "$kaliroot/usr/bin/ls.bat" $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'whois' {
+                        & "$kaliroot\usr\bin\busybox.exe" whois $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'nc' {
+                        # It wouldn't be acceptable to make a Kali Linux environment without netcat.
+
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" nc $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'netcat' {
+                        # It wouldn't be acceptable to make a Kali Linux environment without netcat.
+
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" nc $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'printf' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" printf $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'awk' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" awk $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'sed' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" sed $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'grep' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" grep $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'find' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" find $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'tee' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" tee $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'which' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" which $convertedshellargs
                         $commandSuccess = $?
                     }
                     'dir' {
-                        # Loop for every word in $shellargs
-                        $convertedshellargs = @()
-                        foreach ($arg in $shellargs) {
-                            # Check if the first two characters of $arg are a drive letter
-                            if ($arg -match '^[A-Za-z]:') {
-                                Write-Host "Cannot list Windows path: $arg"
-                                $commandSuccess = $false
-                                continue
-                            }
-                            if ($arg -match '^/') {
-                                $arg = "$kaliroot$arg" -replace '//+', '/'
-                            }
-                            if ($arg -match '^~') {
-                                $homeDir = "$kaliroot\home\$env:USERNAME"
-                                $arg = $homeDir + $arg.Substring(1)
-                            }
-                            $arg.Replace('/', '\')
-                            $convertedshellargs += $arg
-                        }
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
 
-                        & $kaliroot/usr/bin/ls.bat $convertedshellargs
+                        & "$kaliroot/usr/bin/ls.bat" $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'cat' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\cat.bat" $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'ps' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" ps $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'kill' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" kill $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'killall' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" killall $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'pkill' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" pkill $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'rm' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" rm $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'rmdir' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" rmdir $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'mkdir' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" mkdir $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'cp' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" cp $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'mv' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" mv $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'ln' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" ln $convertedshellargs
+                        $commandSuccess = $?
+                    }
+                    'chmod' {
+                        $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+                        & "$kaliroot\usr\bin\busybox.exe" chmod $convertedshellargs
                         $commandSuccess = $?
                     }
                     default {

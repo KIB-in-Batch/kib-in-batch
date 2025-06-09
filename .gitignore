@@ -1,0 +1,15 @@
+*.exe
+*.dll
+*.out
+*.a
+*.so
+*.so.*
+*.dylib
+*.o
+*.o.*
+.MTREE
+.BUILDINFO
+.PKGINFO
+*.tar
+*.tar.*
+bashbug

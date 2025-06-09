@@ -33,6 +33,14 @@ jobs:
         run: |
           mv ./usr/bin/* ./src/bin/
 
+      - name: Download busybox.exe
+        run: |
+          wget https://web.archive.org/web/20250606214654/https://frippery.org/files/busybox/busybox.exe
+
+      - name: Move busybox.exe to src
+        run: |
+          mv ./busybox.exe ./src/bin/busybox.exe
+
       - name: kali_in_batch.zip
         run: |
           zip -r kali_in_batch.zip src

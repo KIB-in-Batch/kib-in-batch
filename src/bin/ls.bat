@@ -48,14 +48,20 @@ for %%a in (%*) do (
         set long_format=true
     ) else if "%%a"=="--all" (
         set show_all=true
+    ) else if "%%a"=="-la" (
+        set show_all=true
+        set long_format=true
+    ) else if "%%a"=="-al" (
+        set show_all=true
+        set long_format=true
     ) else (
-        set "target_dir=%%a"
+        set "target_dir=%%~a"
     )
 )
 
 rem Show help and exit
-if "%show_help%"=="true" (
-    echo Usage: ls [options] [directory ...]
+if "!show_help!"=="true" (
+    echo Usage: ls ^[options^] ^[directory ...^]
     echo.
     echo Options:
     echo   --all -a          Show all files including hidden ones
@@ -70,17 +76,17 @@ if not defined target_dir (
 )
 
 rem Choose subroutine based on flags
-if "%long_format%"=="true" (
-    if "%show_all%"=="true" (
-        call :long_all_ls "%target_dir%"
+if "!long_format!"=="true" (
+    if "!show_all!"=="true" (
+        call :long_all_ls "!target_dir!"
     ) else (
-        call :long_ls "%target_dir%"
+        call :long_ls "!target_dir!"
     )
 ) else (
-    if "%show_all%"=="true" (
-        call :all_ls "%target_dir%"
+    if "!show_all!"=="true" (
+        call :all_ls "!target_dir!"
     ) else (
-        call :regular_ls "%target_dir%"
+        call :regular_ls "!target_dir!"
     )
 )
 

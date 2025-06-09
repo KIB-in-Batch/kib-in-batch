@@ -313,17 +313,17 @@ rem So if the user runs git pull on the local repository to get updates, they ca
 mkdir "%APPDATA%\kali_in_batch\powershell"
 cd /d "%~dp0" & rem Needed incase the user is using a Windows Terminal profile or something that changes the current directory
 rem Copy .\powershell\* to %APPDATA%\kali_in_batch\powershell
-xcopy .\powershell\* "%APPDATA%\kali_in_batch\powershell" /s /y >nul
+xcopy "%~dp0\powershell\*" "%APPDATA%\kali_in_batch\powershell" /s /y >nul
 
 rem Copy %~dp0\bin\* to !kaliroot!\usr\bin
-xcopy .\bin\* "!kaliroot!\usr\bin" /s /y >nul
+xcopy "%~dp0\bin\*" "!kaliroot!\usr\bin" /s /y >nul
 
 rem Check if VERSION.txt exists and delete it if it does
 if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 4.0.6>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 4.1.0>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 echo Starting services...
 where nmap >nul 2>&1
@@ -339,7 +339,13 @@ if !errorlevel! neq 0 (
 )
 
 if not exist "!kaliroot!\usr\bin\bash.exe" (
-    echo !COLOR_ERROR!Error: Bash not found. Please try again.!COLOR_RESET!
+    echo !COLOR_ERROR!Error: Failed to start Bash service: Bash not found.!COLOR_RESET!
+    pause >nul
+    exit
+)
+
+if not exist "!kaliroot!\usr\bin\busybox.exe" (
+    echo !COLOR_ERROR!Error: Failed to start Busybox service: Busybox not found.!COLOR_RESET!
     pause >nul
     exit
 )
@@ -348,7 +354,7 @@ set "bash_path=!kaliroot!\usr\bin\bash.exe"
 
 where pwsh >nul 2>&1
 if !errorlevel! neq 0 (
-    echo !COLOR_ERROR!Error: PowerShell is not installed. Please try again.!COLOR_RESET!
+    echo !COLOR_ERROR!Error: Failed to start PowerShell service: PowerShell not found.!COLOR_RESET!
     pause >nul
     exit
 )
