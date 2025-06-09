@@ -304,19 +304,107 @@ function Get-Command {
                         $commandSuccess = $?
                     }
                     'netcat' {
-                        # It wouldn't be acceptable to make a Kali Linux environment without netcat.
-
                         $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
 
                         & "$kaliroot\usr\bin\busybox.exe" nc $convertedshellargs
                         $commandSuccess = $?
                     }
+					'tar' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" tar $convertedshellargs
+						$commandSuccess = $?
+					}
+					'readlink' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" readlink $convertedshellargs
+						$commandSuccess = $?
+					}
+					'unlink' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" unlink $convertedshellargs
+						$commandSuccess = $?
+					}
+					'ssl_client' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" ssl_client $convertedshellargs
+						$commandSuccess = $?
+					}
+					'sha3sum' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" sha3sum $convertedshellargs
+						$commandSuccess = $?
+					}
+					'sha256sum' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" sha256sum $convertedshellargs
+						$commandSuccess = $?
+					}
+					'sha512sum' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" sha512sum $convertedshellargs
+						$commandSuccess = $?
+					}
+					'unexpand' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" unexpand $convertedshellargs
+						$commandSuccess = $?
+					}
+					'arch' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" arch $convertedshellargs
+						$commandSuccess = $?
+					}
+					'uptime' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" uptime $convertedshellargs
+						$commandSuccess = $?
+					}
+					'date' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" date $convertedshellargs
+						$commandSuccess = $?
+					}
+					'cal' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" cal $convertedshellargs
+						$commandSuccess = $?
+					}
                     'printf' {
                         $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
 
                         & "$kaliroot\usr\bin\busybox.exe" printf $convertedshellargs
                         $commandSuccess = $?
                     }
+					'base32' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" base32 $convertedshellargs
+						$commandSuccess = $?
+					}
+					'base64' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" base64 $convertedshellargs
+						$commandSuccess = $?
+					}
+					'dpkg' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" dpkg $convertedshellargs
+						$commandSuccess = $?
+					}
                     'awk' {
                         $convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
 
@@ -431,6 +519,48 @@ function Get-Command {
                         & "$kaliroot\usr\bin\busybox.exe" chmod $convertedshellargs
                         $commandSuccess = $?
                     }
+					'lsattr' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" lsattr $convertedshellargs
+						$commandSuccess = $?
+					}
+					'wc' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" wc $convertedshellargs
+						$commandSuccess = $?
+					}
+					'basename' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" basename $convertedshellargs
+						$commandSuccess = $?
+					}
+					'dirname' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" dirname $convertedshellargs
+						$commandSuccess = $?
+					}
+					'[[' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" [[ $convertedshellargs
+						$commandSuccess = $?
+					}
+					'dos2unix' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" dos2unix $convertedshellargs
+						$commandSuccess = $?
+					}
+					'unix2dos' {
+						$convertedshellargs = Convert-ShellArgs -shellArgs $shellargs
+
+						& "$kaliroot\usr\bin\busybox.exe" unix2dos $convertedshellargs
+						$commandSuccess = $?
+					}
                     default {
                         if ($command -eq '') {
                             $commandSuccess = $true
@@ -466,6 +596,7 @@ function Get-Command {
                         $commandLine = "export HOME='$kaliroot/home/$env:USERNAME'; cd '$bashPath'; $command $($convertedshellargs -join ' ')"
                         
                         & $bashExe -c $commandLine
+
                         $commandSuccess = ($LASTEXITCODE -eq 0)
                     }
                 }
