@@ -34,10 +34,6 @@ We welcome contributions from the community, but they must follow these guidelin
     ```batch
     set foo=bar
     ```
-* Any issues must follow templates, otherwise they will be closed.
-
-By contributing, you also agree to the following:
-* You will not include any code verbatim that is licensed under a viral license, as that requires relicensing the Kali in Batch project.
 
 Where to start?
 ===============
