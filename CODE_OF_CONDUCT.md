@@ -1,1 +1,1 @@
-Be a decent person. The project is welcome to anyon who wants to contribute.
+Hello, World!
