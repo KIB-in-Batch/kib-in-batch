@@ -1,12 +1,7 @@
 Kali in Batch Security Policy
 =============================
 
-## Versions supported with security updates
-
-All versions of Kali in Batch are supported until 7 days after the next version is released.
-
-Reporting a Security Issue
-==========================
+## Reporting a Security Issue
 
 If you believe you have found a vulnerability, follow these steps:
 - [Create a new vulnerability issue](https://github.com/Kali-in-Batch/kali-in-batch/issues/new?template=vulnerability.yml).
