@@ -46,4 +46,6 @@ git clone git@github.com:your-username/kali-in-batch.git
 ```
 From there, you can make changes to the code.
 
+*Note: You can also use https, and the name of the repo may be different if you specify a different name when you fork the repo.*
+
 You can also make changes directly in the GitHub web interface.
