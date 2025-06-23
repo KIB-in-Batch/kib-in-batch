@@ -51,11 +51,11 @@ jobs:
       - name: Create stable release and upload assets
         uses: softprops/action-gh-release@v2
         with:
-          name: stable-${{ env.COMMIT_HASH }}
-          tag_name: stable-${{ env.COMMIT_HASH }}
+          name: nightly-${{ env.COMMIT_HASH }}
+          tag_name: nightly-${{ env.COMMIT_HASH }}
           prerelease: true
           body: |
-            Automated stable release for commit `${{ env.COMMIT_HASH }}`
+            Automated unstable release for commit `${{ env.COMMIT_HASH }}`
           files: |
             kali_in_batch.zip
             kali_in_batch.tar.gz
