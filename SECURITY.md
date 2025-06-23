@@ -3,10 +3,7 @@ Kali in Batch Security Policy
 
 ## Versions supported with security updates
 
-| Version  | Supported             |
-| -------  | --------------------- |
-| > 4.0.x    | ✅                  
-| < 4.0.x  | ❌              
+All versions of Kali in Batch are supported until 7 days after the next version is released.
 
 Reporting a Security Issue
 ==========================
