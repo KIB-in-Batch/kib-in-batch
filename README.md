@@ -17,7 +17,3 @@ Kali in Batch bundles portable versions of Busybox, Bash and the Msys runtime, a
 Some commands, like `cat`, `ls`, `echo` and `ls` are reimplemented in pure Batch.
 
 The actual shell is written in PowerShell, and the bootloader and installer are written in Batch.
-
-## Nightly builds
-
-![Latest nightly build](https://img.shields.io/endpoint?url=https://kali-in-batch.github.io/kali-in-batch/prerelease.json&style=for-the-badge&color=blue)
