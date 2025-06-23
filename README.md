@@ -18,10 +18,8 @@ Some commands, like `cat`, `ls`, `echo` and `ls` are reimplemented in pure Batch
 
 The actual shell is written in PowerShell, and the bootloader and installer are written in Batch.
 
-## Downloads
+## Releases
 
-[![zip](https://img.shields.io/badge/release-kali__in__batch.zip-blue?style=for-the-badge&logo=github)](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest/download/kali_in_batch.zip)
-[![tar.gz](https://img.shields.io/badge/release-kali__in__batch.tar.gz-green?style=for-the-badge&logo=github)](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest/download/kali_in_batch.tar.gz)
+## Nightly builds
 
-[![Development branch](https://img.shields.io/badge/branch-dev-blue?style=for-the-badge&logo=github)](https://github.com/Kali-in-Batch/kali-in-batch/archive/refs/heads/dev.zip)
-[![Stable branch](https://img.shields.io/badge/branch-master-green?style=for-the-badge&logo=github)](https://github.com/Kali-in-Batch/kali-in-batch/archive/refs/heads/master.zip)
+![Latest nightly build](https://img.shields.io/endpoint?url=https://kali-in-batch.github.io/kali-in-batch/prerelease.json&style=for-the-badge&color=blue)
