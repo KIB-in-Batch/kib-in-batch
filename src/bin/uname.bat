@@ -40,7 +40,7 @@ goto :eof
 
 :release
 
-echo 6.0
+echo 6.1
 goto :eof
 
 :machine
@@ -60,7 +60,7 @@ goto :eof
 
 :version
 
-echo Uname for Kali in Batch 6.0
+echo Uname for Kali in Batch 6.1
 echo This is Apache-2.0 licensed free software. There is NO WARRANTY.
 goto :eof
 
