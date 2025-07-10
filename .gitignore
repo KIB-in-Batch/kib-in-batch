@@ -13,3 +13,4 @@
 *.tar
 *.tar.*
 bashbug
+usr/

@@ -1,0 +1,34 @@
+# THINGS WILL BREAK IF YOU MODIFY THIS FILE
+export BASH_ENV="/etc/.kibenv"
+
+export PATH="/usr/bin:/bin:/cygdrive/c/Windows:/cygdrive/c/Windows/System32:/cygdrive/c/Program Files (x86)/Nmap:/cygdrive/c/Users/$USER/AppData/Local/Microsoft/WindowsApps:/cygdrive/c/Program Files/WindowsApps:/cygdrive/c/Program Files/Neovim/bin"
+
+PS1=$'\[\e[32m\]┌──(\[\e[34m\]\u㉿\h\[\e[32m\])-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]\$ \[\e[0m\]'
+
+# Aliases
+alias touch='touch.bat'
+alias uname='uname.bat'
+alias whoami='whoami.bat'
+alias pkg='pkg.bat'
+alias echo='echo.bat'
+alias cat='cat.bat'
+alias ls='ls.bat'
+alias clear='clear.bat'
+alias nc='busybox nc'
+alias netcat='busybox nc'
+
+# BusyBox fallback for unrecognized commands
+mapfile -t __busybox_applets < <(busybox --list)
+
+command_not_found_handle() {
+  for applet in "${__busybox_applets[@]}"; do
+    if [[ "$1" == "$applet" ]]; then
+      busybox "$@"
+      return $?
+    fi
+  done
+  printf '%s: command not found\n' "$1" >&2
+  return 127
+}
+
+[ -f ~/.bashrc ] && source ~/.bashrc

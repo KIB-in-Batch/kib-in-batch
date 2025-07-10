@@ -1,9 +1,9 @@
-Kali in Batch Security Policy
-=============================
+# Kali in Batch Security Policy
 
 ## Reporting a Security Issue
 
 If you believe you have found a vulnerability, follow these steps:
+
 - [Create a new vulnerability issue](https://github.com/Kali-in-Batch/kali-in-batch/issues/new?template=vulnerability.yml).
 - Fill out the template.
 - If you believe this should be kept confidential to you and maintainers, [submit a security advisory instead](https://github.com/Kali-in-Batch/kali-in-batch/security/advisories/new).

@@ -129,6 +129,7 @@ if not exist "%APPDATA%\kali_in_batch" (
         mkdir "!kaliroot!\bin"
         mkdir "!kaliroot!\tmp"
         mkdir "!kaliroot!\usr"
+        mkdir "!kaliroot!\etc"
         mkdir "!kaliroot!\usr\bin"
         rem Copy contents of %~dp0bin to !kaliroot!\usr\bin.
         copy /y "%~dp0bin\*" "!kaliroot!\usr\bin"
@@ -167,51 +168,32 @@ if !command!==help (
     echo help - Displays this message.
     echo done - Finishes setup and exits the preinstall shell.
     echo wipe - Wipes the Kali in Batch root filesystem.
+    echo add-kibenv - Adds a .kibenv file to the file system.
     echo add-bashrc - Adds a .bashrc file to the home directory.
-    echo clear - Clears the screen.
     echo edit-bashrc - Edits the .bashrc file.
+    echo clear - Clears the screen.
     goto preinstall
 ) else if !command!==done (
     echo Finishing setup...
-    if not exist "!kaliroot!\home\!username!\.bashrc" (
-        echo Please run add-bashrc before finishing setup
+    if not exist "!kaliroot!\etc\.kibenv" (
+        echo Please run add-kibenv before finishing setup
         goto preinstall
     )
     cls
     goto boot
 ) else if !command!==wipe (
     goto wipe
+) else if !command!==add-kibenv (
+    echo Adding .kibenv file...
+
+    copy "%~dp0kibenv" "!kaliroot!\etc\.kibenv" /y >nul
+
+    echo Done.
+    goto preinstall
 ) else if !command!==add-bashrc (
     echo Adding .bashrc file...
 
-    (
-        echo # THINGS WILL BREAK IF YOU MODIFY ANYTHING BELOW
-        echo export BASH_ENV="$HOME/.bashrc"
-        echo export PATH="/usr/bin:/bin:/cygdrive/c/Windows:/cygdrive/c/Windows/System32:/cygdrive/c/Program Files (x86)/Nmap:/cygdrive/c/Users/!username!/AppData/Local/Microsoft/WindowsApps:/cygdrive/c/Program Files/WindowsApps:/cygdrive/c/Program Files/Neovim/bin"
-        echo PS1=$'\[\e[34m\]┌──^(\[\e[0;38;5;45m\]\u\[\e[34m\]㉿\[\e[0;38;5;203m\]\h\[\e[34m\]^)-[\[\e[32m\]\w\[\e[34m\]]\n└─\[\e[0m\]\$ '
-        echo alias touch='touch.bat'
-        echo alias uname='uname.bat'
-        echo alias whoami='whoami.bat'
-        echo alias pkg='pkg.bat'
-        echo alias echo='echo.bat'
-        echo alias cat='cat.bat'
-        echo alias ls='ls.bat'
-        echo alias nc='busybox nc'
-        echo alias netcat='busybox nc'
-        echo   mapfile -t __busybox_applets ^< ^<^(busybox --list^)
-        echo   command_not_found_handle^(^) {
-        echo     for applet in "${__busybox_applets[@]}"; do
-        echo       if [[ "$1" == "$applet" ]]; then
-        echo         busybox "$@"
-        echo         return $?
-        echo       fi
-        echo     done
-        echo     printf '^%%s: command not found\n' "$1" ^>^&2
-        echo     return 127
-        echo   }
-        echo # Here, it is safe to add more commands below
-        echo.
-    ) >> "!kaliroot!\home\!username!\.bashrc"
+    echo # Add commands to run on startup here>"!kaliroot!\home\!username!\.bashrc"
 
     echo Done.
     goto preinstall
@@ -247,11 +229,7 @@ if !command!==help (
 echo Wiping kali rootfs...
 echo.
 rem Delete all files Kali in Batch creates
-rmdir /s /q "!kaliroot!\home\!username!"
-rmdir /s /q "!kaliroot!\bin"
-rmdir /s /q "!kaliroot!\tmp"
-rmdir /s /q "!kaliroot!\home"
-rmdir /s /q "!kaliroot!\usr"
+rmdir /s /q "C:\Users\!username!\kali"
 rmdir /s /q "%APPDATA%\kali_in_batch"
 rem Remove the drive letter assignment
 subst !kaliroot! /d
@@ -276,12 +254,15 @@ if exist !kaliroot! (
 rem Copy %~dp0bin\* to !kaliroot!\usr\bin
 xcopy "%~dp0bin\*" "!kaliroot!\usr\bin\" /s /y >nul
 
+rem Copy kibenv
+copy /y "%~dp0kibenv" "!kaliroot!\etc\.kibenv" >nul
+
 rem Check if VERSION.txt exists and delete it if it does
 if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 5.0>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 6.0>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 echo Starting services...
 where nmap >nul 2>&1
@@ -332,7 +313,6 @@ if !remote_version! neq !local_version! (
     echo !COLOR_SUCCESS!Local version: !local_version!!COLOR_RESET!
 )
 timeout /t 1 >nul
-rem DEV BRANCH FIX: Delete VERSION.txt in tmp folder
 del "!kaliroot!\tmp\VERSION.txt"
 echo.
 cls
@@ -342,11 +322,11 @@ goto startup
 rem Navigate to home directory
 cd /d "C:\Users\!username!\kali\home\!username!"
 if %errorlevel% neq 0 (
-    echo error
+    echo Fatal error, please reinstall Kali in Batch
     pause >nul
     exit
 )
-set "bashrc=!cd!\.bashrc"
+set "kibenv=!kaliroot!\etc\.kibenv"
 set "home_dir=!cd!"
 
 :shell
@@ -358,4 +338,4 @@ echo ██  ██  ██   ██ ██      ██     ██ ██  █�
 echo ██   ██ ██   ██ ███████ ██     ██ ██   ████     ██████  ██   ██    ██     ██████ ██   ██
 echo.
 
-!bash_path!
+!bash_path! --rcfile "!kibenv!"
