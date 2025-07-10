@@ -33,7 +33,6 @@ Kali in Batch is a batch script-based environment that runs a bash shell with ma
    * `add-bashrc` - Add the default `.bashrc` file.
    * `edit-bashrc` - Edit the `.bashrc` file.
 5. Once setup is complete, you can now enjoy the bash shell.
-6. You can run `update-kibenv` in the bash shell to update the .kibenv file.
 
 ## Preview
 
