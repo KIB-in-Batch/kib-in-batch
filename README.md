@@ -18,7 +18,6 @@ Kali in Batch is a batch script-based environment that runs a bash shell with ma
   * Usable shell scripting environment
 * Has a simple package manager, which has packages like [neofetch](https://github.com/dylanaraps/neofetch)
   * You may invoke this package manager by running the `pkg` command.
-  * Note: It only has packages written in bash.
 
 ## Usage
 
