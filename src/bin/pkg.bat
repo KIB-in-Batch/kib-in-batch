@@ -76,8 +76,17 @@ rem Save package contents to C:\Users\%USERNAME%\kali\usr\bin\%2
 echo Installing package %2...
 curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/%2.sh >"C:\Users\%USERNAME%\kali\usr\bin\%2"
 echo. >"C:\Users\%USERNAME%\kali\usr\bin\%2.sh"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/preinstall.sh >"C:\Users\%USERNAME%\kali\tmp\%2_preinstall"
+set /p preinstaller_contents=<C:\Users\%USERNAME%\kali\tmp\%2_preinstall
+if "!contents!"=="404: Not Found" (
+    echo Package %2 has no preinstall script
+) else (
+    echo Running preinstall script for package %2...
+    "C:\Users\%USERNAME%\kali\usr\bin\bash.exe" -c "/tmp/%2_preinstall"
+)
 echo Package %2 installed successfully.
 del "C:\Users\%USERNAME%\kali\tmp\contents.txt"
+del "C:\Users\%USERNAME%\kali\tmp\%2_preinstall"
 exit
 
 :remove
@@ -126,9 +135,18 @@ rem Upgrade the package
 
 echo Upgrading package %2...
 curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/%2.sh >"C:\Users\%USERNAME%\kali\usr\bin\%2"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/preinstall.sh >"C:\Users\%USERNAME%\kali\tmp\%2_preinstall"
+set /p preinstaller_contents=<C:\Users\%USERNAME%\kali\tmp\%2_preinstall
+if "!contents!"=="404: Not Found" (
+    echo Package %2 has no preinstall script
+) else (
+    echo Running preinstall script for package %2...
+    "C:\Users\%USERNAME%\kali\usr\bin\bash.exe" -c "/tmp/%2_preinstall"
+)
 echo Package %2 upgraded successfully.
 
 del "C:\Users\%USERNAME%\kali\tmp\contents.txt"
+del "C:\Users\%USERNAME%\kali\tmp\%2_preinstall"
 exit
 
 :search
