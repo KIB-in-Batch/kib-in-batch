@@ -5,6 +5,8 @@ export PATH="/usr/bin:/bin:/cygdrive/c/Users/$USERNAME/AppData/Local/Microsoft/W
 
 export USER="$USERNAME" # Because Windows is weird
 
+export HOME="/home/$USER"
+
 PS1=$'\[\e[32m\]┌──(\[\e[34m\]\u㉿\h\[\e[32m\])-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]\$ \[\e[0m\]'
 
 # Aliases
