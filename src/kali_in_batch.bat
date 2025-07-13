@@ -130,7 +130,7 @@ if not exist "%APPDATA%\kali_in_batch" (
         mkdir "!kaliroot!\tmp"
         mkdir "!kaliroot!\usr"
         mkdir "!kaliroot!\etc"
-        copy /y "%~dp0os-release" >nul 2>&1
+        copy /y "%~dp0os-release" "!kaliroot!\etc\os-release" >nul 2>&1
         mkdir "!kaliroot!\usr\bin"
         rem Copy contents of %~dp0bin to !kaliroot!\usr\bin.
         copy /y "%~dp0bin\*" "!kaliroot!\usr\bin"
@@ -258,12 +258,15 @@ xcopy "%~dp0bin\*" "!kaliroot!\usr\bin\" /s /y >nul
 rem Copy kibenv
 copy /y "%~dp0kibenv" "!kaliroot!\etc\.kibenv" >nul
 
+rem Copy os-release
+copy /y "%~dp0os-release" "!kaliroot!\etc\os-release" >nul
+
 rem Check if VERSION.txt exists and delete it if it does
 if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 7.0>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 7.1>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 echo Starting services...
 where nmap >nul 2>&1
