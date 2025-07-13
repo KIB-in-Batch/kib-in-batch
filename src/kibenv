@@ -17,7 +17,6 @@ alias uname='uname.bat'
 alias whoami='whoami.bat'
 alias pkg='pkg.bat'
 alias echo='echo.bat'
-alias cat='cat.bat'
 alias clear='clear.bat'
 alias nc='busybox nc'
 alias netcat='busybox nc'
@@ -26,14 +25,14 @@ alias netcat='busybox nc'
 mapfile -t __busybox_applets < <(busybox --list)
 
 command_not_found_handle() {
-  for applet in "${__busybox_applets[@]}"; do
-    if [[ "$1" == "$applet" ]]; then
-      busybox "$@"
-      return $?
+    for applet in "${__busybox_applets[@]}"; do
+        if [[ "$1" == "$applet" ]]; then
+        busybox "$@"
+        return $?
     fi
-  done
-  printf '%s: command not found\n' "$1" >&2
-  return 127
+    done
+    printf '%s: command not found\n' "$1" >&2
+    return 127
 }
 
 [ -f ~/.bashrc ] && source ~/.bashrc
