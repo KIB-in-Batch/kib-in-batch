@@ -1,0 +1,10 @@
+NAME="Kali in Batch"
+VERSION="7.0"
+ID=kalibatch
+ID_LIKE=linux
+VERSION_ID="7.0"
+PRETTY_NAME="Kali in Batch 7.0"
+ANSI_COLOR="0;36"
+HOME_URL="https://kali-in-batch.github.io"
+SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
+BUG_REPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/issues"

@@ -130,6 +130,7 @@ if not exist "%APPDATA%\kali_in_batch" (
         mkdir "!kaliroot!\tmp"
         mkdir "!kaliroot!\usr"
         mkdir "!kaliroot!\etc"
+        copy /y "%~dp0os-release" >nul 2>&1
         mkdir "!kaliroot!\usr\bin"
         rem Copy contents of %~dp0bin to !kaliroot!\usr\bin.
         copy /y "%~dp0bin\*" "!kaliroot!\usr\bin"
@@ -262,7 +263,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 6.6>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 7.0>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 echo Starting services...
 where nmap >nul 2>&1
