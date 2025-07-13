@@ -8,4 +8,9 @@ if not exist "%~1" (
     echo File "%~1" does not exist.
     exit /b
 )
-type "%~1"
+
+rem Bug fix: Replace / with \
+set "file=%~1"
+set "file=%file:/=\%"
+
+type "%file%"
