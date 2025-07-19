@@ -31,12 +31,3 @@ rem Move busybox.exe to src\bin
 move /y "%~dp0busybox.exe" "%~dp0src\bin\busybox.exe"
 
 echo Done!
-
-choice /c yn /n /m "Do you want to run Kali in Batch? (y/n) "
-if errorlevel 2 goto end
-if errorlevel 1 goto kali
-
-:kali
-"%~dp0src\kali_in_batch.bat"
-
-:end

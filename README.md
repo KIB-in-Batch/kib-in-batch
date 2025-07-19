@@ -25,7 +25,7 @@ Kali in Batch is a batch script-based environment that runs a bash shell with ma
 
 ## Usage
 
-1. Run `setup.bat` to install and configure the environment.
+1. Run `setup.bat` to download required binaries.
 2. Run `kali_in_batch.bat` to launch the Kali in Batch shell.
 3. On first run, follow the prompts to assign a drive letter and complete setup.
 4. Login with your username or root when prompted.
