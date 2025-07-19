@@ -25,7 +25,7 @@ rem Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 echo Kali in Batch is having a very much BREAKING update.
 echo This package manager will be available once new repositories for packages are set up.
 echo.
-echo Please be patient and wait for the stable release of Kali in Batch 8.0.
+echo Please be patient.
 echo If you prefer to speed up the process, you can contribute to the project by creating a pull request at
 echo https://github.com/Kali-in-Batch/kali-in-batch/pulls
 exit /b 69
