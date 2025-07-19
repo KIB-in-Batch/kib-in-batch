@@ -371,7 +371,9 @@ echo ------------------------------------------------
 
 echo !COLOR_SUCCESS!System boot completed.!COLOR_RESET!
 if "%~1"=="automated" (
-    del "!kaliroot!\tmp\VERSION.txt"
+    del "!kaliroot!\tmp\VERSION.txt" >nul 2>&1
+    set "USER=!username!"
+    set "ROOT=0"
     echo.
     cls
     goto startup
