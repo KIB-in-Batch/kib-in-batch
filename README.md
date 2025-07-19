@@ -2,6 +2,8 @@
 
 Kali in Batch is a batch script-based environment that runs a bash shell with many Kali Linux utilities.
 
+[![CI/CD](https://github.com/Kali-in-Batch/kali-in-batch/actions/workflows/cicd.yml/badge.svg)](https://github.com/Kali-in-Batch/kali-in-batch/actions/workflows/cicd.yml)
+
 ## Installation
 
 * Download a source code archive from the [latest release](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest).
