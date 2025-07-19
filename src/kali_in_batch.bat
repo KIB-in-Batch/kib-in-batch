@@ -319,8 +319,6 @@ echo 8.0>"%APPDATA%\kali_in_batch\VERSION.txt"
 where nmap >nul 2>&1
 if !errorlevel! neq 0 (
     <nul set /p "=[ !COLOR_ERROR!FAILED!COLOR_RESET! ]"
-    pause >nul
-    exit /b 1
 ) else (
     <nul set /p "=[ !COLOR_SUCCESS!OK!COLOR_RESET! ]"
     echo.
