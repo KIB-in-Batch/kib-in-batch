@@ -5,11 +5,40 @@ setlocal enabledelayedexpansion
 rem pkg.bat
 rem    * Package manager for the Kali in Batch project.
 rem    * Manages packages.
-rem    * Licensed under the Apache-2.0.
+rem    * Licensed under the GPL-2.0-only.
+rem Copyright (C) 2025 benja2998
+rem
+rem This program is free software; you can redistribute it and/or modify
+rem it under the terms of the GNU General Public License as published by
+rem the Free Software Foundation; ONLY version 2 of the License.
+rem
+rem This program is distributed in the hope that it will be useful,
+rem but WITHOUT ANY WARRANTY; without even the implied warranty of
+rem MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+rem GNU General Public License for more details.
+rem
+rem You should have received a copy of the GNU General Public License
+rem along with this program; if not, write to the Free Software
+rem Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+
+echo Kali in Batch is having a very much BREAKING update.
+echo This package manager will be available once new repositories for packages are set up.
+echo.
+echo Please be patient.
+echo If you prefer to speed up the process, you can contribute to the project by creating a pull request at
+echo https://github.com/Kali-in-Batch/kali-in-batch/pulls
+exit /b 69
 
 goto start
 
 :start
+
+rem Check if ROOT is set to 0
+if "%ROOT%" == "0" (
+    echo Please log in as the root user to run pkg
+    exit /b 1
+)
 
 rem Check if the command line arguments are empty
 if "%*"=="" (
@@ -86,7 +115,6 @@ if "!contents!"=="404: Not Found" (
 )
 echo Package %2 installed successfully.
 del "C:\Users\%USERNAME%\kali\tmp\contents.txt"
-del "C:\Users\%USERNAME%\kali\tmp\%2_preinstall"
 exit
 
 :remove

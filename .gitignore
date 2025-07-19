@@ -7,6 +7,8 @@
 *.dylib
 *.o
 *.o.*
+*.zip
+*.zip.*
 .MTREE
 .BUILDINFO
 .PKGINFO
@@ -14,3 +16,6 @@
 *.tar.*
 bashbug
 usr/
+share/
+lib/
+etc/

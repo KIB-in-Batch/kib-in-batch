@@ -20,102 +20,24 @@
 #                      #
 ########################
 
-## Ensure non-interactive sessions load this file ##
-
-export BASH_ENV="/etc/.kibenv"
-
-## Set PATH variables ##
-
-export PATH_OLD="$PATH"
-export PATH="/usr/bin:/bin:/cygdrive/c/Users/$USERNAME/AppData/Local/Microsoft/WindowsApps/winget:/cygdrive/c/Windows:/cygdrive/c/Windows/System32:/cygdrive/c/Program Files (x86)/Nmap:/cygdrive/c/Users/$USERNAME/AppData/Local/Microsoft/WindowsApps:/cygdrive/c/Program Files/WindowsApps:/cygdrive/c/Program Files/Neovim/bin"
-export PATH_NEW="$PATH"
-
-## Fix variables expected by shell scripts ##
-
-export USER="$USERNAME"
-export HOME="/home/$USER"
-
 ## Kali Linux shell prompt ##
 
-PS1=$'\[\e[32m\]┌──(\[\e[34m\]\u㉿\h\[\e[32m\])-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]\$ \[\e[0m\]'
+# Check if ROOT is 1
 
-# Looks something like this:
+if [ "$ROOT" == "1" ]; then
+    PS1=$'\[\e[34m\]┌──(\[\e[31m\]root㉿\h\[\e[34m\])-[\[\e[0m\]\w\[\e[34m\]]\n\[\e[34m\]└─\[\e[31m\]# \[\e[0m\]'
+else
+    PS1=$'\[\e[32m\]┌──(\[\e[34m\]\u㉿\h\[\e[32m\])-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]\$ \[\e[0m\]'
+fi
 
-# ┌──(username㉿hostname)-[/path/to/directory]
-# └─$
+alias pkg="$kaliroot/usr/bin/pkg.bat"
+alias clear="$kaliroot/usr/bin/clear.bat"
+alias touch="$kaliroot/usr/bin/touch.bat"
+alias uname="$kaliroot/usr/bin/uname.bat"
+alias which="$kaliroot/usr/bin/which.bat"
+alias whoami="$kaliroot/usr/bin/whoami.bat"
+alias netcat="nc"
 
-## Aliases ##
+## Load ~/.bashrc ##
 
-alias touch='touch.bat'
-alias uname='uname.bat'
-alias whoami='whoami.bat'
-alias whois='busybox whois'
-alias pkg='pkg.bat'
-alias echo='echo.bat'
-alias clear='clear.bat'
-
-# BusyBox aliases for common tools, as different versions of them may be in PATH
-
-alias nc='busybox nc'
-alias netcat='busybox nc'
-alias find='busybox find'
-alias grep='busybox grep'
-alias ls='busybox ls'
-alias mkdir='busybox mkdir'
-alias mv='busybox mv'
-alias rm='busybox rm'
-alias cp='busybox cp'
-alias cmp='busybox cmp'
-alias rmdir='busybox rmdir'
-alias diff='busybox diff'
-alias sort='busybox sort'
-alias dos2unix='busybox dos2unix'
-alias unix2dos='busybox unix2dos'
-alias lsattr='busybox lsattr'
-alias chattr='busybox chattr'
-alias chmod='busybox chmod'
-alias tee='busybox tee'
-
-# Non-critical but nice to have aliases
-
-alias ls='ls -lhF'
-alias la='ls -lahF'
-alias l='ls -lhF'
-alias neofetch='neofetch --ascii_bold on --ascii_distro kali'
-
-## Locale fixes ##
-
-export LANG=C.UTF-8
-export LANGUAGE=C.UTF-8
-export LC_CTYPE=C.UTF-8
-export LC_NUMERIC=C.UTF-8
-export LC_TIME=C.UTF-8
-export LC_COLLATE=C.UTF-8
-export LC_MONETARY=C.UTF-8
-export LC_MESSAGES=C.UTF-8
-export LC_PAPER=C.UTF-8
-export LC_NAME=C.UTF-8
-export LC_ADDRESS=C.UTF-8
-export LC_TELEPHONE=C.UTF-8
-export LC_MEASUREMENT=C.UTF-8
-export LC_IDENTIFICATION=C.UTF-8
-export LC_ALL=C.UTF-8
-
-## BusyBox fallback for unrecognized commands ##
-
-mapfile -t __busybox_applets < <(busybox --list)
-
-command_not_found_handle() {
-    for applet in "${__busybox_applets[@]}"; do
-        if [[ "$1" == "$applet" ]]; then
-        busybox "$@"
-        return $?
-    fi
-    done
-    printf '%s: command not found\n' "$1" >&2
-    return 127
-}
-
-## Source the user's configuration file ##
-
-[ -f ~/.bashrc ] && source ~/.bashrc
+source ~/.bashrc

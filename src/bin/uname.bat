@@ -5,7 +5,22 @@ setlocal enabledelayedexpansion
 rem uname.bat
 rem    * Uname reimplementation for the Kali in Batch project.
 rem    * Displays basic system information.
-rem    * Licensed under the Apache-2.0.
+rem    * Licensed under the GPL-2.0-only.
+rem Copyright (C) 2025 benja2998
+rem
+rem This program is free software; you can redistribute it and/or modify
+rem it under the terms of the GNU General Public License as published by
+rem the Free Software Foundation; ONLY version 2 of the License.
+rem
+rem This program is distributed in the hope that it will be useful,
+rem but WITHOUT ANY WARRANTY; without even the implied warranty of
+rem MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+rem GNU General Public License for more details.
+rem
+rem You should have received a copy of the GNU General Public License
+rem along with this program; if not, write to the Free Software
+rem Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
 
 goto check
 
@@ -40,7 +55,7 @@ goto :eof
 
 :release
 
-echo 7.1
+echo 8.0
 goto :eof
 
 :machine
@@ -60,8 +75,8 @@ goto :eof
 
 :version
 
-echo Uname for Kali in Batch 7.1
-echo This is Apache-2.0 licensed free software. There is NO WARRANTY.
+echo Uname for Kali in Batch 8.0
+echo This is GPL-2.0-only licensed free software. There is NO WARRANTY.
 goto :eof
 
 :help

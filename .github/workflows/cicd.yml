@@ -1,0 +1,29 @@
+name: CI/CD
+permissions:
+  contents: read
+  checks: write
+
+# Run on push and pull request to any branch
+on:
+    push:
+        # All branches
+        branches: ['*']
+    pull_request:
+        # All branches
+        branches: ['*']
+
+jobs:
+    build-and-deploy:
+        runs-on: windows-2025 # This software is for Microsoft Windows
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Run setup.bat
+              shell: cmd
+              run: .\setup.bat
+            
+            - name: Run src\kali_in_batch.bat
+              shell: cmd
+              run: |
+                echo 1 | src\kali_in_batch.bat automated && echo Success && exit /b 0 || echo Failure && exit /b 1
