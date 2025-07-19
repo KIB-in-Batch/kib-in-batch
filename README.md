@@ -34,7 +34,6 @@ Kali in Batch is a batch script-based environment that runs a bash shell with ma
 ## Preview
 
 ![image of a terminal nmap scan with uname -a output above](./assets/image.png)
-![image of a terminal neofetch](./assets/image2.png)
 
 ## License
 
