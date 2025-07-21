@@ -1,0 +1,58 @@
+Introduction
+============
+
+Kali in Batch behaves similarly to a Linux system, but with some differences and additions.
+Here you can see how to install and use some common (ethical) hacking or penetration testing commands in Kali in Batch.
+
+Reconnaissance
+==============
+
+Kali in Batch automatically installs Nmap, a powerful port scanner that can allow thorough reconnaissance.
+Here's an example:
+
+---------------------------
+nmap -v -A -T4 scanme.nmap.org # Replace this with the IP or domain you want to do a scan on
+---------------------------
+
+Nmap comes with Ncat, which can be used for both reconnaissance and post-exploitation.
+
+Follow any additional instructions given by the commands mentioned.
+
+Post-Exploitation
+=================
+
+Because Kali in Batch uses BusyBox for the userland, you can use BusyBox nc for a simple reverse shell:
+
+---------------------------
+nc -l -p 6969 # Replace this with your preferred port
+---------------------------
+
+For a more comprehensive reverse shell, you can use Ncat which Nmap comes with:
+
+---------------------------
+ncat -l -p 6969 # Replace this with your preferred port
+---------------------------
+
+I know that is the same command as the nc one, but Ncat has a lot more flags you can use. Just see 'ncat --help' for more info because it has too much to list here.
+
+Follow any additional instructions given by the commands mentioned.
+
+Any Exploitation
+================
+
+Kali in Batch comes with an msfconsole wrapper, which is a batch file that uses the Windows Subsystem for Linux to launch the Metasploit Framework.
+
+You can run it just like this:
+
+---------------------------
+msfconsole
+---------------------------
+
+End
+===
+
+THE KALI IN BATCH DEVELOPERS DO NOT CONDONE ANY FORM OF ILLEGAL ACTIVITY.
+THIS IS FOR EDUCATIONAL PURPOSES AND ETHICAL HACKING PURPOSES **ONLY**.
+YOU MAY ONLY PERFORM ANY TECHNIQUES THAT ARE BEYOND RECONNAISSANCE **ONLY** WITH PERMISSION FROM THE OWNER OF THE SYSTEM.
+
+WE ARE NOT RESPONSIBLE FOR ANY DAMAGE CAUSED BY THE USE OF ANYTHING MENTIONED. THERE IS **NO** WARRANTY.
