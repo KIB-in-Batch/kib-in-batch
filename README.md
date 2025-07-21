@@ -7,10 +7,9 @@ Kali in Batch is a batch script-based environment that runs a bash shell with ma
 ## Installation
 
 * Download a source code archive from the [latest release](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest).
-* Run `setup.bat` to download and set up required binaries and dependencies.
-* After setup, run `kali_in_batch.bat` to start the Kali in Batch environment.
+* Run `kali_in_batch.bat` to start the environment.
 * During the first run, you will be prompted to assign a drive letter to the root filesystem (e.g., Z:). This drive letter will be used to mount the Kali root filesystem.
-* The installer will check for required dependencies such as Nmap, Neovim, and Whois, and install them automatically using winget if they are missing.
+* The installer will automatically download dependencies.
 
 ## Features
 
@@ -21,7 +20,6 @@ Kali in Batch is a batch script-based environment that runs a bash shell with ma
   * Whois
   * Usable shell scripting environment.
 * Simple package manager accessible via the `pkg` command.
-* Automatic dependency management using winget.
 * Update checking mechanism that compares local and remote versions to notify if the installation is outdated.
 * Custom shell prompt and aliases for common commands to enhance usability.
 

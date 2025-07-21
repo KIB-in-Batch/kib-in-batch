@@ -18,10 +18,6 @@ jobs:
         steps:
             - name: Checkout code
               uses: actions/checkout@v4
-
-            - name: Run setup.bat
-              shell: cmd
-              run: .\setup.bat
             
             - name: Run src\kali_in_batch.bat
               shell: cmd

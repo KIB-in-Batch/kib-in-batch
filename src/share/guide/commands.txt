@@ -1,0 +1,105 @@
+Introduction
+============
+
+Kali in Batch behaves similarly to a Linux system, but with some differences and additions.
+Here you can see how to install and use some common Linux distro commands in Kali in Batch.
+
+Package Management
+==================
+
+Use the "pkg" package manager to install packages. Here's an example:
+
+---------------------------
+pkg install example-package
+---------------------------
+
+To remove it:
+
+---------------------------
+pkg remove example-package
+---------------------------
+
+To upgrade it:
+
+---------------------------
+pkg upgrade example-package
+---------------------------
+
+To open package databases to search for a package:
+
+---------------------------
+pkg search # You don't search for a specific package, you just open the database
+---------------------------
+
+To list installed packages:
+
+---------------------------
+pkg list
+---------------------------
+
+Follow any additional instructions given by the package manager.
+
+File Management
+===============
+
+You can use the "cd" command to change directories. Here's an example:
+
+---------------------------
+cd /path/to/directory
+---------------------------
+
+You can use the "mkdir" command to create a new directory. Here's an example:
+
+---------------------------
+mkdir new-directory
+---------------------------
+
+You can use the "rm" command to remove a file or directory. Here's an example:
+
+---------------------------
+rm file.txt
+rm -r directory
+---------------------------
+
+You can use the "rmdir" command to remove (specifically) a directory. Here's an example:
+
+---------------------------
+rmdir directory
+---------------------------
+
+You can use the "cp" command to copy a file. Here's an example:
+
+---------------------------
+cp file.txt new-file.txt
+---------------------------
+
+You can use the "mv" command to move or rename a file. Here's an example:
+
+---------------------------
+mv file.txt new-file.txt
+---------------------------
+
+Follow any additional instructions given by the commands mentioned.
+
+Software Development
+====================
+
+Kali in Batch automatically installs Neovim, but you can use any other text editor on your system.
+For example to create main.c using Visual Studio Code:
+
+---------------------------
+code main.c
+---------------------------
+
+To compile main.c using GCC (not installed by Kali in Batch), you can use the following command:
+
+---------------------------
+gcc main.c -o main # -o can also be before the file name
+---------------------------
+
+Follow any additional instructions given by the commands mentioned.
+
+End
+===
+
+By now you should have gotten used to Kali in Batch. Happy hacking!
