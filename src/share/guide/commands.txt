@@ -99,7 +99,39 @@ gcc main.c -o main # -o can also be before the file name
 
 Follow any additional instructions given by the commands mentioned.
 
+Privilege Escalation
+====================
+
+Kali in Batch provides a root user, which unlike the regular user has the ability to manage packages.
+
+---------------------------
+Kali in Batch x.y
+Kernel x.y.z... on an PROCESSOR_ARCHITECTURE
+
+Users on this system: USERNAME, root
+
+COMPUTERNAME login:
+---------------------------
+
+Notice how there is a root user. You can log in as it by just typing "root" in the login field.
+
+If you have already logged in as the regular user, you can use sudo to run a command as the root user:
+
+---------------------------
+sudo command # This does not have an interactive shell, use su for that
+---------------------------
+
+You can also use su if you want an interactive root shell:
+
+---------------------------
+su
+---------------------------
+
+Type unsu once you don't need to be root anymore.
+
+Follow any additional instructions given by the commands mentioned.
+
 End
 ===
 
-By now you should have gotten used to Kali in Batch. Happy hacking!
+By now you should have gotten used to Kali in Batch.

@@ -38,7 +38,7 @@ rem Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 echo Starting, this may take a few minutes...
 
-wsl -d kali-linux bash -c "exit 0" >nul 2>&1
+wsl -d kali-linux bash -c "exit 0" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 
 if errorlevel 1 (
     echo Kali Linux WSL is not installed. Installing it...
@@ -46,9 +46,9 @@ if errorlevel 1 (
     wsl --install -d kali-linux
 )
 
-wsl --set-default-version 2 >nul 2>&1
+wsl --set-default-version 2 >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 
-wsl --set-version kali-linux 2 >nul 2>&1
+wsl --set-version kali-linux 2 >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 
 rem Get the current directory
 set "currentDir=!cd!"
@@ -60,19 +60,19 @@ rem Extract the path without the drive letter
 set "pathWithoutDrive=!currentDir:~3!"
 
 rem Set the new path with the desired drive letter and path
-set "newPath=C:\Users\%USERNAME%\kali\!pathWithoutDrive!"
+set "newPath=%USERPROFILE%\kali\!pathWithoutDrive!"
 
 echo !newPath!
 
 rem Change to newPath if output of subst contains !driveLetter!
 
-subst | findstr /i "!driveLetter!" >nul 2>&1
+subst | findstr /i "!driveLetter!" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 
 rem Check if errorlevel is 0
 
 if "!errorlevel!"=="0" (
     echo Output of subst contains !driveLetter!
-    cd /d "!newPath!" >nul 2>&1
+    cd /d "!newPath!" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 )
 
 wsl -d kali-linux msfconsole %*
@@ -86,4 +86,4 @@ if errorlevel 1 (
 
 rem Change back to the original directory
 
-cd /d "!currentDir!" >nul 2>&1
+cd /d "!currentDir!" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"

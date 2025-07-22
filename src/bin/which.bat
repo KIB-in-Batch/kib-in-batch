@@ -65,9 +65,9 @@ for %%a in (%*) do (
     )
 
     if not "!arg!"=="" (
-        where "!arg!">"%TEMP%\out.txt" 2>&1
-        copy /y "%TEMP%\out.txt" "%TEMP%\out2.txt" >nul 2>&1
-        del /s /q "%TEMP%\out.txt" >nul 2>&1
+        where "!arg!">"%TEMP%\out.txt" 2>>"%APPDATA%\kali_in_batch\errors.log"
+        copy /y "%TEMP%\out.txt" "%TEMP%\out2.txt" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        del /s /q "%TEMP%\out.txt" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         rem Replace backslashes with forward slashes in out.txt
         for /f "tokens=* delims=" %%i in ('type "%TEMP%\out2.txt"') do (
             set "line=%%i"
@@ -75,8 +75,8 @@ for %%a in (%*) do (
             set "line=!line:\=/!"
             echo !line! >>"%TEMP%\out.txt"
         )
-        del /s /q "%TEMP%\out2.txt" >nul 2>&1
-        where "!arg!" >nul 2>&1
+        del /s /q "%TEMP%\out2.txt" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        where "!arg!" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         if errorlevel 1 (
             if "!is_flag!"=="false" (
                 <nul set /p "=%~0: no !arg! in !PATH!"
@@ -95,7 +95,7 @@ for %%a in (%*) do (
                 echo !firstline!
             )
         )
-        del /s /q "%TEMP%\out.txt" >nul 2>&1
+        del /s /q "%TEMP%\out.txt" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
     )
     set "is_flag=false"
 )
