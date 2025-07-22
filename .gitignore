@@ -16,6 +16,5 @@
 *.tar.*
 bashbug
 usr/
-share/
 lib/
 etc/
