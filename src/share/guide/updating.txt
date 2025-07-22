@@ -10,7 +10,7 @@ Checking If Your Version Is Outdated
 When you boot Kali in Batch, it will check for updates. You can see if it is outdated if you see this:
 
 ---------------------------
-Checking for remote updates...                       [ OUTDATED ]
+Checking for remote updates...                       [ OUTDATED-LOCAL-VERSION ]
 ---------------------------
 
 Checking If You Can Upgrade

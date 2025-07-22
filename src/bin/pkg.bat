@@ -93,21 +93,21 @@ if "%1"=="install" (
 :install
 
 rem Check if the package is already installed
-rem C:\Users\%USERNAME%\kali is the Kali in Batch root filesystem path.
+rem %USERPROFILE%\kali is the Kali in Batch root filesystem path.
 
-if exist "C:\Users\%USERNAME%\kali\usr\bin\%2" (
+if exist "%USERPROFILE%\kali\usr\bin\%2" (
     echo Package %2 is already installed.
     exit /b
 )
 
-rem Save package contents to C:\Users\%USERNAME%\kali\tmp\contents.txt
+rem Save package contents to %USERPROFILE%\kali\tmp\contents.txt
 
 echo Fetching package contents...
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/bin/%2 >"C:\Users\%USERNAME%\kali\tmp\contents.txt"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/bin/%2 >"%USERPROFILE%\kali\tmp\contents.txt"
 
 rem Check if the contents are "404: Not Found"
 
-set /p contents=<C:\Users\%USERNAME%\kali\tmp\contents.txt
+set /p contents=<%USERPROFILE%\kali\tmp\contents.txt
 
 if "!contents!"=="404: Not Found" (
     echo Package %2 is not available.
@@ -121,60 +121,60 @@ if %errorlevel%==1 (
     echo Package %2 is available.
 )
 
-rem Save package contents to C:\Users\%USERNAME%\kali\usr\bin\%2
+rem Save package contents to %USERPROFILE%\kali\usr\bin\%2
 echo Installing package %2...
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/bin/%2 >"C:\Users\%USERNAME%\kali\usr\bin\%2"
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/lib/%2.lib >"C:\Users\%USERNAME%\kali\usr\lib\%2.lib"
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/libexec/%2.libexec >"C:\Users\%USERNAME%\kali\usr\libexec\%2.libexec
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/share/%2.share >"C:\Users\%USERNAME%\kali\usr\share\%2.share"
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/local/%2.local >"C:\Users\%USERNAME%\kali\usr\local\%2.local"
-echo. >"C:\Users\%USERNAME%\kali\usr\bin\%2.sh"
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/PREINSTALL >"C:\Users\%USERNAME%\kali\tmp\%2_preinstall"
-set /p preinstaller_contents=<C:\Users\%USERNAME%\kali\tmp\%2_preinstall
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/bin/%2 >"%USERPROFILE%\kali\usr\bin\%2"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/lib/%2.lib >"%USERPROFILE%\kali\usr\lib\%2.lib"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/libexec/%2.libexec >"%USERPROFILE%\kali\usr\libexec\%2.libexec
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/share/%2.share >"%USERPROFILE%\kali\usr\share\%2.share"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/local/%2.local >"%USERPROFILE%\kali\usr\local\%2.local"
+echo. >"%USERPROFILE%\kali\usr\bin\%2.sh"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/PREINSTALL >"%USERPROFILE%\kali\tmp\%2_preinstall"
+set /p preinstaller_contents=<%USERPROFILE%\kali\tmp\%2_preinstall
 if "!contents!"=="404: Not Found" (
     echo Package %2 has no preinstall script
 ) else (
     echo Running preinstall script for package %2...
-    "C:\Users\%USERNAME%\kali\usr\bin\busybox.exe" bash -c "C:/Users/%USERNAME%/kali/tmp/%2_preinstall"
+    "%USERPROFILE%\kali\usr\bin\busybox.exe" bash -c "C:/Users/%USERNAME%/kali/tmp/%2_preinstall"
 )
 echo Package %2 installed successfully.
-del "C:\Users\%USERNAME%\kali\tmp\contents.txt"
+del "%USERPROFILE%\kali\tmp\contents.txt"
 exit
 
 :remove
 
 rem Check if the package is installed
-if not exist "C:\Users\%USERNAME%\kali\usr\bin\%2" (
+if not exist "%USERPROFILE%\kali\usr\bin\%2" (
     echo Package %2 is not installed. Install it by running: pkg install %2
     exit /b
 )
 
 rem Remove the package
-del "C:\Users\%USERNAME%\kali\usr\bin\%2"
-del "C:\Users\%USERNAME%\kali\usr\bin\%2.sh"
-del "C:\Users\%USERNAME%\kali\usr\lib\%2.lib"
-del "C:\Users\%USERNAME%\kali\usr\libexec\%2.libexec"
-del "C:\Users\%USERNAME%\kali\usr\share\%2.share"
-del "C:\Users\%USERNAME%\kali\usr\local\%2.local"
+del "%USERPROFILE%\kali\usr\bin\%2"
+del "%USERPROFILE%\kali\usr\bin\%2.sh"
+del "%USERPROFILE%\kali\usr\lib\%2.lib"
+del "%USERPROFILE%\kali\usr\libexec\%2.libexec"
+del "%USERPROFILE%\kali\usr\share\%2.share"
+del "%USERPROFILE%\kali\usr\local\%2.local"
 echo Package %2 removed successfully.
 exit
 
 :upgrade
 
 rem Check if the package is installed
-if not exist "C:\Users\%USERNAME%\kali\usr\bin\%2" (
+if not exist "%USERPROFILE%\kali\usr\bin\%2" (
     echo Package %2 is not installed. Install it by running: pkg install %2
     exit /b
 )
 
-rem Save package contents to C:\Users\%USERNAME%\kali\tmp\contents.txt
+rem Save package contents to %USERPROFILE%\kali\tmp\contents.txt
 
 echo Fetching package contents for upgrade...
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/bin/%2 >"C:\Users\%USERNAME%\kali\tmp\contents.txt"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/bin/%2 >"%USERPROFILE%\kali\tmp\contents.txt"
 
 rem Check if the contents are "404: Not Found"
 
-set /p contents=<C:\Users\%USERNAME%\kali\tmp\contents.txt
+set /p contents=<%USERPROFILE%\kali\tmp\contents.txt
 
 if "!contents!"=="404: Not Found" (
     echo Package %2 is not available anymore. Sorry!
@@ -190,24 +190,24 @@ if %errorlevel%==1 (
 
 rem Upgrade the package
 echo Upgrading package %2...
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/bin/%2 >"C:\Users\%USERNAME%\kali\usr\bin\%2"
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/lib/%2.lib >"C:\Users\%USERNAME%\kali\usr\lib\%2.lib"
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/libexec/%2.libexec >"C:\Users\%USERNAME%\kali\usr\libexec\%2.libexec"
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/share/%2.share >"C:\Users\%USERNAME%\kali\usr\share\%2.share"
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/local/%2.local >"C:\Users\%USERNAME%\kali\usr\local\%2.local"
-echo. >"C:\Users\%USERNAME%\kali\usr\bin\%2.sh"
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/PREINSTALL >"C:\Users\%USERNAME%\kali\tmp\%2_preinstall"
-set /p preinstaller_contents=<C:\Users\%USERNAME%\kali\tmp\%2_preinstall
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/bin/%2 >"%USERPROFILE%\kali\usr\bin\%2"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/lib/%2.lib >"%USERPROFILE%\kali\usr\lib\%2.lib"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/libexec/%2.libexec >"%USERPROFILE%\kali\usr\libexec\%2.libexec"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/share/%2.share >"%USERPROFILE%\kali\usr\share\%2.share"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/rootfs/usr/local/%2.local >"%USERPROFILE%\kali\usr\local\%2.local"
+echo. >"%USERPROFILE%\kali\usr\bin\%2.sh"
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/PREINSTALL >"%USERPROFILE%\kali\tmp\%2_preinstall"
+set /p preinstaller_contents=<%USERPROFILE%\kali\tmp\%2_preinstall
 if "!contents!"=="404: Not Found" (
     echo Package %2 has no preinstall script
 ) else (
     echo Running preinstall script for package %2...
-    "C:\Users\%USERNAME%\kali\usr\bin\busybox.exe" bash -c "C:/Users/%USERNAME%/kali/tmp/%2_preinstall"
+    "%USERPROFILE%\kali\usr\bin\busybox.exe" bash -c "C:/Users/%USERNAME%/kali/tmp/%2_preinstall"
 )
 echo Package %2 upgraded successfully.
 
-del "C:\Users\%USERNAME%\kali\tmp\contents.txt"
-del "C:\Users\%USERNAME%\kali\tmp\%2_preinstall"
+del "%USERPROFILE%\kali\tmp\contents.txt"
+del "%USERPROFILE%\kali\tmp\%2_preinstall"
 exit
 
 :search
@@ -224,7 +224,7 @@ exit
 rem List all packages
 setlocal enabledelayedexpansion
 set /i count=0
-for /f "delims=" %%a in ('dir /b "C:\Users\%USERNAME%\kali\usr\bin\*.sh"') do (
+for /f "delims=" %%a in ('dir /b "%USERPROFILE%\kali\usr\bin\*.sh"') do (
     set /a count+=1
     rem Remove .sh from noextension
     set noextension=%%a
