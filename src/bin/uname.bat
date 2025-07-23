@@ -149,7 +149,7 @@ if "%arg:~0,2%"=="--" (
     if "%arg:~0,1%"=="-" (
         setlocal enabledelayedexpansion
         set "opts=!arg:~1!"
-        for /l %%i in (0,1,31) do (
+        for /l %%i in (0,1,4096) do (
             if "!opts:~%%i,1!"=="" goto end_opts_loop
             set "opt=!opts:~%%i,1!"
             if "!opt!"=="a" set flag_a=1
