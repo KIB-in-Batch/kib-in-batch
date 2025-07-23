@@ -222,18 +222,12 @@ exit
 :list
 
 rem List all packages
-setlocal enabledelayedexpansion
-set /i count=0
-for /f "delims=" %%a in ('dir /b "%USERPROFILE%\kali\usr\bin\*.sh"') do (
+set count=0
+for /f "delims=" %%a in ('dir /b "%USERPROFILE%\kali\usr\bin\*.sh" 2^>^&1') do (
     set /a count+=1
     rem Remove .sh from noextension
     set noextension=%%a
     set noextension=!noextension:.sh=!
-    if !count!==1 (
-        rem Hide the error message at the top
-        <nul set /p=[1A[2K
-    )
     echo Package !count! [1;37m- [3;36m!noextension![0m
 )
-endlocal
 exit

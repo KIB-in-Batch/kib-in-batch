@@ -11,21 +11,21 @@ File System
 
     * For example if your chosen drive letter is Z:, do this:
 
-    ---------------------------
+    ```code
     cd Z:/
-    ---------------------------
+    ```endcode
 
     * And not this:
 
-    ---------------------------
+    ```code
     cd /
-    ---------------------------
+    ```endcode
 
     * If you forgot your chosen drive letter, do this:
 
-    ---------------------------
+    ```code
     cd $KALIROOT/ # KALIROOT is set to your chosen drive letter
-    ---------------------------
+    ```endcode
 
 Permissions
 ===========

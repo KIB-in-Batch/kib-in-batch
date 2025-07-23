@@ -9,9 +9,9 @@ Uninstallation
 
 You should first download the source code archive from <https://github.com/Kali-in-Batch/kali-in-batch/releases/latest>, extract it and run this in PowerShell or Command Prompt in the directory you extracted the archive to:
 
----------------------------
+```code
 .\uninstall.bat
----------------------------
+```endcode
 
 End
 ===
