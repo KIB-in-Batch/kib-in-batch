@@ -30,6 +30,7 @@ rem * %~dp0bin\uname.bat - Displays system information
 rem * %~dp0bin\which.bat - Displays location of a file or directory in the PATH
 rem * %~dp0bin\whoami.bat - Displays the current user
 rem * %~dp0bin\msfconsole.bat - Uses the Windows Subsystem for Linux to launch the Metasploit Framework
+rem * %~dp0bin\kibfetch.bat - Simple neofetch-like program
 
 rem Color Definitions
 set "COLOR_RESET=[0m"
@@ -441,11 +442,41 @@ echo.
     echo BUG_REPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/issues"
 ) > "!kaliroot!\etc\os-release" 2>>"%APPDATA%\kali_in_batch\errors.log"
 
-xcopy "%~dp0bin\*" "!kaliroot!\usr\bin\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+rem Create applet symlinks so many tools don't break because something is missing from /bin
+
+(
+    del /s /q "!kaliroot!\usr\bin\ls.exe"
+    del /s /q "!kaliroot!\usr\bin\rm.exe"
+    del /s /q "!kaliroot!\usr\bin\cp.exe"
+    del /s /q "!kaliroot!\usr\bin\mv.exe"
+    del /s /q "!kaliroot!\usr\bin\sh.exe"
+    del /s /q "!kaliroot!\usr\bin\bash.exe"
+    del /s /q "!kaliroot!\usr\bin\echo.exe"
+    del /s /q "!kaliroot!\usr\bin\printf.exe"
+) >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+
+(
+    mklink "!kaliroot!\usr\bin\ls.exe" "!kaliroot!\usr\bin\busybox.exe"
+    mklink "!kaliroot!\usr\bin\rm.exe" "!kaliroot!\usr\bin\busybox.exe"
+    mklink "!kaliroot!\usr\bin\cp.exe" "!kaliroot!\usr\bin\busybox.exe"
+    mklink "!kaliroot!\usr\bin\mv.exe" "!kaliroot!\usr\bin\busybox.exe"
+    mklink "!kaliroot!\usr\bin\sh.exe" "!kaliroot!\usr\bin\busybox.exe"
+    mklink "!kaliroot!\usr\bin\bash.exe" "!kaliroot!\usr\bin\busybox.exe"
+    mklink "!kaliroot!\usr\bin\echo.exe" "!kaliroot!\usr\bin\busybox.exe"
+    mklink "!kaliroot!\usr\bin\printf.exe" "!kaliroot!\usr\bin\busybox.exe"
+) >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+
+if errorlevel 1 (
+    echo !COLOR_ERROR!Could not create symlinks. Please run as admin or enable developer mode in settings.!COLOR_RESET!
+    pause >nul
+    exit /b 1
+)
+
 xcopy "%~dp0etc\*" "!kaliroot!\etc\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 xcopy "%~dp0lib\*" "!kaliroot!\usr\lib\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 xcopy "%~dp0share\*" "!kaliroot!\usr\share\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 xcopy "%~dp0libexec\*" "!kaliroot!\usr\libexec\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+xcopy "%~dp0bin\*" "!kaliroot!\usr\bin\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 
 if !errorlevel! neq 0 (
     <nul set /p "=[ !COLOR_ERROR!FAILED!COLOR_RESET! ]"
@@ -605,17 +636,17 @@ if not exist "!HOME!\.bashrc" (
 set "ENV=C:/Users/!username!/kali/etc/.kibenv"
 
 if not exist "!HOME!\.hushlogin" (
-    echo ██   ██  █████  ██      ██     ██ ███    ██     ██████   █████  ████████  ██████ ██   ██
-    echo ██  ██  ██   ██ ██      ██     ██ ████   ██     ██   ██ ██   ██    ██    ██      ██   ██
-    echo █████   ███████ ██      ██     ██ ██ ██  ██     ██████  ███████    ██    ██      ███████
-    echo ██  ██  ██   ██ ██      ██     ██ ██  ██ ██     ██   ██ ██   ██    ██    ██      ██   ██
-    echo ██   ██ ██   ██ ███████ ██     ██ ██   ████     ██████  ██   ██    ██     ██████ ██   ██
-    echo.
-    echo For a guide on how to use Kali in Batch, run 'ls Z:/usr/share/guide' and
+rem    echo ██   ██  █████  ██      ██     ██ ███    ██     ██████   █████  ████████  ██████ ██   ██
+rem    echo ██  ██  ██   ██ ██      ██     ██ ████   ██     ██   ██ ██   ██    ██    ██      ██   ██
+rem    echo █████   ███████ ██      ██     ██ ██ ██  ██     ██████  ███████    ██    ██      ███████
+rem    echo ██  ██  ██   ██ ██      ██     ██ ██  ██ ██     ██   ██ ██   ██    ██    ██      ██   ██
+rem    echo ██   ██ ██   ██ ███████ ██     ██ ██   ████     ██████  ██   ██    ██     ██████ ██   ██
+rem    echo.
+    echo For a guide on how to use Kali in Batch, run 'ls !kaliroot!/usr/share/guide' and
     echo open the text file that you think will help you.
     echo.
     echo Example:
-    echo $ less Z:/usr/share/guide/hacking.txt # Less is used here because you can scroll
+    echo $ less !kaliroot!/usr/share/guide/hacking.txt # Less is used here because you can scroll
     echo.
     echo You can just copy and paste that command and adjust the file name.
     echo To disable this message and the banner, create a file called .hushlogin in your home directory.

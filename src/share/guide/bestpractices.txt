@@ -1,0 +1,40 @@
+Introduction
+============
+
+Kali in Batch behaves similarly to a Linux system, but with some differences and additions.
+Here you can see the best practices when using Kali in Batch.
+
+File System
+===========
+
+1. We recommend you use <drive letter>:/ instead of /, as it is universal and avoid issues when you are in another drive.
+
+    * For example if your chosen drive letter is Z:, do this:
+
+    ---------------------------
+    cd Z:/
+    ---------------------------
+
+    * And not this:
+
+    ---------------------------
+    cd /
+    ---------------------------
+
+    * If you forgot your chosen drive letter, do this:
+
+    ---------------------------
+    cd $KALIROOT/ # KALIROOT is set to your chosen drive letter
+    ---------------------------
+
+Permissions
+===========
+
+Unlike a regular Linux system, Kali in Batch does not implement file system restrictions to the non-root user. The only special privilege root has is the ability to manage packages.
+
+That means we absolutely do not recommend to try doing dangerous operations as the non-root user, as you will NOT see any permission denied errors.
+
+End
+===
+
+By now, you should have learned the best practices when using Kali in Batch.
