@@ -107,10 +107,53 @@ Z:\>\bin\kibfetch.bat
                           CPU Revision: 8d01
 
 
-Z:\>
 ```endcode
 
 Packages
 ========
 
-You are able to 
+You are able to manage packages using pkg.bat even outside Kali in Batch, which will add even more executables to "/usr/bin". 
+Here's an example of using pkg.bat from the command prompt, assuming you have the Kali in Batch root directory set to "Z:":
+
+```code
+C:\Users\benja>Z:\usr\bin\pkg.bat install example-package
+Fetching package contents...
+################################################################################################################################################################################## 100.0%
+Package example-package is available.
+Installing package example-package...
+################################################################################################################################################################################## 100.0%
+################################################################################################################################################################################## 100.0%
+################################################################################################################################################################################## 100.0%
+################################################################################################################################################################################## 100.0%
+################################################################################################################################################################################## 100.0%
+################################################################################################################################################################################## 100.0%
+Running preinstall script for package example-package...
+This is a preinstall script
+Package example-package installed successfully.
+
+C:\Users\benja>Z:\usr\bin\example-package
+Hello, world!
+```endcode
+
+Even Further
+============
+
+You can also improve the experience even more by adding Z:\usr\bin to your system's PATH environment variable. This will allow you to run Kali in Batch executables from anywhere without typing out the full path.
+
+After that, you can just run things like:
+
+```code
+C:\Users\benja>kibfetch
+██   ██ ██ ██████         benja@ACERB
+██  ██  ██ ██   ██        -------------------------------
+█████   ██ ██████         OS: Kali in Batch 9.1
+██  ██  ██ ██   ██        Kernel: KALI_IN_BATCH_Windows_NT
+██   ██ ██ ██████         Kali in Batch Root: Z:/
+                          CPU Architecture: AMD64
+                          CPU Identifier: Intel64 Family 6 Model 141 Stepping 1, GenuineIntel
+                          CPU Level: 6
+                          Number of CPU cores: 12
+                          CPU Revision: 8d01
+
+
+```endcode
