@@ -104,7 +104,7 @@ set "username=%USERNAME%"
 title Kali in Batch
 if not exist "%APPDATA%\kali_in_batch" (
 
-    where winget >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+    where winget >nul 2>&1
     if !errorlevel! neq 0 (
         echo Winget is not installed.
         echo Redirecting to the winget download page...
@@ -435,13 +435,6 @@ echo.
     echo     export HOME="!kaliroot!/home/$USERNAME"
     echo     PS1=$'\[\e[32m\]┌──^(\[\e[34m\]\u㉿\h\[\e[32m\]^)-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]$ \[\e[0m\]'
     echo }
-    echo.
-    echo ## Check if not interactive ##
-    echo.
-    echo if [[ $- != *i* ]]; then
-    echo     echo "Not an interactive session, likely running in CI/CD"
-    echo     echo "If you are seeing this in a CI/CD output, it means the software ran successfully."
-    echo fi
     echo.
     echo ## Load ~/.bashrc ##
     echo.
