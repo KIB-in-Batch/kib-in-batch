@@ -87,6 +87,18 @@ set "COLOR_INFO=!COLOR_BRIGHT_CYAN!!COLOR_BOLD!"
 set "COLOR_DEBUG=!COLOR_BRIGHT_MAGENTA!!COLOR_BOLD!"
 set "COLOR_PROMPT=!COLOR_BRIGHT_BLUE!!COLOR_BOLD!"
 
+if not exist "%~dp0bin" (
+    echo This script is not meant to be used standalone.
+    pause >nul
+    start https://github.com/Kali-in-Batch/kali-in-batch/releases/latest
+    exit /b 1
+) else if not exist "%~dp0share" (
+    echo This script is not meant to be used standalone.
+    pause >nul
+    start https://github.com/Kali-in-Batch/kali-in-batch/releases/latest
+    exit /b 1
+)
+
 cls
 set "username=%USERNAME%"
 title Kali in Batch
@@ -646,7 +658,7 @@ rem    echo.
     echo open the text file that you think will help you.
     echo.
     echo Example:
-    echo $ less !kaliroot!/usr/share/guide/hacking.txt # Less is used here because you can scroll
+    echo $ notepad !kaliroot!/usr/share/guide/hacking.txt
     echo.
     echo You can just copy and paste that command and adjust the file name.
     echo To disable this message and the banner, create a file called .hushlogin in your home directory.
