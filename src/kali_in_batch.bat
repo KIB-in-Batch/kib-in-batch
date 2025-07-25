@@ -30,6 +30,7 @@ rem * %~dp0bin\uname.bat - Displays system information
 rem * %~dp0bin\which.bat - Displays location of a file or directory in the PATH
 rem * %~dp0bin\whoami.bat - Displays the current user
 rem * %~dp0bin\msfconsole.bat - Uses the Windows Subsystem for Linux to launch the Metasploit Framework
+rem * %~dp0bin\kibfetch.bat - Simple neofetch-like program
 
 rem Color Definitions
 set "COLOR_RESET=[0m"
@@ -86,12 +87,24 @@ set "COLOR_INFO=!COLOR_BRIGHT_CYAN!!COLOR_BOLD!"
 set "COLOR_DEBUG=!COLOR_BRIGHT_MAGENTA!!COLOR_BOLD!"
 set "COLOR_PROMPT=!COLOR_BRIGHT_BLUE!!COLOR_BOLD!"
 
+if not exist "%~dp0bin" (
+    echo This script is not meant to be used standalone.
+    pause >nul
+    start https://github.com/Kali-in-Batch/kali-in-batch/releases/latest
+    exit /b 1
+) else if not exist "%~dp0share" (
+    echo This script is not meant to be used standalone.
+    pause >nul
+    start https://github.com/Kali-in-Batch/kali-in-batch/releases/latest
+    exit /b 1
+)
+
 cls
 set "username=%USERNAME%"
 title Kali in Batch
 if not exist "%APPDATA%\kali_in_batch" (
 
-    where winget >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+    where winget >nul 2>&1
     if !errorlevel! neq 0 (
         echo Winget is not installed.
         echo Redirecting to the winget download page...
@@ -264,7 +277,7 @@ for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.V
 
 cls
 
-echo Welcome to Kali in Batch 9.0 ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to Kali in Batch 9.1 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 ::                                                                 |
@@ -430,22 +443,52 @@ echo.
 
 (
     echo NAME="Kali in Batch"
-    echo VERSION="9.0"
+    echo VERSION="9.1"
     echo ID=kalibatch
     echo ID_LIKE=linux
-    echo VERSION_ID="9.0"
-    echo PRETTY_NAME="Kali in Batch 9.0"
+    echo VERSION_ID="9.1"
+    echo PRETTY_NAME="Kali in Batch 9.1"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kali-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
     echo BUG_REPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/issues"
 ) > "!kaliroot!\etc\os-release" 2>>"%APPDATA%\kali_in_batch\errors.log"
 
-xcopy "%~dp0bin\*" "!kaliroot!\usr\bin\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+rem Create applet symlinks so many tools don't break because something is missing from /bin
+
+(
+    del /s /q "!kaliroot!\usr\bin\ls.exe"
+    del /s /q "!kaliroot!\usr\bin\rm.exe"
+    del /s /q "!kaliroot!\usr\bin\cp.exe"
+    del /s /q "!kaliroot!\usr\bin\mv.exe"
+    del /s /q "!kaliroot!\usr\bin\sh.exe"
+    del /s /q "!kaliroot!\usr\bin\bash.exe"
+    del /s /q "!kaliroot!\usr\bin\echo.exe"
+    del /s /q "!kaliroot!\usr\bin\printf.exe"
+) >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+
+(
+    mklink "!kaliroot!\usr\bin\ls.exe" "!kaliroot!\usr\bin\busybox.exe"
+    mklink "!kaliroot!\usr\bin\rm.exe" "!kaliroot!\usr\bin\busybox.exe"
+    mklink "!kaliroot!\usr\bin\cp.exe" "!kaliroot!\usr\bin\busybox.exe"
+    mklink "!kaliroot!\usr\bin\mv.exe" "!kaliroot!\usr\bin\busybox.exe"
+    mklink "!kaliroot!\usr\bin\sh.exe" "!kaliroot!\usr\bin\busybox.exe"
+    mklink "!kaliroot!\usr\bin\bash.exe" "!kaliroot!\usr\bin\busybox.exe"
+    mklink "!kaliroot!\usr\bin\echo.exe" "!kaliroot!\usr\bin\busybox.exe"
+    mklink "!kaliroot!\usr\bin\printf.exe" "!kaliroot!\usr\bin\busybox.exe"
+) >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+
+if errorlevel 1 (
+    echo !COLOR_ERROR!Could not create symlinks. Please run as admin or enable developer mode in settings.!COLOR_RESET!
+    pause >nul
+    exit /b 1
+)
+
 xcopy "%~dp0etc\*" "!kaliroot!\etc\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 xcopy "%~dp0lib\*" "!kaliroot!\usr\lib\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 xcopy "%~dp0share\*" "!kaliroot!\usr\share\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 xcopy "%~dp0libexec\*" "!kaliroot!\usr\libexec\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+xcopy "%~dp0bin\*" "!kaliroot!\usr\bin\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 
 if !errorlevel! neq 0 (
     <nul set /p "=[ !COLOR_ERROR!FAILED!COLOR_RESET! ]"
@@ -461,7 +504,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 9.0>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 9.1>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -512,7 +555,15 @@ curl -s https://raw.githubusercontent.com/Kali-in-Batch/kali-in-batch/refs/heads
 rem Check if the version is the same
 set /p remote_version=<"!kaliroot!\tmp\VERSION.txt"
 set /p local_version=<"%APPDATA%\kali_in_batch\VERSION.txt"
-if !remote_version! gtr !local_version! (
+rem Get the first character of each version and store it in a variable
+set "remote_version_first_char=!remote_version:~0,1!"
+set "local_version_first_char=!local_version:~0,1!"
+if !remote_version_first_char! gtr !local_version_first_char! (
+    rem The version has major breaking changes, so updating will require a reinstall.
+    rem So we will say it is up to date.
+    <nul set /p "=[ !COLOR_SUCCESS!UP-TO-DATE!COLOR_RESET! ]"
+    echo.
+) else if !remote_version! gtr !local_version! (
     rem Outdated Kali in Batch installation
     <nul set /p "=[ !COLOR_WARNING!OUTDATED-LOCAL-VERSION!COLOR_RESET! ]"
     echo.
@@ -545,7 +596,7 @@ if "%~1"=="automated" (
 :login
 
 cls
-echo Kali in Batch 9.0
+echo Kali in Batch 9.1
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root
@@ -605,17 +656,17 @@ if not exist "!HOME!\.bashrc" (
 set "ENV=C:/Users/!username!/kali/etc/.kibenv"
 
 if not exist "!HOME!\.hushlogin" (
-    echo ██   ██  █████  ██      ██     ██ ███    ██     ██████   █████  ████████  ██████ ██   ██
-    echo ██  ██  ██   ██ ██      ██     ██ ████   ██     ██   ██ ██   ██    ██    ██      ██   ██
-    echo █████   ███████ ██      ██     ██ ██ ██  ██     ██████  ███████    ██    ██      ███████
-    echo ██  ██  ██   ██ ██      ██     ██ ██  ██ ██     ██   ██ ██   ██    ██    ██      ██   ██
-    echo ██   ██ ██   ██ ███████ ██     ██ ██   ████     ██████  ██   ██    ██     ██████ ██   ██
-    echo.
-    echo For a guide on how to use Kali in Batch, run 'ls Z:/usr/share/guide' and
+rem    echo ██   ██  █████  ██      ██     ██ ███    ██     ██████   █████  ████████  ██████ ██   ██
+rem    echo ██  ██  ██   ██ ██      ██     ██ ████   ██     ██   ██ ██   ██    ██    ██      ██   ██
+rem    echo █████   ███████ ██      ██     ██ ██ ██  ██     ██████  ███████    ██    ██      ███████
+rem    echo ██  ██  ██   ██ ██      ██     ██ ██  ██ ██     ██   ██ ██   ██    ██    ██      ██   ██
+rem    echo ██   ██ ██   ██ ███████ ██     ██ ██   ████     ██████  ██   ██    ██     ██████ ██   ██
+rem    echo.
+    echo For a guide on how to use Kali in Batch, run 'ls !kaliroot!/usr/share/guide' and
     echo open the text file that you think will help you.
     echo.
     echo Example:
-    echo $ less Z:/usr/share/guide/hacking.txt # Less is used here because you can scroll
+    echo $ notepad !kaliroot!/usr/share/guide/hacking.txt
     echo.
     echo You can just copy and paste that command and adjust the file name.
     echo To disable this message and the banner, create a file called .hushlogin in your home directory.

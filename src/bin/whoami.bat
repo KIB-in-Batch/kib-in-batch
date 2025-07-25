@@ -19,4 +19,8 @@ rem You should have received a copy of the GNU General Public License
 rem along with this program; if not, write to the Free Software
 rem Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+if not defined USER (
+    set "USER=%USERNAME%"
+)
+
 echo %USER%

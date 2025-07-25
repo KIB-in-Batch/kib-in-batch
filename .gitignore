@@ -15,6 +15,3 @@
 *.tar
 *.tar.*
 bashbug
-usr/
-lib/
-etc/

@@ -9,9 +9,9 @@ Checking If Your Version Is Outdated
 
 When you boot Kali in Batch, it will check for updates. You can see if it is outdated if you see this:
 
----------------------------
+```code
 Checking for remote updates...                       [ OUTDATED-LOCAL-VERSION ]
----------------------------
+```endcode
 
 Checking If You Can Upgrade
 ===========================
@@ -29,26 +29,26 @@ Upgrading To A Minor Update
 
 To upgrade, simply download the source code archive from <https://github.com/Kali-in-Batch/kali-in-batch/releases/latest>, extract it and run this in PowerShell or Command Prompt in the directory you extracted the archive to:
 
----------------------------
+```code
 .\src\kali_in_batch.bat
----------------------------
+```endcode
 
 Upgrading To A Major Update
 ===========================
 
 You should first download the source code archive from <https://github.com/Kali-in-Batch/kali-in-batch/releases/latest>, extract it and run this in PowerShell or Command Prompt in the directory you extracted the archive to:
 
----------------------------
+```code
 .\uninstall.bat
----------------------------
+```endcode
 
 Follow any instructions.
 
 Then run this in PowerShell or Command Prompt from the directory you extracted the archive to:
 
---------------------------
+```code
 .\src\kali_in_batch.bat
---------------------------
+```endcode
 
 End
 ===

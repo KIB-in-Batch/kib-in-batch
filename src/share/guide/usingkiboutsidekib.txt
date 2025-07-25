@@ -1,0 +1,159 @@
+Introduction
+============
+
+Kali in Batch behaves similarly to a Linux system, but with some differences and additions.
+Here you can see how to benefit from Kali in Batch's features without directly using Kali in Batch.
+
+Executables
+===========
+
+A base installation of Kali in Batch contains the following executables in the "/usr/bin" directory:
+
+* clear.bat - Clears the screen
+* kibfetch.bat - Simple neofetch clone
+* msfconsole.bat - Wrapper for Metasploit that uses WSL
+* pkg.bat - Package manager for Kali in Batch
+* touch.bat - Creates a new empty file
+* uname.bat - Displays system information
+* which.bat - Displays location of a file in the PATH
+* whoami.bat - Displays the current user
+* busybox.exe - BusyBox executable
+* bash.exe - Symlink to BusyBox
+* cp.exe - Symlink to BusyBox
+* ls.exe - Symlink to BusyBox
+* echo.exe - Symlink to BusyBox
+* mv.exe - Symlink to BusyBox
+* printf.exe - Symlink to BusyBox
+* rm.exe - Symlink to BusyBox
+* sh.exe - Symlink to BusyBox
+
+This collection of various useful utilities can be used outside of Kali in Batch for an easier Windows experience.
+Here is an example of using them from command prompt, assuming the drive letter for Kali in Batch is "Z:":
+
+```code
+C:\Users\benja>Z:
+
+Z:\>dir
+ El volumen de la unidad Z es Windows 11
+ El número de serie del volumen es: B85B-9857
+
+ Directorio de Z:\
+
+21-07-2025  22:44    <DIR>          .
+23-07-2025  17:21    <DIR>          ..
+21-07-2025  17:19    <SYMLINKD>     bin [Z:\usr\bin]
+21-07-2025  17:19    <DIR>          etc
+21-07-2025  17:19    <DIR>          home
+21-07-2025  17:19    <SYMLINKD>     lib [Z:\usr\lib]
+21-07-2025  17:19    <DIR>          root
+23-07-2025  17:55    <DIR>          tmp
+21-07-2025  17:19    <DIR>          usr
+21-07-2025  17:19    <DIR>          var
+               0 archivos              0 bytes
+              10 dirs  26.302.132.224 bytes libres
+
+Z:\>\bin\busybox.exe
+BusyBox v1.38.0-FRP-5579-g5749feb35 (2025-02-08 12:49:06 UTC)
+(mingw64-gcc 14.2.1-3.fc41; mingw64-crt 12.0.0-4.fc41; glob; Unicode)
+
+BusyBox is copyrighted by many authors between 1998-2025.
+Licensed under GPLv2. See source distribution for detailed
+copyright notices.
+
+Usage: busybox [function [arguments]...]
+   or: busybox --list[-full]
+   or: busybox --install [-s] [-u|DIR]
+   or: busybox --uninstall [-n] file
+   or: function [arguments]...
+
+        BusyBox is a multi-call binary that combines many common Unix
+        utilities into a single executable.  The shell in this build
+        is configured to run built-in utilities without $PATH search.
+        You don't need to install a link to busybox for each utility.
+        To run external program, use full path (/sbin/ip instead of ip).
+
+Currently defined functions:
+        [, [[, ar, arch, ascii, ash, awk, base32, base64, basename, bash, bc, bunzip2, busybox, bzcat, bzip2, cal, cat, cdrop, chattr, chmod, cksum, clear, cmp, comm, cp, cpio, crc32,
+        cut, date, dc, dd, df, diff, dirname, dos2unix, dpkg, dpkg-deb, drop, du, echo, ed, egrep, env, expand, expr, factor, false, fgrep, find, fold, free, fsync, ftpget, ftpput,
+        getopt, grep, groups, gunzip, gzip, hd, head, hexdump, httpd, iconv, id, inotifyd, install, ipcalc, jn, kill, killall, lash, less, link, ln, logname, ls, lsattr, lzcat, lzma,
+        lzop, lzopcat, make, man, md5sum, mkdir, mktemp, mv, nc, nl, nproc, od, paste, patch, pdpmake, pdrop, pgrep, pidof, pipe_progress, pkill, printenv, printf, ps, pwd, readlink,
+        realpath, reset, rev, rm, rmdir, rpm, rpm2cpio, sed, seq, sh, sha1sum, sha256sum, sha3sum, sha512sum, shred, shuf, sleep, sort, split, ssl_client, stat, strings, su, sum, sync,
+        tac, tail, tar, tee, test, time, timeout, touch, tr, true, truncate, ts, tsort, ttysize, uname, uncompress, unexpand, uniq, unix2dos, unlink, unlzma, unlzop, unxz, unzip,
+        uptime, usleep, uudecode, uuencode, vi, watch, wc, wget, which, whoami, whois, xargs, xxd, xz, xzcat, yes, zcat
+
+Z:\>\bin\ls.exe -lahF
+total 16K
+drwxrwxr-x    8 benja    benja       4.0K Jul 21 22:44 ./
+drwxrwxr-x    8 benja    benja       4.0K Jul 21 22:44 ../
+lrwxrwxrwx    2 benja    benja         10 Jul 21 17:19 bin -> Z:/usr/bin/
+drwxrwxr-x    2 benja    benja          0 Jul 21 17:19 etc/
+drwxrwxr-x    3 benja    benja          0 Jul 21 17:19 home/
+lrwxrwxrwx    2 benja    benja         10 Jul 21 17:19 lib -> Z:/usr/lib/
+drwxrwxr-x    2 benja    benja          0 Jul 21 17:19 root/
+drwxrwxr-x    2 benja    benja          0 Jul 23 17:55 tmp/
+drwxrwxr-x    7 benja    benja          0 Jul 21 17:19 usr/
+drwxrwxr-x    2 benja    benja          0 Jul 21 17:19 var/
+
+Z:\>\bin\kibfetch.bat
+██   ██ ██ ██████         benja@ACERB
+██  ██  ██ ██   ██        -------------------------------
+█████   ██ ██████         OS: Kali in Batch 9.1
+██  ██  ██ ██   ██        Kernel: KALI_IN_BATCH_Windows_NT
+██   ██ ██ ██████         Kali in Batch Root: Z:/
+                          CPU Architecture: AMD64
+                          CPU Identifier: Intel64 Family 6 Model 141 Stepping 1, GenuineIntel
+                          CPU Level: 6
+                          Number of CPU cores: 12
+                          CPU Revision: 8d01
+
+
+```endcode
+
+Packages
+========
+
+You are able to manage packages using pkg.bat even outside Kali in Batch, which will add even more executables to "/usr/bin". 
+Here's an example of using pkg.bat from the command prompt, assuming you have the Kali in Batch root directory set to "Z:":
+
+```code
+C:\Users\benja>Z:\usr\bin\pkg.bat install example-package
+Fetching package contents...
+################################################################################################################################################################################## 100.0%
+Package example-package is available.
+Installing package example-package...
+################################################################################################################################################################################## 100.0%
+################################################################################################################################################################################## 100.0%
+################################################################################################################################################################################## 100.0%
+################################################################################################################################################################################## 100.0%
+################################################################################################################################################################################## 100.0%
+################################################################################################################################################################################## 100.0%
+Running preinstall script for package example-package...
+This is a preinstall script
+Package example-package installed successfully.
+
+C:\Users\benja>Z:\usr\bin\example-package
+Hello, world!
+```endcode
+
+Even Further
+============
+
+You can also improve the experience even more by adding Z:\usr\bin to your system's PATH environment variable. This will allow you to run Kali in Batch executables from anywhere without typing out the full path.
+
+After that, you can just run things like:
+
+```code
+C:\Users\benja>kibfetch
+██   ██ ██ ██████         benja@ACERB
+██  ██  ██ ██   ██        -------------------------------
+█████   ██ ██████         OS: Kali in Batch 9.1
+██  ██  ██ ██   ██        Kernel: KALI_IN_BATCH_Windows_NT
+██   ██ ██ ██████         Kali in Batch Root: Z:/
+                          CPU Architecture: AMD64
+                          CPU Identifier: Intel64 Family 6 Model 141 Stepping 1, GenuineIntel
+                          CPU Level: 6
+                          Number of CPU cores: 12
+                          CPU Revision: 8d01
+
+
+```endcode

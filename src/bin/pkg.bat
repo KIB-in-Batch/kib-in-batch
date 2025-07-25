@@ -43,7 +43,7 @@ if "%*"=="" (
 :noargs
 
 echo Usage: pkg ^(install/remove/upgrade/search/list/help^)
-exit
+exit /b 64
 
 :help
 
@@ -56,7 +56,7 @@ echo   upgrade  - Upgrade an installed package to the latest version.
 echo   search   - Open the package database in a browser.
 echo   list     - List all installed packages.
 echo   help     - Display this help message.
-exit
+exit /b
 
 :parse
 
@@ -87,7 +87,7 @@ if "%1"=="install" (
     goto list
 ) else (
     echo Invalid argument.
-    exit /b
+    exit /b 1
 )
 
 :install
@@ -139,14 +139,14 @@ if "!contents!"=="404: Not Found" (
 )
 echo Package %2 installed successfully.
 del "%USERPROFILE%\kali\tmp\contents.txt"
-exit
+exit /b
 
 :remove
 
 rem Check if the package is installed
 if not exist "%USERPROFILE%\kali\usr\bin\%2" (
     echo Package %2 is not installed. Install it by running: pkg install %2
-    exit /b
+    exit /b 1
 )
 
 rem Remove the package
@@ -157,7 +157,7 @@ del "%USERPROFILE%\kali\usr\libexec\%2.libexec"
 del "%USERPROFILE%\kali\usr\share\%2.share"
 del "%USERPROFILE%\kali\usr\local\%2.local"
 echo Package %2 removed successfully.
-exit
+exit /b
 
 :upgrade
 
@@ -208,7 +208,7 @@ echo Package %2 upgraded successfully.
 
 del "%USERPROFILE%\kali\tmp\contents.txt"
 del "%USERPROFILE%\kali\tmp\%2_preinstall"
-exit
+exit /b
 
 :search
 
@@ -217,23 +217,17 @@ rem Open package database in browser
 echo Opening package database in browser...
 start https://github.com/Kali-in-Batch/pkg/tree/main/packages
 
-exit
+exit /b
 
 :list
 
 rem List all packages
-setlocal enabledelayedexpansion
-set /i count=0
-for /f "delims=" %%a in ('dir /b "%USERPROFILE%\kali\usr\bin\*.sh"') do (
+set count=0
+for /f "delims=" %%a in ('dir /b "%USERPROFILE%\kali\usr\bin\*.sh" 2^>^&1') do (
     set /a count+=1
     rem Remove .sh from noextension
     set noextension=%%a
     set noextension=!noextension:.sh=!
-    if !count!==1 (
-        rem Hide the error message at the top
-        <nul set /p=[1A[2K
-    )
     echo Package !count! [1;37m- [3;36m!noextension![0m
 )
-endlocal
-exit
+exit /b
