@@ -436,6 +436,13 @@ echo.
     echo     PS1=$'\[\e[32m\]┌──^(\[\e[34m\]\u㉿\h\[\e[32m\]^)-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]$ \[\e[0m\]'
     echo }
     echo.
+    echo ## Check if not interactive ##
+    echo.
+    echo if [[ $- != *i* ]]; then
+    echo     echo "Not an interactive session, likely running in CI/CD"
+    echo     echo "If you are seeing this in a CI/CD output, it means the software ran successfully."
+    echo fi
+    echo.
     echo ## Load ~/.bashrc ##
     echo.
     echo source ~/.bashrc
@@ -555,7 +562,15 @@ curl -s https://raw.githubusercontent.com/Kali-in-Batch/kali-in-batch/refs/heads
 rem Check if the version is the same
 set /p remote_version=<"!kaliroot!\tmp\VERSION.txt"
 set /p local_version=<"%APPDATA%\kali_in_batch\VERSION.txt"
-if !remote_version! gtr !local_version! (
+rem Get the first character of each version and store it in a variable
+set "remote_version_first_char=!remote_version:~0,1!"
+set "local_version_first_char=!local_version:~0,1!"
+if !remote_version_first_char! gtr !local_version_first_char! (
+    rem The version has major breaking changes, so updating will require a reinstall.
+    rem So we will say it is up to date.
+    <nul set /p "=[ !COLOR_SUCCESS!UP-TO-DATE!COLOR_RESET! ]"
+    echo.
+) else if !remote_version! gtr !local_version! (
     rem Outdated Kali in Batch installation
     <nul set /p "=[ !COLOR_WARNING!OUTDATED-LOCAL-VERSION!COLOR_RESET! ]"
     echo.
