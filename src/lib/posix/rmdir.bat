@@ -21,21 +21,6 @@ rem You should have received a copy of the GNU General Public License
 rem along with this program; if not, write to the Free Software
 rem Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-rem Copyright (C) 2025 benja2998
-rem
-rem This program is free software; you can redistribute it and/or modify
-rem it under the terms of the GNU General Public License as published by
-rem the Free Software Foundation; ONLY version 2 of the License.
-rem
-rem This program is distributed in the hope that it will be useful,
-rem but WITHOUT ANY WARRANTY; without even the implied warranty of
-rem MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-rem GNU General Public License for more details.
-rem
-rem You should have received a copy of the GNU General Public License
-rem along with this program; if not, write to the Free Software
-rem Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
 rem Color Definitions
 set "COLOR_RESET=[0m"
 set "COLOR_BLACK=[30m"
@@ -109,18 +94,13 @@ if %argcount% lss 1 (
     echo %COLOR_ERROR%error:%COLOR_RESET% too few arguments to function %COLOR_BOLD%'rmdir'%COLOR_RESET%
     echo %COLOR_ERROR%%~0%COLOR_RESET% %*
     echo %COLOR_ERROR%^^~~~%COLOR_RESET%
-    exit /b 1
+    exit 1
 ) else if %argcount% gtr 1 (
     echo %COLOR_ERROR%error:%COLOR_RESET% too many arguments to function %COLOR_BOLD%'rmdir'%COLOR_RESET%
     echo %COLOR_ERROR%%~0%COLOR_RESET% %*
     echo %COLOR_ERROR%^^~~~%COLOR_RESET%
-    exit /b 1
+    exit 1
 )
 
 set "pathname=%~1"
-rmdir "%pathname%" >nul 2>&1
-if %errorlevel% neq 0 (
-    exit /b 255
-) else (
-    exit /b 0
-)
+rmdir "%pathname%" >nul 2>&1 && exit 0 || exit -1

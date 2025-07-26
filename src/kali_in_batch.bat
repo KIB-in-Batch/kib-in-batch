@@ -277,7 +277,7 @@ for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.V
 
 cls
 
-echo Welcome to Kali in Batch 9.1 ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to Kali in Batch 9.2 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 ::                                                                 |
@@ -313,6 +313,7 @@ if not exist "!kaliroot!\usr\libexec" set rescue_required=1
 if not exist "!kaliroot!\var" set rescue_required=1
 if not exist "!kaliroot!\root" set rescue_required=1
 if not exist "!kaliroot!\lib" set rescue_required=1
+if not exist "!kaliroot!\usr\include" set rescue_required=1
 
 if %rescue_required%==1 (
     if not exist "!kaliroot!\etc" mkdir "!kaliroot!\etc"
@@ -324,10 +325,12 @@ if %rescue_required%==1 (
         mkdir "!kaliroot!\usr\lib"
         mkdir "!kaliroot!\usr\local"
         mkdir "!kaliroot!\usr\libexec"
+        mkdir "!kaliroot!\usr\include"
     )
     if not exist "!kaliroot!\usr\bin" mkdir "!kaliroot!\usr\bin"
     if not exist "!kaliroot!\usr\share" mkdir "!kaliroot!\usr\share"
     if not exist "!kaliroot!\usr\lib" mkdir "!kaliroot!\usr\lib"
+    if not exist "!kaliroot!\usr\include" mkdir "!kaliroot!\usr\include"
     if not exist "!kaliroot!\usr\local" mkdir "!kaliroot!\usr\local"
     if not exist "!kaliroot!\usr\libexec" mkdir "!kaliroot!\usr\libexec"
     if not exist "!kaliroot!\bin" mklink /d "!kaliroot!\bin" "!kaliroot!\usr\bin" >nul
@@ -443,11 +446,11 @@ echo.
 
 (
     echo NAME="Kali in Batch"
-    echo VERSION="9.1"
+    echo VERSION="9.2"
     echo ID=kalibatch
     echo ID_LIKE=linux
-    echo VERSION_ID="9.1"
-    echo PRETTY_NAME="Kali in Batch 9.1"
+    echo VERSION_ID="9.2"
+    echo PRETTY_NAME="Kali in Batch 9.2"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kali-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
@@ -489,6 +492,7 @@ xcopy "%~dp0lib\*" "!kaliroot!\usr\lib\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\
 xcopy "%~dp0share\*" "!kaliroot!\usr\share\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 xcopy "%~dp0libexec\*" "!kaliroot!\usr\libexec\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 xcopy "%~dp0bin\*" "!kaliroot!\usr\bin\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+xcopy "%~dp0include\*" "!kaliroot!\usr\include\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 
 if !errorlevel! neq 0 (
     <nul set /p "=[ !COLOR_ERROR!FAILED!COLOR_RESET! ]"
@@ -504,7 +508,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 9.1>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 9.2>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -596,7 +600,7 @@ if "%~1"=="automated" (
 :login
 
 cls
-echo Kali in Batch 9.1
+echo Kali in Batch 9.2
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root

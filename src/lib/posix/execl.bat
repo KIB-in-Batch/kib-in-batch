@@ -1,10 +1,9 @@
 @echo off
-
 chcp 65001 >nul
 
-rem mkdir.bat
-rem    * mkdir API reimplementation for the Kali in Batch project.
-rem    * Usage: mkdir pathname mode
+rem execl.bat
+rem    * execl API reimplementation for the Kali in Batch project.
+rem    * Usage: execl program
 rem    * Licensed under the GPL-2.0-only.
 rem Copyright (C) 2025 benja2998
 rem
@@ -76,31 +75,18 @@ set "COLOR_INFO=%COLOR_BRIGHT_CYAN%%COLOR_BOLD%"
 set "COLOR_DEBUG=%COLOR_BRIGHT_MAGENTA%%COLOR_BOLD%"
 set "COLOR_PROMPT=%COLOR_BRIGHT_BLUE%%COLOR_BOLD%"
 
-rem The original POSIX API is used like this:
-rem mkdir(const char *pathname, mode_t mode);
+setlocal enabledelayedexpansion
+shift
 
-rem The Batch API is used like this:
-rem mkdir pathname mode
+rem Build argument string
+set "ARGS="
+:build_args
+if "%~1"=="" goto run
+set "ARGS=!ARGS! "%~1""
+shift
+goto build_args
 
-rem Loop for each argument given
+:run
 
-set argcount=0
-
-for %%i in (%*) do (
-    set /a argcount+=1
-)
-
-if %argcount% lss 2 (
-    echo %COLOR_ERROR%error:%COLOR_RESET% too few arguments to function %COLOR_BOLD%'mkdir'%COLOR_RESET%
-    echo %COLOR_ERROR%%~0%COLOR_RESET% %*
-    echo %COLOR_ERROR%^^~~~%COLOR_RESET%
-    exit 1
-) else if %argcount% gtr 2 (
-    echo %COLOR_ERROR%error:%COLOR_RESET% too many arguments to function %COLOR_BOLD%'mkdir'%COLOR_RESET%
-    echo %COLOR_ERROR%%~0%COLOR_RESET% %*
-    echo %COLOR_ERROR%^^~~~%COLOR_RESET%
-    exit 1
-)
-
-set "pathname=%~1"
-mkdir "%pathname%" >nul 2>&1 && exit 0 || exit -1
+rem Run the executable with arguments
+%EXE% %ARGS%
