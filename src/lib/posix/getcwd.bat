@@ -1,10 +1,9 @@
 @echo off
-
 chcp 65001 >nul
 
-rem mkdir.bat
-rem    * mkdir API reimplementation for the Kali in Batch project.
-rem    * Usage: mkdir pathname mode
+rem getcwd.bat
+rem    * getcwd API reimplementation for the Kali in Batch project.
+rem    * Usage: getcwd
 rem    * Licensed under the GPL-2.0-only.
 rem Copyright (C) 2025 benja2998
 rem
@@ -77,30 +76,27 @@ set "COLOR_DEBUG=%COLOR_BRIGHT_MAGENTA%%COLOR_BOLD%"
 set "COLOR_PROMPT=%COLOR_BRIGHT_BLUE%%COLOR_BOLD%"
 
 rem The original POSIX API is used like this:
-rem mkdir(const char *pathname, mode_t mode);
-
+rem    char *getcwd(char *buf, size_t size);
 rem The Batch API is used like this:
-rem mkdir pathname mode
+rem    getcwd
+rem The Batch API is not meant to be used standalone, but rather through unistd.h.
 
-rem Loop for each argument given
-
+rem Check argument count: getcwd expects 0 args
 set argcount=0
-
 for %%i in (%*) do (
     set /a argcount+=1
 )
-
-if %argcount% lss 2 (
-    echo %COLOR_ERROR%error:%COLOR_RESET% too few arguments to function %COLOR_BOLD%'mkdir'%COLOR_RESET%
+if %argcount% neq 0 (
+    echo %COLOR_ERROR%error:%COLOR_RESET% getcwd takes no arguments, use the wrapper in unistd.h in a C file for arguments%COLOR_RESET%
     echo %COLOR_ERROR%%~0%COLOR_RESET% %*
     echo %COLOR_ERROR%^^~~~%COLOR_RESET%
-    exit 1
-) else if %argcount% gtr 2 (
-    echo %COLOR_ERROR%error:%COLOR_RESET% too many arguments to function %COLOR_BOLD%'mkdir'%COLOR_RESET%
-    echo %COLOR_ERROR%%~0%COLOR_RESET% %*
-    echo %COLOR_ERROR%^^~~~%COLOR_RESET%
-    exit 1
+    exit /b 1
 )
 
-set "pathname=%~1"
-mkdir "%pathname%" >nul 2>&1 && exit 0 || exit -1
+rem Store %cd% with backslashes converted to slashes in cwd
+
+set "cwd=%cd:/=\%"
+
+echo %cwd%
+
+exit /b 0

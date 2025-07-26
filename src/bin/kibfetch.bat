@@ -21,21 +21,6 @@ rem You should have received a copy of the GNU General Public License
 rem along with this program; if not, write to the Free Software
 rem Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-rem Copyright (C) 2025 benja2998
-rem
-rem This program is free software; you can redistribute it and/or modify
-rem it under the terms of the GNU General Public License as published by
-rem the Free Software Foundation; ONLY version 2 of the License.
-rem
-rem This program is distributed in the hope that it will be useful,
-rem but WITHOUT ANY WARRANTY; without even the implied warranty of
-rem MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-rem GNU General Public License for more details.
-rem
-rem You should have received a copy of the GNU General Public License
-rem along with this program; if not, write to the Free Software
-rem Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
 rem Color Definitions
 set "COLOR_RESET=[0m"
 set "COLOR_BLACK=[30m"
@@ -101,7 +86,7 @@ set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
 
 echo ██   ██ ██ ██████         %COLOR_DEBUG%%USER%%COLOR_RESET%@%COLOR_DEBUG%%COMPUTERNAME%%COLOR_RESET%
 echo ██  ██  ██ ██   ██        -------------------------------
-echo █████   ██ ██████         %COLOR_DEBUG%OS%COLOR_RESET%: Kali in Batch 9.1
+echo █████   ██ ██████         %COLOR_DEBUG%OS%COLOR_RESET%: Kali in Batch 9.2
 echo ██  ██  ██ ██   ██        %COLOR_DEBUG%Kernel%COLOR_RESET%: KALI_IN_BATCH_%OS%
 echo ██   ██ ██ ██████         %COLOR_DEBUG%Kali in Batch Root%COLOR_RESET%: %kaliroot%/
 echo                           %COLOR_DEBUG%CPU Architecture%COLOR_RESET%: %PROCESSOR_ARCHITECTURE%
