@@ -8,6 +8,7 @@
 #include <process.h>
 #include <time.h>
 #include <stdarg.h>
+#include <windows.h>
 #define getpid _getpid
 
 #define MAX_PATH_LEN 1024
@@ -51,6 +52,32 @@ static inline int read_kaliroot(char *kaliroot, size_t size) {
     }
 
     return 0;
+}
+
+static inline int chdir(const char* path) {
+    wchar_t wpath[MAX_PATH];
+    if (MultiByteToWideChar(CP_UTF8, 0, path, -1, wpath, MAX_PATH) == 0) {
+        errno = EINVAL;  // Set errno for POSIX compliance
+        return -1;
+    }
+    if (SetCurrentDirectoryW(wpath)) {
+        return 0; // Success
+    }
+    // Set errno based on Windows error for better POSIX compliance
+    DWORD err = GetLastError();
+    switch (err) {
+        case ERROR_FILE_NOT_FOUND:
+        case ERROR_PATH_NOT_FOUND:
+            errno = ENOENT;
+            break;
+        case ERROR_ACCESS_DENIED:
+            errno = EACCES;
+            break;
+        default:
+            errno = EIO;
+            break;
+    }
+    return -1; // Failure
 }
 
 static inline int posix_execl(const char *path, const char *arg, ...) {
@@ -131,6 +158,7 @@ static inline pid_t fork(void) {
    
     int result = system(cmd);
     return (result == 0) ? 123 : -1;  // Return fake PID on success, -1 on error
+    // TOOD: Make the child inherit the parent's current program counter
 }
 
 static inline int mkdir(const char *path, mode_t mode) {

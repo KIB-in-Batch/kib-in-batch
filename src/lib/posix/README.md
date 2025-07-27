@@ -5,11 +5,15 @@ This directory contains batch file implementations of POSIX APIs. For a referenc
 ## Implemented APIs
 
 * int execl(const char *path, const char \*arg, ...)
+  * Note: The batch file for this is not meant to be used standalone, use the wrapper in unistd.h instead.
 * int mkdir(const char *path, mode_t mode)
 * int rmdir(const char *path)
+* int chdir(const char *path)
+  * Note: This does not have a batch file backend, the logic is just a wrapper for SetCurrentDirectoryW().
 * char *getcwd(char \*buf, size_t size)
+  * Note: The batch file for this is not meant to be used standalone, use the wrapper in unistd.h instead.
 * pid_t fork(void)
-  * Note: The child process does not inherit the parent's current instruction.
+  * Note: This fork() implementation is unreliable and has many differences from POSIX fork()! Do not use it in production!
 
 Other APIs will be implemented in the future.
 
@@ -43,26 +47,28 @@ int main() {
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
         printf("Current working directory: %s\n", cwd);
     } else {
-        perror("getcwd() error");
+        perror("getcwd() error");   
         return 1;
     }
 
     // Create a new directory
+    printf("Creating demo_directory... ");
     mkdir("demo_directory", 0777);
+    printf("Created demo_directory\n");
 
-    // Delete it
-    rmdir("demo_directory");
-
-    // Reproduce
-    pid_t pid = fork();
-
-    if (pid == 0) {
-        printf("Child process\n");
-        // Execute something
-        execl("/bin/ls", "ls", "-l", NULL);
-        printf("This should not be printed\n");
+    // Change to demo_directory
+    printf("Changing to demo_directory... ");
+    if (chdir("demo_directory") != 0) {
+        perror("chdir() error");
+        return 1;
     } else {
-        printf("Parent process\n");
+        printf("Changed to demo_directory\n");
+        char cwd2[4096];
+        if (getcwd(cwd2, sizeof(cwd2)) != NULL) {
+            printf("Current working directory: %s\n", cwd2);
+        } else {
+            perror("getcwd() error");
+        }
     }
 
     return 0;
