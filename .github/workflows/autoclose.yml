@@ -1,0 +1,43 @@
+name: Auto-close failed PRs
+
+on:
+  workflow_run:
+    workflows: ["CI/CD"]
+    types: [completed]
+
+jobs:
+  autoclose:
+    if: ${{ github.event.workflow_run.event == 'pull_request' && github.event.workflow_run.conclusion != 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Close PRs whose checks failed
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const wr = context.payload.workflow_run;
+
+            if (!wr.pull_requests || wr.pull_requests.length === 0) {
+              core.info("No pull requests associated with this workflow run. Exiting.");
+              return;
+            }
+
+            for (const pr of wr.pull_requests) {
+              core.info(`Closing PR #${pr.number} due to failed CI/CD checks.`);
+
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+                state: "closed"
+              });
+
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pr.number,
+                body: "CI/CD checks failed. This pull request has been automatically closed."
+              });
+            }
