@@ -19,7 +19,7 @@ Kali in Batch is a batch script-based environment that runs a bash shell with ma
   * Netcat
   * Nmap
   * Whois
-  * Usable shell scripting environment.
+  * Usable shell scripting environment
 * Simple package manager accessible via the `pkg` command.
 * Update checking mechanism that compares local and remote versions to notify if the installation is outdated.
 * Custom shell prompt and aliases for common commands to enhance usability.
@@ -45,6 +45,48 @@ This project is licensed under the GPL-2.0-only License. See the [LICENSE](LICEN
 * [GitHub Repository](https://github.com/Kali-in-Batch/kali-in-batch)
 * [Latest Releases](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest)
 
----
+## FAQ
 
-This project is not associated with Kali Linux.
+### What is Kali in Batch?
+
+Kali in Batch is a batch script-based environment that runs a bash shell with many Kali Linux utilities on Windows.
+
+### How do I install Kali in Batch?
+
+Download the latest release from the [releases page](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest), run `kali_in_batch.bat`, and follow the prompts to assign a drive letter and complete setup.
+
+### How do I update Kali in Batch?
+
+Kali in Batch checks for updates on startup. For minor updates, download the latest release and run `.\src\kali_in_batch.bat`. For major updates, uninstall first using `.\uninstall.bat` then reinstall.
+
+### How do I uninstall Kali in Batch?
+
+Run the `uninstall.bat` script from the extracted release directory in PowerShell or Command Prompt.
+
+### How do I manage packages?
+
+Use the `pkg` command to install, remove, upgrade, search, and list packages. For example, `pkg install <package-name>`.
+
+### Can I use Kali in Batch utilities outside the environment?
+
+Yes, many utilities are available in the `/usr/bin` directory and can be used from Windows command prompt by referencing their full path or adding them to your system PATH.
+
+### What ethical hacking tools are included?
+
+Kali in Batch includes tools like Nmap, Ncat, and a Metasploit Framework wrapper (`msfconsole`) for ethical hacking and penetration testing.
+
+### Is Kali in Batch a full Linux system?
+
+No, it is a batch script environment that mimics many Linux utilities and behaviors but runs on Windows with some limitations.
+
+### Where can I find POSIX API reimplementations?
+
+POSIX API batch file implementations are located in `/usr/lib/posix` and the header files are located in `/usr/include`. See [src/lib/posix/README.md](./src/lib/posix/README.md) for details.
+
+### Help, the symlinks cannot be created
+
+This is because you didn't run the file as Administrator when developer mode was disabled. Run the file as Administrator or enable developer mode to create symlinks.
+
+### Is Kali in Batch affiliated with Kali Linux?
+
+No, this project is not associated with Kali Linux.

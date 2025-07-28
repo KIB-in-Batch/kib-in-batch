@@ -97,6 +97,16 @@ if not exist "%~dp0bin" (
     pause >nul
     start https://github.com/Kali-in-Batch/kali-in-batch/releases/latest
     exit /b 1
+) else if not exist "%~dp0lib" (
+    echo This script is not meant to be used standalone.
+    pause >nul
+    start https://github.com/Kali-in-Batch/kali-in-batch/releases/latest
+    exit /b 1
+) else if not exist "%~dp0include" (
+    echo This script is not meant to be used standalone.
+    pause >nul
+    start https://github.com/Kali-in-Batch/kali-in-batch/releases/latest
+    exit /b 1
 )
 
 cls
@@ -277,7 +287,7 @@ for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.V
 
 cls
 
-echo Welcome to Kali in Batch 9.2 ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to Kali in Batch 9.3 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 ::                                                                 |
@@ -446,11 +456,11 @@ echo.
 
 (
     echo NAME="Kali in Batch"
-    echo VERSION="9.2"
+    echo VERSION="9.3"
     echo ID=kalibatch
     echo ID_LIKE=linux
-    echo VERSION_ID="9.2"
-    echo PRETTY_NAME="Kali in Batch 9.2"
+    echo VERSION_ID="9.3"
+    echo PRETTY_NAME="Kali in Batch 9.3"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kali-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
@@ -508,7 +518,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 9.2>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 9.3>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -600,7 +610,7 @@ if "%~1"=="automated" (
 :login
 
 cls
-echo Kali in Batch 9.2
+echo Kali in Batch 9.3
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root
