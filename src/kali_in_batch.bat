@@ -687,4 +687,6 @@ rem    echo.
     echo.
 )
 
+exit /b 1
+
 "!busybox_path!" bash -l
