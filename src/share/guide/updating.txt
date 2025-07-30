@@ -7,11 +7,7 @@ Here you can see how to upgrade your Kali in Batch to the latest version.
 Checking If Your Version Is Outdated
 ====================================
 
-When you boot Kali in Batch, it will check for updates. You can see if it is outdated if you see this:
-
-```code
-Checking for remote updates...                       [ OUTDATED-LOCAL-VERSION ]
-```endcode
+See the GitHub page for the latest version of Kali in Batch: <https://github.com/Kali-in-Batch/kali-in-batch>
 
 Checking If You Can Upgrade
 ===========================
