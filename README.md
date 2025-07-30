@@ -36,6 +36,47 @@ Kali in Batch is a batch script-based environment that runs a bash shell with ma
 
 ![image of a terminal nmap scan with uname -a output above](./assets/image.png)
 
+## How it Works
+
+```mermaid
+flowchart TD
+  %% Kali in Batch Setup
+  C[Is Kali in Batch installed?] --> D[Yes] --> E[Proceed to bootloader]
+  C --> F[No] --> G[Do initial setup]
+  
+  %% Initial Setup
+  G --> H[Prompt for drive letter]
+  H --> I[You enter drive letter]
+  I --> IA[Create root file system directories]
+  IA --> J[Download dependencies using winget and download BusyBox using curl]
+  
+  %% Kali in Batch Bootloader
+  E --> K[Begin bootloader]
+  J --> K
+  K --> L[Is GitHub CLI installed?]
+  L --> M[Yes] --> N[Prompt to create an issue with the log file contents as the body]
+  L --> O[No] --> P[Proceed to the boot process]
+  N --> P
+  P --> Q[Is drive letter not assigned?]
+  Q --> R[Yes] --> S[Assign drive letter]
+  Q --> T[No] --> W[Continue with boot process]
+  S --> W
+  W --> X[Is rescue required?]
+  X --> Y[Yes] --> Z[Enter rescue mode]
+  %% Rescue Mode
+  Z --> AA[Remake missing directories]
+  Y --> BB[No] --> CC[Continue with boot process]
+  AA --> CC
+  %% Initialize ROOT environment variable
+  CC --> DD[Set ROOT environment variable]
+  DD --> EE[Copy core files]
+  EE --> FF[Start Nmap, Neovim and Bash services]
+  %% Login
+  FF --> GG[Login with username or root]
+  GG --> HH[Login successful]
+  HH --> II[Start Bash shell]
+```
+
 ## License
 
 This project is licensed under the GPL-2.0-only License. See the [LICENSE](LICENSE) file for details.
