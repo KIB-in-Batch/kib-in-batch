@@ -7,7 +7,7 @@ Kali in Batch is a batch script-based environment that runs a bash shell with ma
 ## Installation
 
 * Download a source code archive from the [latest release](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest).
-* Run `kali_in_batch.bat` to start the environment and perform the initial setup.
+* Run [`kali_in_batch.bat`](./src/kali_in_batch.bat) to start the environment and perform the initial setup.
 * During the first run, you will be prompted to assign a drive letter to the root filesystem (e.g., Z:). This drive letter will be used to mount the Kali root filesystem.
 * The installer will automatically download dependencies such as Nmap and Neovim using winget.
 * The environment will download and set up BusyBox automatically.
@@ -27,7 +27,7 @@ Kali in Batch is a batch script-based environment that runs a bash shell with ma
 
 ## Usage
 
-1. Run `kali_in_batch.bat` to launch the Kali in Batch shell.
+1. Run [`kali_in_batch.bat`](./src/kali_in_batch.bat) to launch the Kali in Batch shell.
 2. On first run, follow the prompts to assign a drive letter and complete setup.
 3. Login with your username or root when prompted.
 4. Once setup is complete, enjoy the bash shell with Kali Linux utilities.
@@ -53,7 +53,7 @@ Kali in Batch is a batch script-based environment that runs a bash shell with ma
 
 ### How do I install Kali in Batch?
 
-Download the latest release from the [releases page](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest), run `kali_in_batch.bat`, and follow the prompts to assign a drive letter and complete setup.
+Download the latest release from the [releases page](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest), run [`kali_in_batch.bat`](./src/kali_in_batch.bat), and follow the prompts to assign a drive letter and complete setup.
 
 ### How do I update Kali in Batch?
 
