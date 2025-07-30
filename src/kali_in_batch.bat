@@ -287,7 +287,7 @@ for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.V
 
 cls
 
-echo Welcome to Kali in Batch 9.4 ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to Kali in Batch 9.5.0 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 ::                                                                 |
@@ -456,11 +456,11 @@ echo.
 
 (
     echo NAME="Kali in Batch"
-    echo VERSION="9.4"
+    echo VERSION="9.5.0"
     echo ID=kalibatch
     echo ID_LIKE=linux
-    echo VERSION_ID="9.4"
-    echo PRETTY_NAME="Kali in Batch 9.4"
+    echo VERSION_ID="9.5.0"
+    echo PRETTY_NAME="Kali in Batch 9.5.0"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kali-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
@@ -518,7 +518,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 9.4>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 9.5.0>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -562,34 +562,6 @@ echo.
 
 set "busybox_path=!kaliroot!\usr\bin\busybox.exe"
 
-::                                                                 |
-<nul set /p "=Checking for remote updates...                       "
-
-curl -s https://raw.githubusercontent.com/Kali-in-Batch/kali-in-batch/refs/heads/master/VERSION.txt >"!kaliroot!\tmp\VERSION.txt"
-rem Check if the version is the same
-set /p remote_version=<"!kaliroot!\tmp\VERSION.txt"
-set /p local_version=<"%APPDATA%\kali_in_batch\VERSION.txt"
-rem Get the first character of each version and store it in a variable
-set "remote_version_first_char=!remote_version:~0,1!"
-set "local_version_first_char=!local_version:~0,1!"
-if !remote_version_first_char! gtr !local_version_first_char! (
-    rem The version has major breaking changes, so updating will require a reinstall.
-    rem So we will say it is up to date.
-    <nul set /p "=[ !COLOR_SUCCESS!UP-TO-DATE!COLOR_RESET! ]"
-    echo.
-) else if !remote_version! gtr !local_version! (
-    rem Outdated Kali in Batch installation
-    <nul set /p "=[ !COLOR_WARNING!OUTDATED-LOCAL-VERSION!COLOR_RESET! ]"
-    echo.
-) else if !local_version! gtr !remote_version! (
-    rem Unstable Kali in Batch installation
-    <nul set /p "=[ !COLOR_DEBUG!UNSTABLE-LOCAL-VERSION!COLOR_RESET! ]"
-    echo.
-) else (
-    <nul set /p "=[ !COLOR_SUCCESS!UP-TO-DATE!COLOR_RESET! ]"
-    echo.
-)
-
 echo ------------------------------------------------
 
 echo !COLOR_SUCCESS!System boot completed.!COLOR_RESET!
@@ -610,7 +582,7 @@ if "%~1"=="automated" (
 :login
 
 cls
-echo Kali in Batch 9.4
+echo Kali in Batch 9.5.0
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root
