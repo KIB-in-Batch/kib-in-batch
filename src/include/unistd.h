@@ -16,6 +16,10 @@
 typedef unsigned int mode_t;
 // Define pid_t
 typedef unsigned int pid_t;
+// Define POSIX file constants
+#define STDIN_FILENO 0
+#define STDOUT_FILENO 1
+#define STDERR_FILENO 2
 
 /* Helper to read kaliroot from file, returns 0 on success, -1 on failure */
 static inline int read_kaliroot(char *kaliroot, size_t size) {

@@ -62,7 +62,7 @@ goto :eof
 
 :release
 
-<nul set /p "=9.6.0 "
+<nul set /p "=9.6.1 "
 goto :eof
 
 :machine
@@ -87,7 +87,7 @@ goto :eof
 
 :version
 
-echo Uname for Kali in Batch 9.6.0
+echo Uname for Kali in Batch 9.6.1
 echo This is GPL-2.0-only licensed free software. There is NO WARRANTY.
 goto :eof
 
