@@ -1,6 +1,14 @@
 #ifndef UNISTD_H
 #define UNISTD_H
 
+#define _CRT_SECURE_NO_WARNINGS
+
+// Define POSIX types
+typedef unsigned int mode_t;
+typedef unsigned int pid_t;
+typedef long ssize_t;
+typedef long off_t;
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -9,17 +17,70 @@
 #include <time.h>
 #include <stdarg.h>
 #include <windows.h>
+#include <io.h>  // For _get_osfhandle
+#include <fcntl.h>  // For file modes
 #define getpid _getpid
 
 #define MAX_PATH_LEN 1024
-// Define mode_t
-typedef unsigned int mode_t;
-// Define pid_t
-typedef unsigned int pid_t;
+#define FD_TABLE_SIZE 256  // Maximum open files
+
 // Define POSIX file constants
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
 #define STDERR_FILENO 2
+
+// File open flags (from fcntl.h)
+#define O_RDONLY     _O_RDONLY
+#define O_WRONLY     _O_WRONLY
+#define O_RDWR       _O_RDWR
+#define O_APPEND     _O_APPEND
+#define O_CREAT      _O_CREAT
+#define O_EXCL       _O_EXCL
+#define O_TRUNC      _O_TRUNC
+#define O_TEXT       _O_TEXT
+#define O_BINARY     _O_BINARY
+
+static HANDLE fd_table[FD_TABLE_SIZE];
+static int fd_table_initialized = 0;
+
+static void init_fd_table(void) {
+    if (!fd_table_initialized) {
+        fd_table[0] = GetStdHandle(STD_INPUT_HANDLE);
+        fd_table[1] = GetStdHandle(STD_OUTPUT_HANDLE);
+        fd_table[2] = GetStdHandle(STD_ERROR_HANDLE);
+        for (int i = 3; i < FD_TABLE_SIZE; i++) {
+            fd_table[i] = INVALID_HANDLE_VALUE;
+        }
+        fd_table_initialized = 1;
+    }
+}
+
+// Helper to allocate new file descriptor
+static int alloc_fd(HANDLE handle) {
+    static int initialized = 0;
+    if (!initialized) {
+        init_fd_table();
+        initialized = 1;
+    }
+    
+    for (int i = 3; i < FD_TABLE_SIZE; i++) {
+        if (fd_table[i] == INVALID_HANDLE_VALUE) {
+            fd_table[i] = handle;
+            return i;
+        }
+    }
+    
+    errno = EMFILE;  // Too many open files
+    return -1;
+}
+
+// Helper to get handle from descriptor
+static HANDLE get_handle(int fd) {
+    if (fd < 0 || fd >= FD_TABLE_SIZE) {
+        return INVALID_HANDLE_VALUE;
+    }
+    return fd_table[fd];
+}
 
 /* Helper to read kaliroot from file, returns 0 on success, -1 on failure */
 static inline int read_kaliroot(char *kaliroot, size_t size) {
@@ -266,5 +327,234 @@ static char *getcwd(char *buf, size_t size) {
 
     return buf;
 }
+
+// POSIX write implementation
+static inline ssize_t posix_write(int fd, const void *buf, size_t count) {
+    HANDLE hFile = get_handle(fd);
+    if (hFile == INVALID_HANDLE_VALUE) {
+        errno = EBADF;
+        return -1;
+    }
+
+    DWORD bytesWritten;
+    if (!WriteFile(hFile, buf, (DWORD)count, &bytesWritten, NULL)) {
+        // Map Windows error to POSIX errno
+        DWORD err = GetLastError();
+        switch (err) {
+            case ERROR_ACCESS_DENIED:
+                errno = EACCES;
+                break;
+            case ERROR_INVALID_HANDLE:
+                errno = EBADF;
+                break;
+            case ERROR_BROKEN_PIPE:
+                errno = EPIPE;
+                break;
+            case ERROR_NOT_ENOUGH_MEMORY:
+                errno = ENOMEM;
+                break;
+            case ERROR_HANDLE_DISK_FULL:
+                errno = ENOSPC;
+                break;
+            default:
+                errno = EIO;
+                break;
+        }
+        return -1;
+    }
+
+    return (ssize_t)bytesWritten;
+}
+
+// POSIX open implementation
+static inline int posix_open(const char *path, int flags, ...) {
+    // Handle mode parameter for O_CREAT
+    mode_t mode = 0;
+    if (flags & O_CREAT) {
+        va_list args;
+        va_start(args, flags);
+        mode = va_arg(args, mode_t);
+        va_end(args);
+    }
+
+    // Convert POSIX flags to Windows access flags
+    DWORD access = 0;
+    if (flags & O_RDWR) access = GENERIC_READ | GENERIC_WRITE;
+    else if (flags & O_WRONLY) access = GENERIC_WRITE;
+    else access = GENERIC_READ;  // Default to read-only
+
+    // Convert POSIX flags to Windows creation flags
+    DWORD disposition = OPEN_EXISTING;
+    if (flags & O_CREAT) {
+        disposition = (flags & O_EXCL) ? CREATE_NEW : OPEN_ALWAYS;
+        if (flags & O_TRUNC) disposition = CREATE_ALWAYS;
+    } else if (flags & O_TRUNC) {
+        disposition = TRUNCATE_EXISTING;
+    }
+
+    // Convert path to wide characters
+    wchar_t wpath[MAX_PATH];
+    if (MultiByteToWideChar(CP_UTF8, 0, path, -1, wpath, MAX_PATH) == 0) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    // Create the file
+    HANDLE hFile = CreateFileW(
+        wpath,
+        access,
+        FILE_SHARE_READ | FILE_SHARE_WRITE,  // Share mode
+        NULL,
+        disposition,
+        FILE_ATTRIBUTE_NORMAL,
+        NULL
+    );
+
+    if (hFile == INVALID_HANDLE_VALUE) {
+        // Map Windows error to POSIX errno
+        DWORD err = GetLastError();
+        switch (err) {
+            case ERROR_FILE_NOT_FOUND:
+            case ERROR_PATH_NOT_FOUND:
+                errno = ENOENT;
+                break;
+            case ERROR_ACCESS_DENIED:
+                errno = EACCES;
+                break;
+            case ERROR_FILE_EXISTS:
+                errno = EEXIST;
+                break;
+            case ERROR_DISK_FULL:
+                errno = ENOSPC;
+                break;
+            case ERROR_SHARING_VIOLATION:
+                errno = EBUSY;
+                break;
+            case ERROR_TOO_MANY_OPEN_FILES:
+                errno = EMFILE;
+                break;
+            default:
+                errno = EIO;
+                break;
+        }
+        return -1;
+    }
+
+    // Set append mode if requested
+    if (flags & O_APPEND) {
+        SetFilePointer(hFile, 0, NULL, FILE_END);
+    }
+
+    // Allocate new file descriptor
+    int fd = alloc_fd(hFile);
+    if (fd < 0) {
+        CloseHandle(hFile);
+        return -1;
+    }
+
+    return fd;
+}
+
+// POSIX close implementation
+static inline int posix_close(int fd) {
+    if (fd < 0 || fd >= FD_TABLE_SIZE) {
+        errno = EBADF;
+        return -1;
+    }
+
+    HANDLE hFile = fd_table[fd];
+    if (hFile == INVALID_HANDLE_VALUE) {
+        errno = EBADF;
+        return -1;
+    }
+
+    // Don't close standard streams
+    if (fd >= 0 && fd <= 2) {
+        return 0;
+    }
+
+    if (!CloseHandle(hFile)) {
+        // Map Windows error to POSIX errno
+        DWORD err = GetLastError();
+        switch (err) {
+            case ERROR_INVALID_HANDLE:
+                errno = EBADF;
+                break;
+            default:
+                errno = EIO;
+                break;
+        }
+        return -1;
+    }
+
+    fd_table[fd] = INVALID_HANDLE_VALUE;
+    return 0;
+}
+
+// POSIX read implementation
+static inline ssize_t posix_read(int fd, void *buf, size_t count) {
+    HANDLE hFile = get_handle(fd);
+    if (hFile == INVALID_HANDLE_VALUE) {
+        errno = EBADF;
+        return -1;
+    }
+
+    if (fd == STDIN_FILENO) {
+        DWORD bytesRead;
+        if (!ReadFile(hFile, buf, (DWORD)count, &bytesRead, NULL)) {
+            DWORD err = GetLastError();
+            switch (err) {
+                case ERROR_BROKEN_PIPE:
+                    return 0;  // EOF
+                case ERROR_OPERATION_ABORTED:
+                    errno = EINTR;
+                    return -1;
+                default:
+                    errno = EIO;
+                    return -1;
+            }
+        }
+        return (ssize_t)bytesRead;
+    }
+
+    DWORD bytesRead;
+    if (!ReadFile(hFile, buf, (DWORD)count, &bytesRead, NULL)) {
+        // Map Windows errors to POSIX errno
+        DWORD err = GetLastError();
+        switch (err) {
+            case ERROR_HANDLE_EOF:
+                return 0;  // EOF
+            case ERROR_ACCESS_DENIED:
+                errno = EACCES;
+                break;
+            case ERROR_INVALID_HANDLE:
+                errno = EBADF;
+                break;
+            case ERROR_OPERATION_ABORTED:
+                errno = EINTR;
+                break;
+            case ERROR_NOT_ENOUGH_MEMORY:
+                errno = ENOMEM;
+                break;
+            default:
+                errno = EIO;
+                break;
+        }
+        return -1;
+    }
+
+    // Handle EOF condition
+    if (bytesRead == 0 && count != 0) {
+        return 0;  // EOF
+    }
+
+    return (ssize_t)bytesRead;
+}
+
+#define open posix_open
+#define close posix_close
+#define read posix_read
+#define write posix_write
+#define unlink _unlink
 
 #endif // UNISTD_H

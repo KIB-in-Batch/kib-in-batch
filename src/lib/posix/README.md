@@ -10,8 +10,20 @@ This directory contains batch file implementations of POSIX APIs. For a referenc
 * int rmdir(const char *path)
 * int chdir(const char *path)
   * Note: This does not have a batch file backend, the logic is just a wrapper for SetCurrentDirectoryW().
+* int open(const char *path, int flags, ...)
+  * Note: This does not have a batch file backend.
+* int close(int fd)
+  * Note: This does not have a batch file backend.
+* ssize_t read(int fd, void *buf, size_t count)
+  * Note: This does not have a batch file backend.
+* ssize_t write(int fd, const void *buf, size_t count)
+  * Note: This does not have a batch file backend.
 * char *getcwd(char \*buf, size_t size)
   * Note: The batch file for this is not meant to be used standalone, use the wrapper in unistd.h instead.
+* getpid
+  * Note: This is just a define for _getpid.
+* unlink
+  * Note: This is just a define for _unlink.
 * pid_t fork(void)
   * Note: This fork() implementation is unreliable and has many differences from POSIX fork()! Do not use it in production!
 
