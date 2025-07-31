@@ -112,7 +112,11 @@ if not exist "%~dp0bin" (
 cls
 set "username=%USERNAME%"
 title Kali in Batch
-if not exist "%APPDATA%\kali_in_batch" (
+set "missing="
+if not exist "%APPDATA%\kali_in_batch" set "missing=1"
+if not exist "%USERPROFILE%\kali" set "missing=1"
+
+if defined missing (
 
     where winget >nul 2>&1
     if !errorlevel! neq 0 (
@@ -125,17 +129,19 @@ if not exist "%APPDATA%\kali_in_batch" (
     
     cls
     echo !COLOR_INFO!Kali in Batch Installer!COLOR_RESET!
-    echo !COLOR_BG_BLUE!---------------------------------------
-    echo ^| * Press 1 to install Kali in Batch. ^|
-    echo ^| * Press 2 to exit.                  ^|
-    echo ^| * Press 3 to visit the GitHub page. ^|
-    echo ---------------------------------------!COLOR_RESET!
+    echo !COLOR_BG_BLUE!-----------------------------------------------------
+    echo ^| * Press 1 to install Kali in Batch.               ^|
+    echo ^| * Press 2 to exit.                                ^|
+    echo ^| * Press 3 to enter manual install ^(live shell^).   ^|
+    echo ^| * Press 4 to visit the GitHub page.               ^|
+    echo -----------------------------------------------------!COLOR_RESET!
     echo.
-    choice /c 123 /n /m ""
-    if errorlevel 3 (
+    choice /c 1234 /n /m ""
+    if errorlevel 4 (
         start https://github.com/Kali-in-Batch/kali-in-batch
         exit
     )
+    if errorlevel 3 goto live_shell
     if errorlevel 2 exit
     if errorlevel 1 (
         mkdir "%APPDATA%\kali_in_batch"
@@ -228,19 +234,135 @@ cls
 copy "%~dp0kibenv" "!kaliroot!\etc\.kibenv" /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 goto boot
 
+:live_shell
+
+echo !COLOR_INFO!Starting live shell...!COLOR_RESET!
+mkdir "%APPDATA%\kali_in_batch" >nul 2>&1
+cls
+echo !COLOR_INFO!Type help for a list of commands.!COLOR_RESET!
+echo !COLOR_INFO!Note that kibstrap and mkdrive are REQUIRED for a functional installation.!COLOR_RESET!
+echo !COLOR_INFO!You must type kibstrap before running mkdrive.!COLOR_RESET!
+echo !COLOR_INFO!You must run kibstrap and mkdrive before running pkg.!COLOR_RESET!
+echo !COLOR_INFO!Running getdeps is recommended because it installs Nmap ^(a powerful reconnaissance tool^) and Neovim ^(a powerful text editor^).!COLOR_RESET!
+goto live_shell_loop
+:live_shell_loop
+set "input="
+set /p "input=!COLOR_BRIGHT_RED!root!COLOR_RESET!@kibiso: !COLOR_BOLD!~!COLOR_RESET! # "
+if defined input (
+    if "!input!"=="help" (
+        echo !COLOR_INFO!Available commands: !COLOR_RESET!
+        echo !COLOR_INFO!  - help: Displays this help message. !COLOR_RESET!
+        echo !COLOR_INFO!  - exit: Exits the live shell. !COLOR_RESET!
+        echo !COLOR_INFO!  - kibstrap: Bootstraps a minimal base system at %USERPROFILE%\kali. !COLOR_RESET!
+        echo !COLOR_INFO!  - pkg: Package manager. Use it if you want packages in your base system. !COLOR_RESET!
+        echo !COLOR_INFO!  - getdeps: Installs dependencies of Kali in Batch. !COLOR_RESET!
+        echo !COLOR_INFO!  - mkdrive: Uses subst to create a drive letter for the Kali in Batch root. !COLOR_RESET!
+        echo !COLOR_INFO!  - boot: Boots the Kali in Batch installation. !COLOR_RESET!
+        echo !COLOR_INFO!  - clear: Clears the screen. !COLOR_RESET!
+        echo !COLOR_INFO!  - wipe: Wipes the Kali in Batch installation. !COLOR_RESET!
+        echo.
+    ) else if "!input!"=="exit" (
+        echo !COLOR_INFO!Exiting live shell...!COLOR_RESET!
+        goto wipe
+    ) else if "!input!"=="kibstrap" (
+        mkdir "%USERPROFILE%\kali\home" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        mkdir "%USERPROFILE%\kali\home\!username!" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        mkdir "%USERPROFILE%\kali\tmp" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        mkdir "%USERPROFILE%\kali\usr" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        mkdir "%USERPROFILE%\kali\etc" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        mkdir "%USERPROFILE%\kali\usr\bin" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        mklink /d "%USERPROFILE%\kali\bin" "%USERPROFILE%\kali\usr\bin" >nul 2>&1
+        if errorlevel 1 (
+            echo !COLOR_ERROR!Could not create symlinks. Please run as admin or enable developer mode in settings.!COLOR_RESET!
+            goto wipe
+        )
+        mkdir "%USERPROFILE%\kali\usr\lib" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        mkdir "%USERPROFILE%\kali\usr\share" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        mkdir "%USERPROFILE%\kali\usr\local" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        mkdir "%USERPROFILE%\kali\usr\libexec" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        mklink /d "%USERPROFILE%\kali\lib" "%USERPROFILE%\kali\usr\lib" >nul 2>&1
+        if errorlevel 1 (
+            echo !COLOR_ERROR!Could not create symlinks. Please run as admin or enable developer mode in settings.!COLOR_RESET!
+            pause >nul
+            goto wipe
+        )
+        mkdir "%USERPROFILE%\kali\var" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        mkdir "%USERPROFILE%\kali\root" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        xcopy "%~dp0bin\*" "%USERPROFILE%\kali\usr\bin\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        xcopy "%~dp0etc\*" "%USERPROFILE%\kali\etc\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        xcopy "%~dp0lib\*" "%USERPROFILE%\kali\usr\lib\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        xcopy "%~dp0share\*" "%USERPROFILE%\kali\usr\share\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        xcopy "%~dp0libexec\*" "%USERPROFILE%\kali\usr\libexec\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        echo # Add commands to run on startup here>"%USERPROFILE%\kali\home\!username!\.bashrc"
+        echo # Add commands to run on startup here>"%USERPROFILE%\kali\root\.bashrc"
+        curl -L -o "%USERPROFILE%\kali\usr\bin\busybox.exe" "https://web.archive.org/web/20250627230655/https://frippery.org/files/busybox/busybox64u.exe" -#
+        mkdir "%APPDATA%\kali_in_batch" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+    ) else if "!input!"=="mkdrive" (
+        set /p "kaliroot=Enter drive letter (e.g Z:): "
+        if exist !kaliroot! (
+            echo Drive letter already in use.
+        )
+        subst !kaliroot! "%USERPROFILE%\kali" >nul 2>&1
+        if errorlevel 1 (
+            echo Invalid drive letter.
+        )
+        @echo on
+        echo !kaliroot!>"%APPDATA%\kali_in_batch\kaliroot.txt"
+        @echo off
+        rem Set install part to the txt file created in installer
+        set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
+    ) else if "!input!"=="clear" (
+        cls
+    ) else if "!input!"=="boot" (
+        set "busybox_path=!kaliroot!\usr\bin\busybox.exe"
+        copy "%~dp0kibenv" "!kaliroot!\etc\.kibenv" /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        goto boot
+    ) else if "!input!"=="wipe" (
+        goto wipe
+    ) else if "!input!"=="getdeps" (
+        call :get_deps
+    ) else if "!input!"=="pkg" (
+        set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
+        set "pkg_path=!kaliroot!\usr\bin\pkg.bat"
+        set /p "args=Enter arguments to pass to pkg: "
+        call "!pkg_path!" !args!
+    ) else (
+        echo !input!: command not found
+    )
+)
+goto live_shell_loop 
+
 :wipe
 echo Wiping kali rootfs...
 echo.
+rem Remove the subst drive
+set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
+subst !kaliroot! /d >nul 2>&1
 rem Delete all files Kali in Batch creates
 rmdir /s /q "%USERPROFILE%\kali" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
-rmdir /s /q "%APPDATA%\kali_in_batch" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
-rem Remove the drive letter assignment
-subst !kaliroot! /d >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+rmdir /s /q "%APPDATA%\kali_in_batch" >nul 2>&1
 echo Done, press any key to exit...
 pause >nul
 cls
 exit
 
+:get_deps
+
+where nmap >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+if !errorlevel! neq 0 (
+    echo Installing Nmap from winget...
+    winget install --id Insecure.Nmap -e --source winget
+) else (
+    echo Nmap is already installed.
+)
+where nvim >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+if !errorlevel! neq 0 (
+    echo Installing Neovim from winget...
+    winget install --id Neovim.Neovim -e --source winget
+) else (
+    echo Neovim is already installed.
+)
+goto :eof
 
 :boot
 
@@ -283,11 +405,18 @@ if !lines! geq 100 (
 rem Boot process for Kali in Batch
 rem It handles essential checks to make sure Kali in Batch can boot properly.
 
+if not exist "%USERPROFILE%\kali" (
+    echo Your installation is broken
+    goto wipe
+) else if not exist "%APPDATA%\kali_in_batch" (
+    echo Your installation is broken
+    goto wipe
+)
+
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
 
-cls
-
-echo Welcome to Kali in Batch 9.5.0 ^(%PROCESSOR_ARCHITECTURE%^)
+echo.
+echo Welcome to Kali in Batch 9.6.0 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 ::                                                                 |
@@ -456,11 +585,11 @@ echo.
 
 (
     echo NAME="Kali in Batch"
-    echo VERSION="9.5.0"
+    echo VERSION="9.6.0"
     echo ID=kalibatch
     echo ID_LIKE=linux
-    echo VERSION_ID="9.5.0"
-    echo PRETTY_NAME="Kali in Batch 9.5.0"
+    echo VERSION_ID="9.6.0"
+    echo PRETTY_NAME="Kali in Batch 9.6.0"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kali-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
@@ -518,7 +647,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 9.5.0>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 9.6.0>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -571,18 +700,15 @@ if "%~1"=="automated" (
     set "ROOT=0"
     echo Connecting to Bash service...
     echo.
-    cls
     goto startup
 ) else (
-    echo Press any key to log into the system...
-    pause >nul
     goto login
 )
 
 :login
 
-cls
-echo Kali in Batch 9.5.0
+echo.
+echo Kali in Batch 9.6.0
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root
@@ -607,9 +733,7 @@ if "!loginkibusername!"=="!username!" (
     goto login
 )
 
-del "!kaliroot!\tmp\VERSION.txt"
 echo.
-cls
 goto startup
 
 :startup
@@ -655,7 +779,7 @@ rem    echo.
     echo $ notepad !kaliroot!/usr/share/guide/hacking.txt
     echo.
     echo You can just copy and paste that command and adjust the file name.
-    echo To disable this message and the banner, create a file called .hushlogin in your home directory.
+    echo To disable this message, create a file called .hushlogin in your home directory.
     echo.
 )
 
