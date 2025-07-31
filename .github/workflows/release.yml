@@ -23,7 +23,7 @@ jobs:
         run: zip -r kali_in_batch.zip src
 
       - name: Publish Release & Upload ZIP
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           files: kali_in_batch.zip
