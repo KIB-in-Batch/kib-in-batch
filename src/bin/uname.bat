@@ -37,7 +37,7 @@ if "%1"=="" (
 
 :kernel
 
-<nul set /p "=KALI-IN-BATCH_!OS! "
+<nul set /p "=Linux "
 goto :eof
 
 :all
@@ -47,12 +47,14 @@ call :nodename
 call :release
 call :kernelversion
 call :machine
+call :machine
+call :machine
 call :os
 goto :eof
 
 :kernelversion
 
-<nul set /p "=!vernum! "
+<nul set /p "=#1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 "
 goto :eof
 
 :nodename
@@ -62,32 +64,45 @@ goto :eof
 
 :release
 
-<nul set /p "=9.6.1 "
+<nul set /p "=6.6.87.2-kib "
 goto :eof
 
 :machine
+rem Detect actual architecture by checking override on 64-bit Windows
+if defined PROCESSOR_ARCHITEW6432 (
+  set arch=%PROCESSOR_ARCHITEW6432%
+) else (
+  set arch=%PROCESSOR_ARCHITECTURE%
+)
+rem Normalize to uppercase
+for %%A in (%arch%) do set arch=%%~A
 
-<nul set /p "=%PROCESSOR_ARCHITECTURE% "
-goto :eof
+if "%arch%"=="AMD64" (
+  set uname_m=x86_64
+) else if "%arch%"=="EM64T" (
+  set uname_m=x86_64
+) else if "%arch%"=="IA64" (
+  set uname_m=ia64
+) else if "%arch%"=="ARM64" (
+  set uname_m=aarch64
+) else if "%arch%"=="X86" (
+  rem 32-bit fallback
+  set uname_m=i386
+) else (
+  set uname_m=%arch%
+)
 
-:hardwareplatform
-
-<nul set /p "=unknown "
-goto :eof
-
-:processor
-
-<nul set /p "=unknown "
+<nul set /p "=%uname_m% "
 goto :eof
 
 :os
 
-<nul set /p "=Kali in Batch "
+<nul set /p "=GNU/Linux "
 goto :eof
 
 :version
 
-echo Uname for Kali in Batch 9.6.1
+echo Uname for Kali in Batch 9.7.0
 echo This is GPL-2.0-only licensed free software. There is NO WARRANTY.
 goto :eof
 
@@ -111,6 +126,9 @@ echo The following options are not printed in --all:
 echo.
 echo --help                     display this help and exit
 echo --version                  output version
+echo.
+echo About the use of the word "Linux", see below:
+echo Linux is a registered trademark of Linus Torvalds.
 
 :check_again
 set "flag_s=0"
@@ -198,8 +216,8 @@ if !flag_n! equ 1 call :nodename
 if !flag_r! equ 1 call :release
 if !flag_v! equ 1 call :kernelversion
 if !flag_m! equ 1 call :machine
-if !flag_p! equ 1 call :processor
-if !flag_i! equ 1 call :hardwareplatform
+if !flag_p! equ 1 call :machine
+if !flag_i! equ 1 call :machine
 if !flag_o! equ 1 call :os
 echo.
 endlocal
