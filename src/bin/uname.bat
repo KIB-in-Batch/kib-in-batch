@@ -102,7 +102,7 @@ goto :eof
 
 :version
 
-echo Uname for Kali in Batch 9.7.1
+echo Uname for Kali in Batch 9.8.0
 echo This is GPL-2.0-only licensed free software. There is NO WARRANTY.
 goto :eof
 

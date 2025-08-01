@@ -119,6 +119,19 @@ static inline int read_kaliroot(char *kaliroot, size_t size) {
     return 0;
 }
 
+static inline unsigned int sleep(unsigned int seconds) {
+    // Get kali root
+    char kaliroot[MAX_PATH_LEN];
+    if (read_kaliroot(kaliroot, sizeof(kaliroot)) < 0)
+        return 1;
+
+    char cmd[2048];
+    // We use kaliroot/usr/lib/posix/sleep.bat to sleep
+    snprintf(cmd, sizeof(cmd), "%s/usr/lib/posix/sleep.bat %d", kaliroot, seconds);
+    // Execute the command
+    system(cmd);
+}
+
 static inline int chdir(const char* path) {
     wchar_t wpath[MAX_PATH];
     if (MultiByteToWideChar(CP_UTF8, 0, path, -1, wpath, MAX_PATH) == 0) {

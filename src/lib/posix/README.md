@@ -26,6 +26,7 @@ This directory contains batch file implementations of POSIX APIs. For a referenc
   * Note: This is just a define for _unlink.
 * pid_t fork(void)
   * Note: This fork() implementation is unreliable and has many differences from POSIX fork()! Do not use it in production!
+* unsigned int sleep(unsigned int seconds)
 
 Other APIs will be implemented in the future.
 
@@ -82,6 +83,10 @@ int main() {
             perror("getcwd() error");
         }
     }
+
+    printf("Sleeping for 2 seconds... ");
+    sleep(2);
+    printf("Slept for 2 seconds\n");
 
     return 0;
 }
