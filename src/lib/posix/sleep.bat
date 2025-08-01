@@ -2,9 +2,9 @@
 
 chcp 65001 >nul
 
-rem kibfetch.bat
-rem    * Neofetch-like program for the Kali in Batch project.
-rem    * Displays thorough system info with an ASCII banner.
+rem something.bat
+rem    * (something) for the Kali in Batch project.
+rem    * (something)
 rem    * Licensed under the GPL-2.0-only.
 rem Copyright (C) 2025 benja2998
 rem
@@ -76,22 +76,48 @@ set "COLOR_INFO=%COLOR_BRIGHT_CYAN%%COLOR_BOLD%"
 set "COLOR_DEBUG=%COLOR_BRIGHT_MAGENTA%%COLOR_BOLD%"
 set "COLOR_PROMPT=%COLOR_BRIGHT_BLUE%%COLOR_BOLD%"
 
-if not defined USER (
-    set "USER=%USERNAME%"
+rem The original POSIX API is used like this:
+rem sleep(unsigned int seconds);
+
+rem The Batch API is used like this:
+rem sleep seconds
+
+rem Loop for each argument given
+
+set argcount=0
+
+for %%i in (%*) do (
+    set /a argcount+=1
 )
 
-rem Fetch kaliroot
+if %argcount% lss 1 (
+    echo %COLOR_ERROR%error:%COLOR_RESET% too few arguments to function %COLOR_BOLD%'sleep'%COLOR_RESET%
+    echo %COLOR_ERROR%%~0%COLOR_RESET% %*
+    echo %COLOR_ERROR%^^~~~%COLOR_RESET%
+    exit 1
+) else if %argcount% gtr 1 (
+    echo %COLOR_ERROR%error:%COLOR_RESET% too many arguments to function %COLOR_BOLD%'sleep'%COLOR_RESET%
+    echo %COLOR_ERROR%%~0%COLOR_RESET% %*
+    echo %COLOR_ERROR%^^~~~%COLOR_RESET%
+    exit 1
+)
 
-set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
+rem Check if the argument is a number
 
-echo ██   ██ ██ ██████         %COLOR_DEBUG%%USER%%COLOR_RESET%@%COLOR_DEBUG%%COMPUTERNAME%%COLOR_RESET%
-echo ██  ██  ██ ██   ██        -------------------------------
-echo █████   ██ ██████         %COLOR_DEBUG%OS%COLOR_RESET%: Kali in Batch 9.8.0
-echo ██  ██  ██ ██   ██        %COLOR_DEBUG%Kernel%COLOR_RESET%: KALI_IN_BATCH_%OS%
-echo ██   ██ ██ ██████         %COLOR_DEBUG%Kali in Batch Root%COLOR_RESET%: %kaliroot%/
-echo                           %COLOR_DEBUG%CPU Architecture%COLOR_RESET%: %PROCESSOR_ARCHITECTURE%
-echo                           %COLOR_DEBUG%CPU Identifier%COLOR_RESET%: %PROCESSOR_IDENTIFIER%
-echo                           %COLOR_DEBUG%CPU Level%COLOR_RESET%: %PROCESSOR_LEVEL%
-echo                           %COLOR_DEBUG%Number of CPU cores%COLOR_RESET%: %NUMBER_OF_PROCESSORS%
-echo                           %COLOR_DEBUG%CPU Revision%COLOR_RESET%: %PROCESSOR_REVISION%
-echo.
+if not "%~1"=="" (
+    for /f "delims=0123456789" %%b in ("%~1") do (
+        echo Argument must be a number.
+        exit /b -1
+    )
+)
+
+rem Sleep for the specified number of seconds
+
+rem Limit for timeout is 99999 seconds unfortunately.
+
+if %~1 gtr 99999 (
+    timeout /t 99999 /nobreak >nul
+) else (
+    timeout /t %~1 /nobreak >nul
+)
+
