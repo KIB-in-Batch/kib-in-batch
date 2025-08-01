@@ -4,6 +4,8 @@ Kali in Batch is a batch script-based environment that runs a bash shell with ma
 
 [![CI/CD](https://github.com/Kali-in-Batch/kali-in-batch/actions/workflows/cicd.yml/badge.svg)](https://github.com/Kali-in-Batch/kali-in-batch/actions/workflows/cicd.yml)
 
+⭐ If you like this project or want to support development, please give it a star!
+
 ## Installation
 
 * Download a source code archive from the [latest release](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest).
@@ -34,12 +36,11 @@ Kali in Batch is a batch script-based environment that runs a bash shell with ma
 
 ## Preview
 
-![nmap scan of google.com](./assets/image1.png)
-![kibfetch](./assets/image3.png)
+![Screen recording showing installation of Kali in Batch, running an Nmap scan in the bash shell, and displaying a directory tree view. The environment is a Windows terminal window with a Kali Linux style prompt. Visible text includes command outputs and prompts such as nmap scan results and tree command output. The tone is informative and technical, demonstrating setup and usage steps in a clear, accessible manner.](./assets/video1.mp4)
 
 ## License
 
-This project is licensed under the GPL-2.0-only License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the GPL-2.0-only License. See the [LICENSE.txt](LICENSE.txt) file for details.
 
 ## Links
 
