@@ -109,6 +109,14 @@ if not exist "%~dp0bin" (
     exit /b 1
 )
 
+where curl >nul 2>&1
+
+if !errorlevel! neq 0 (
+    echo !COLOR_ERROR!CRITICAL: Curl is not installed, exiting before anything can be done...!COLOR_RESET!
+    pause >nul
+    exit /b 1
+)
+
 cls
 set "username=%USERNAME%"
 title Kali in Batch
