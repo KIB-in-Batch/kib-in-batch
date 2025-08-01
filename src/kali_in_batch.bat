@@ -120,11 +120,8 @@ if defined missing (
 
     where winget >nul 2>&1
     if !errorlevel! neq 0 (
-        echo Winget is not installed.
-        echo Redirecting to the winget download page...
-        timeout /t 2 /nobreak >nul
-        start https://github.com/microsoft/winget-cli
-        exit /b
+        echo Winget is not installed. Nmap and Neovim will not be able to be automatically installed.
+        timeout /t 1 /nobreak >nul
     )
     
     cls
@@ -212,11 +209,17 @@ if defined missing (
     if !errorlevel! neq 0 (
         echo Installing Nmap from winget...
         winget install --id Insecure.Nmap -e --source winget
+        if errorlevel 1 (
+            echo Winget not available or failed to install Nmap.
+        )
     )
     where nvim >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
     if !errorlevel! neq 0 (
         echo Installing Neovim from winget...
         winget install --id Neovim.Neovim -e --source winget
+        if errorlevel 1 (
+            echo Winget not available or failed to install Neovim.
+        )
     )
     echo Downloading busybox...
     curl -L -o "!kaliroot!\usr\bin\busybox.exe" "https://web.archive.org/web/20250627230655/https://frippery.org/files/busybox/busybox64u.exe" -#
@@ -416,7 +419,7 @@ if not exist "%USERPROFILE%\kali" (
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
 
 echo.
-echo Welcome to Kali in Batch 9.7.0 ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to Kali in Batch 9.7.1 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 ::                                                                 |
@@ -585,11 +588,11 @@ echo.
 
 (
     echo NAME="Kali in Batch"
-    echo VERSION="9.7.0"
+    echo VERSION="9.7.1"
     echo ID=kalibatch
     echo ID_LIKE=linux
-    echo VERSION_ID="9.7.0"
-    echo PRETTY_NAME="Kali in Batch 9.7.0"
+    echo VERSION_ID="9.7.1"
+    echo PRETTY_NAME="Kali in Batch 9.7.1"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kali-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
@@ -647,7 +650,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 9.7.0>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 9.7.1>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -708,7 +711,7 @@ if "%~1"=="automated" (
 :login
 
 echo.
-echo Kali in Batch 9.7.0
+echo Kali in Batch 9.7.1
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root
