@@ -37,6 +37,7 @@ jobs:
           & "$kaliPath\kib-pkg.bat" update
           & "$kaliPath\kib-pkg.bat" install hello-world
           & "$kaliPath\kib-pkg.bat" list
+          & "$kaliPath\kib-pkg.bat" remove hello-world
           Get-Content "$env:APPDATA\kali_in_batch\errors.log" | Out-File -FilePath "ci_logs\packages_$timestamp.log" -Append
           if ($LASTEXITCODE -ne 0) { throw "Package manager failed" }
 
@@ -47,6 +48,29 @@ jobs:
           & "$env:USERPROFILE\kali\usr\bin\busybox.exe" --help
           Get-Content "$env:APPDATA\kali_in_batch\errors.log" | Out-File -FilePath "ci_logs\busybox_$timestamp.log" -Append
           if ($LASTEXITCODE -ne 0) { throw "BusyBox test failed" }
+      
+      - name: Test other tools
+        shell: powershell
+        run: |
+          & "$env:USERPROFILE\kali\usr\bin\bash.exe" -c "echo 'Hello world!'"
+          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
+          & "$env:USERPROFILE\kali\usr\bin\sh.exe" -c "echo 'Hello world!'"
+          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
+          & "$env:USERPROFILE\kali\usr\bin\lsb_release.bat" --help
+          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
+          & "$env:USERPROFILE\kali\usr\bin\uname.bat" -a
+          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
+          & "$env:USERPROFILE\kali\usr\bin\whoami.bat"
+          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
+          & "$env:USERPROFILE\kali\usr\bin\which.bat" cmd -a
+          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
+          & "$env:USERPROFILE\kali\usr\bin\touch.bat" test.txt
+          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
+          & "$env:USERPROFILE\kali\usr\bin\rm.bat" -rf test.txt
+          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
+          & "$env:USERPROFILE\kali\usr\bin\kibfetch.bat"
+          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
+          Get-Content "$env:APPDATA\kali_in_batch\errors.log" | Out-File -FilePath "ci_logs\other_tools_$timestamp.log" -Append
 
       # Always upload logs
       - name: Upload all logs
