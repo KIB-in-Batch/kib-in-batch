@@ -24,7 +24,9 @@ rem
 rem -- Other Scripts --
 rem
 rem * %~dp0bin\clear.bat - Clears the console
-rem * %~dp0bin\pkg.bat - Manages packages
+rem * %~dp0bin\kib-pkg.bat - Manages packages
+rem * %~dp0bin\kpkg.bat - Wrapper for kib-pkg
+rem * %~dp0bin\pkg.bat - Wrapper for kib-pkg (only exists for backward compatibility)
 rem * %~dp0bin\touch.bat - Creates a new file
 rem * %~dp0bin\uname.bat - Displays system information
 rem * %~dp0bin\which.bat - Displays location of a file or directory in the PATH
@@ -86,6 +88,38 @@ set "COLOR_SUCCESS=!COLOR_BRIGHT_GREEN!!COLOR_BOLD!"
 set "COLOR_INFO=!COLOR_BRIGHT_CYAN!!COLOR_BOLD!"
 set "COLOR_DEBUG=!COLOR_BRIGHT_MAGENTA!!COLOR_BOLD!"
 set "COLOR_PROMPT=!COLOR_BRIGHT_BLUE!!COLOR_BOLD!"
+
+rem Check multiple Wine indicators
+set WINE_DETECTED=0
+
+rem Check Wine registry keys
+reg query "HKEY_CURRENT_USER\Software\Wine" >nul 2>&1
+if %errorlevel% equ 0 set WINE_DETECTED=1
+
+reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Wine" >nul 2>&1
+if %errorlevel% equ 0 set WINE_DETECTED=1
+
+rem Check Wine environment variables
+if defined WINEPREFIX set WINE_DETECTED=1
+if defined WINEARCH set WINE_DETECTED=1
+
+rem Fail if Wine is detected
+if %WINE_DETECTED% equ 1 (
+    echo.
+    echo ERROR: Wine environment detected!
+    echo This script requires native Windows PowerShell.
+    echo Wine's PowerShell implementation is incomplete and will cause failures.
+    echo.
+    echo Please run this script on native Windows.
+    exit /b 1
+)
+
+where powershell >nul 2>&1
+
+if %errorlevel% neq 0 (
+    echo PowerShell not found.
+    exit /b 1
+)
 
 if not exist "%~dp0bin" (
     echo This script is not meant to be used standalone.
@@ -253,7 +287,7 @@ cls
 echo !COLOR_INFO!Type help for a list of commands.!COLOR_RESET!
 echo !COLOR_INFO!Note that kibstrap and mkdrive are REQUIRED for a functional installation.!COLOR_RESET!
 echo !COLOR_INFO!You must type kibstrap before running mkdrive.!COLOR_RESET!
-echo !COLOR_INFO!You must run kibstrap and mkdrive before running pkg.!COLOR_RESET!
+echo !COLOR_INFO!You must run kibstrap and mkdrive before running kib-pkg.!COLOR_RESET!
 echo !COLOR_INFO!Running getdeps is recommended because it installs Nmap ^(a powerful reconnaissance tool^) and Neovim ^(a powerful text editor^).!COLOR_RESET!
 goto live_shell_loop
 :live_shell_loop
@@ -265,7 +299,7 @@ if defined input (
         echo !COLOR_INFO!  - help: Displays this help message. !COLOR_RESET!
         echo !COLOR_INFO!  - exit: Exits the live shell. !COLOR_RESET!
         echo !COLOR_INFO!  - kibstrap: Bootstraps a minimal base system at %USERPROFILE%\kali. !COLOR_RESET!
-        echo !COLOR_INFO!  - pkg: Package manager. Use it if you want packages in your base system. !COLOR_RESET!
+        echo !COLOR_INFO!  - kib-pkg: Package manager. Use it if you want packages in your base system. !COLOR_RESET!
         echo !COLOR_INFO!  - getdeps: Installs dependencies of Kali in Batch. !COLOR_RESET!
         echo !COLOR_INFO!  - mkdrive: Uses subst to create a drive letter for the Kali in Batch root. !COLOR_RESET!
         echo !COLOR_INFO!  - boot: Boots the Kali in Batch installation. !COLOR_RESET!
@@ -332,11 +366,11 @@ if defined input (
         goto wipe
     ) else if "!input!"=="getdeps" (
         call :get_deps
-    ) else if "!input!"=="pkg" (
+    ) else if "!input!"=="kib-pkg" (
         set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
-        set "pkg_path=!kaliroot!\usr\bin\pkg.bat"
-        set /p "args=Enter arguments to pass to pkg: "
-        call "!pkg_path!" !args!
+        set "kib-pkg_path=!kaliroot!\usr\bin\kib-pkg.bat"
+        set /p "args=Enter arguments to pass to kib-pkg: "
+        call "!kib-pkg_path!" !args!
     ) else (
         echo !input!: command not found
     )
@@ -427,7 +461,7 @@ if not exist "%USERPROFILE%\kali" (
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
 
 echo.
-echo Welcome to Kali in Batch 9.8.0 ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to Kali in Batch 9.9.0 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 ::                                                                 |
@@ -555,7 +589,7 @@ echo.
     echo.
     echo ## Applet overrides ##
     echo.
-    echo export BB_OVERRIDE_APPLETS="clear touch uname which whoami msfconsole pkg"
+    echo export BB_OVERRIDE_APPLETS="clear touch uname which whoami msfconsole kib-pkg"
     echo.
     echo alias netcat="nc"
     echo.
@@ -596,11 +630,11 @@ echo.
 
 (
     echo NAME="Kali in Batch"
-    echo VERSION="9.8.0"
+    echo VERSION="9.9.0"
     echo ID=kalibatch
     echo ID_LIKE=linux
-    echo VERSION_ID="9.8.0"
-    echo PRETTY_NAME="Kali in Batch 9.8.0"
+    echo VERSION_ID="9.9.0"
+    echo PRETTY_NAME="Kali in Batch 9.9.0"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kali-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
@@ -658,7 +692,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 9.8.0>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 9.9.0>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -719,7 +753,7 @@ if "%~1"=="automated" (
 :login
 
 echo.
-echo Kali in Batch 9.8.0
+echo Kali in Batch 9.9.0
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root

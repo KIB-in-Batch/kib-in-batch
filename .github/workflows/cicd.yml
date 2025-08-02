@@ -20,6 +20,43 @@ jobs:
               uses: actions/checkout@v4
             
             - name: Run src\kali_in_batch.bat
-              shell: cmd
+              shell: powershell
               run: |
-                echo 1 | src\kali_in_batch.bat automated && echo Success && exit /b 0 || echo Failure && exit /b 1
+                src\kali_in_batch.bat automated
+                if ($LASTEXITCODE -ne 0) { throw "Command failed" }
+                Write-Output "Success"
+            - name: Run kib-pkg.bat
+              shell: powershell
+              run: |
+                $kaliPath = "$env:USERPROFILE\kali\usr\bin"
+                & "$kaliPath\kib-pkg.bat" update
+                if ($LASTEXITCODE -ne 0) { throw "Update failed" }
+                & "$kaliPath\kib-pkg.bat" install hello-world
+                if ($LASTEXITCODE -ne 0) { throw "Install failed" }
+                & "$kaliPath\kib-pkg.bat" list
+                if ($LASTEXITCODE -ne 0) { throw "List failed" }
+                Write-Output "Success"
+            - name: Run busybox.exe
+              shell: powershell
+              run: |
+                & "$env:USERPROFILE\kali\usr\bin\busybox.exe" --help
+                if ($LASTEXITCODE -ne 0) { throw "Busybox failed" }
+                Write-Output "Success"
+            - name: Run whoami.bat
+              shell: powershell
+              run: |
+                & "$env:USERPROFILE\kali\usr\bin\whoami.bat"
+                if ($LASTEXITCODE -ne 0) { throw "Whoami failed" }
+                Write-Output "Success"
+            - name: Run kibfetch.bat
+              shell: powershell
+              run: |
+                & "$env:USERPROFILE\kali\usr\bin\kibfetch.bat"
+                if ($LASTEXITCODE -ne 0) { throw "Kibfetch failed" }
+                Write-Output "Success"
+            - name: Run uname.bat
+              shell: powershell
+              run: |
+                & "$env:USERPROFILE\kali\usr\bin\uname.bat" -a
+                if ($LASTEXITCODE -ne 0) { throw "Uname failed" }
+                Write-Output "Success"

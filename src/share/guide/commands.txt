@@ -7,34 +7,42 @@ Here you can see how to install and use some common Linux distro commands in Kal
 Package Management
 ==================
 
-Use the "pkg" package manager to install packages. Here's an example:
+Use the "kib-pkg" package manager to install packages. Here's an example (replace example-package with the actual package name):
+
+To synchronize the package list:
 
 ```code
-pkg install example-package
+kib-pkg update
+```endcode
+
+To install a package:
+
+```code
+kib-pkg install example-package
 ```endcode
 
 To remove it:
 
 ```code
-pkg remove example-package
+kib-pkg remove example-package
 ```endcode
 
 To upgrade it:
 
 ```code
-pkg upgrade example-package
+kib-pkg upgrade example-package
 ```endcode
 
-To open package databases to search for a package:
+To search for a package:
 
 ```code
-pkg search # You don't search for a specific package, you just open the database
+kib-pkg search example-package
 ```endcode
 
 To list installed packages:
 
 ```code
-pkg list
+kib-pkg list
 ```endcode
 
 Follow any additional instructions given by the package manager.

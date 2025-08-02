@@ -12,7 +12,7 @@ A base installation of Kali in Batch contains the following executables in the "
 * clear.bat - Clears the screen
 * kibfetch.bat - Simple neofetch clone
 * msfconsole.bat - Wrapper for Metasploit that uses WSL
-* pkg.bat - Package manager for Kali in Batch
+* kib-pkg.bat - Package manager for Kali in Batch
 * touch.bat - Creates a new empty file
 * uname.bat - Displays system information
 * which.bat - Displays location of a file in the PATH
@@ -97,7 +97,7 @@ drwxrwxr-x    2 benja    benja          0 Jul 21 17:19 var/
 Z:\>\bin\kibfetch.bat
 ██   ██ ██ ██████         benja@ACERB
 ██  ██  ██ ██   ██        -------------------------------
-█████   ██ ██████         OS: Kali in Batch 9.8.0
+█████   ██ ██████         OS: Kali in Batch 9.9.0
 ██  ██  ██ ██   ██        Kernel: KALI_IN_BATCH_Windows_NT
 ██   ██ ██ ██████         Kali in Batch Root: Z:/
                           CPU Architecture: AMD64
@@ -112,11 +112,11 @@ Z:\>\bin\kibfetch.bat
 Packages
 ========
 
-You are able to manage packages using pkg.bat even outside Kali in Batch, which will add even more executables to "/usr/bin". 
-Here's an example of using pkg.bat from the command prompt, assuming you have the Kali in Batch root directory set to "Z:":
+You are able to manage packages using kib-pkg.bat even outside Kali in Batch, which will add even more executables to "/usr/bin". 
+Here's an example of using kib-pkg.bat from the command prompt, assuming you have the Kali in Batch root directory set to "Z:":
 
 ```code
-C:\Users\benja>Z:\usr\bin\pkg.bat install example-package
+C:\Users\benja>Z:\usr\bin\kib-pkg.bat install example-package
 Fetching package contents...
 ################################################################################################################################################################################## 100.0%
 Package example-package is available.
@@ -146,7 +146,7 @@ After that, you can just run things like:
 C:\Users\benja>kibfetch
 ██   ██ ██ ██████         benja@ACERB
 ██  ██  ██ ██   ██        -------------------------------
-█████   ██ ██████         OS: Kali in Batch 9.8.0
+█████   ██ ██████         OS: Kali in Batch 9.9.0
 ██  ██  ██ ██   ██        Kernel: KALI_IN_BATCH_Windows_NT
 ██   ██ ██ ██████         Kali in Batch Root: Z:/
                           CPU Architecture: AMD64
