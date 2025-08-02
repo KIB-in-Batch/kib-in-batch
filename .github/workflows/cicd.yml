@@ -66,7 +66,7 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
           & "$env:USERPROFILE\kali\usr\bin\touch.bat" test.txt
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kali\usr\bin\rm.bat" -rf test.txt
+          & "$env:USERPROFILE\kali\usr\bin\rm.exe" -rf test.txt
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
           & "$env:USERPROFILE\kali\usr\bin\kibfetch.bat"
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
