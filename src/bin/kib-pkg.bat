@@ -135,7 +135,7 @@ exit /b 64
 :help
 
 echo !COLOR_HEADER!Usage: %~0 (install/remove/upgrade/search/list/update/help)!COLOR_RESET!
-echo.
+echo/
 echo !COLOR_UNDERLINE!Commands:!COLOR_RESET!
 echo   !COLOR_COMMAND!install!COLOR_RESET!         - Install a package by name.
 echo   !COLOR_COMMAND!remove!COLOR_RESET!          - Remove an installed package by name.
@@ -233,7 +233,7 @@ goto :eof
 rem Check if package is installed
 set kib-pkg_to_check=%1
 if not exist "%APPDATA%\kali_in_batch\installed.packages.list" (
-    echo. >"%APPDATA%\kali_in_batch\installed.packages.list"
+    echo/ >"%APPDATA%\kali_in_batch\installed.packages.list"
 )
 if "!kib-pkg_to_check!"=="" (
     exit /b 1
@@ -603,11 +603,11 @@ if not exist "%APPDATA%\kali_in_batch\installed.packages.list" (
     exit /b
 )
 
-echo !COLOR_HEADER!Installed packages:!COLOR_RESET!
+::echo !COLOR_HEADER!Installed packages:!COLOR_RESET!
 set count=0
 for /f "usebackq delims=" %%a in ("%APPDATA%\kali_in_batch\installed.packages.list") do (
     rem Strip out spaces from the package name
-    set "package=%%a"
+    set "package=%%~a"
     set "package=!package: =!"
     if not "!package!"=="" (
         set /a count+=1

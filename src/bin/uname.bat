@@ -29,7 +29,7 @@ goto check
 
 if "%1"=="" (
     call :kernel
-    echo.
+    echo/
     goto :eof
 ) else (
     goto check_again
@@ -110,7 +110,7 @@ goto :eof
 
 echo Usage: uname ^[OPTION^]...
 echo Print certain system information. With no OPTION, same as -s.
-echo.
+echo/
 echo -a --all                   print all information, in the following order,
 echo                            except omit -p and -i if unknown:
 echo -s --kernel-name           print the kernel name
@@ -121,12 +121,12 @@ echo -m --machine               print the machine hardware name
 echo -p --processor             print the processor type
 echo -i --hardware-platform     print the hardware platform
 echo -o --operating-system      print the operating system
-echo.
+echo/
 echo The following options are not printed in --all:
-echo.
+echo/
 echo --help                     display this help and exit
 echo --version                  output version
-echo.
+echo/
 echo About the use of the word "Linux", see below:
 echo Linux is a registered trademark of Linus Torvalds.
 
@@ -205,7 +205,7 @@ if %flag_version%==1 (
 
 if %flag_a%==1 (
     call :all
-    echo.
+    echo/
     goto :eof
 )
 
@@ -219,7 +219,7 @@ if !flag_m! equ 1 call :machine
 if !flag_p! equ 1 call :machine
 if !flag_i! equ 1 call :machine
 if !flag_o! equ 1 call :os
-echo.
+echo/
 endlocal
 
 exit /b 0

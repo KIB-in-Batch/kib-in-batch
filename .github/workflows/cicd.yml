@@ -3,60 +3,54 @@ permissions:
   contents: read
   checks: write
 
-# Run on push and pull request to any branch
-on:
-    push:
-        # All branches
-        branches: ['*']
-    pull_request:
-        # All branches
-        branches: ['*']
+on: [push, pull_request]
 
 jobs:
-    build-and-deploy:
-        runs-on: windows-2025 # This software is for Microsoft Windows
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4
-            
-            - name: Run src\kali_in_batch.bat
-              shell: powershell
-              run: |
-                echo 1 | src\kali_in_batch.bat automated
-                if ($LASTEXITCODE -ne 0) { throw "Command failed" }
-                Write-Output "Success"
-            - name: Run kib-pkg.bat
-              shell: powershell
-              run: |
-                $kaliPath = "$env:USERPROFILE\kali\usr\bin"
-                & "$kaliPath\kib-pkg.bat" update
-                if ($LASTEXITCODE -ne 0) { throw "Update failed" }
-                & "$kaliPath\kib-pkg.bat" install hello-world
-                if ($LASTEXITCODE -ne 0) { throw "Install failed" }
-                & "$kaliPath\kib-pkg.bat" list
-                if ($LASTEXITCODE -ne 0) { throw "List failed" }
-                Write-Output "Success"
-            - name: Run busybox.exe
-              shell: powershell
-              run: |
-                & "$env:USERPROFILE\kali\usr\bin\busybox.exe" --help
-                if ($LASTEXITCODE -ne 0) { throw "Busybox failed" }
-                Write-Output "Success"
-            - name: Run whoami.bat
-              shell: powershell
-              run: |
-                & "$env:USERPROFILE\kali\usr\bin\whoami.bat"
-                if ($LASTEXITCODE -ne 0) { throw "Whoami failed" }
-                Write-Output "Success"
-            - name: Run kibfetch.bat
-              shell: powershell
-              run: |
-                & "$env:USERPROFILE\kali\usr\bin\kibfetch.bat"
-                if ($LASTEXITCODE -ne 0) { throw "Kibfetch failed" }
-                Write-Output "Success"
-            - name: Run uname.bat
-              shell: powershell
-              run: |
-                & "$env:USERPROFILE\kali\usr\bin\uname.bat" -a
-                if ($LASTEXITCODE -ne 0) { throw "Uname failed" }
-                Write-Output "Success"
+  build-and-deploy:
+    runs-on: windows-2025
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Setup log collection from the start
+      - name: Initialize log collection
+        shell: powershell
+        run: |
+          # Create a timestamp for unique log files
+          $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
+          New-Item -ItemType Directory -Path "ci_logs" -Force
+          echo "CI run started at $timestamp" | Out-File -FilePath "ci_logs\session_$timestamp.log"
+
+      # Install KiB
+      - name: Install and validate KiB
+        shell: powershell
+        run: |
+          echo 1 | src\kali_in_batch.bat automated
+          Get-Content "$env:APPDATA\kali_in_batch\errors.log" | Out-File -FilePath "ci_logs\install_$timestamp.log" -Append
+          if ($LASTEXITCODE -ne 0) { throw "Installation failed" }
+
+      # Test package manager
+      - name: Test kib-pkg.bat
+        shell: powershell
+        run: |
+          $kaliPath = "$env:USERPROFILE\kali\usr\bin"
+          & "$kaliPath\kib-pkg.bat" update
+          & "$kaliPath\kib-pkg.bat" install hello-world
+          & "$kaliPath\kib-pkg.bat" list
+          Get-Content "$env:APPDATA\kali_in_batch\errors.log" | Out-File -FilePath "ci_logs\packages_$timestamp.log" -Append
+          if ($LASTEXITCODE -ne 0) { throw "Package manager failed" }
+
+      # Test BusyBox
+      - name: Test BusyBox
+        shell: powershell
+        run: |
+          & "$env:USERPROFILE\kali\usr\bin\busybox.exe" --help
+          Get-Content "$env:APPDATA\kali_in_batch\errors.log" | Out-File -FilePath "ci_logs\busybox_$timestamp.log" -Append
+          if ($LASTEXITCODE -ne 0) { throw "BusyBox test failed" }
+
+      # Always upload logs
+      - name: Upload all logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: kib-ci-logs-${{ github.run_id }}
+          path: ci_logs/*

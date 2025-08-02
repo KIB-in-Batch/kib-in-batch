@@ -38,11 +38,11 @@ for %%a in (%*) do (
     ) else if "!arg!"=="--help" (
         echo Usage: %~0 [options] [--] COMMAND [..]
         echo Write the full path of COMMAND^(s^) to standard output.
-        echo.
+        echo/
         echo    --version, -[vV]           Print version and exit successfully.          
         echo    --help,                    Print this help and exit successfully.
         echo    --all, -a                  Print all matches in PATH, not just the first
-        echo.
+        echo/
         echo Consider contributing to this project as this is an incomplete which implementation.
         exit /b 0
     ) else if "!arg!"=="--version" (
@@ -80,7 +80,7 @@ for %%a in (%*) do (
         if errorlevel 1 (
             if "!is_flag!"=="false" (
                 <nul set /p "=%~0: no !arg! in !PATH!"
-                echo.
+                echo/
             )
         ) else (
             if "!show_all!"=="true" (

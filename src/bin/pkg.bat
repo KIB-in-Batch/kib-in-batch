@@ -84,6 +84,6 @@ echo %COLOR_WARNING%WARNING%COLOR_RESET%: This wrapper is only kept for backward
 echo We recommend you run %COLOR_ITALIC%kib-pkg%COLOR_RESET% or %COLOR_ITALIC%kpkg%COLOR_RESET% instead.
 echo %COLOR_ITALIC%kpkg%COLOR_RESET% is a wrapper for %COLOR_ITALIC%kib-pkg%COLOR_RESET%, but it is only for convenience, not backward compatibility that
 echo may be removed in the future.
-echo.
+echo/
 
 "%kaliroot%\usr\bin\kib-pkg.bat" %*
