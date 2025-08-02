@@ -22,7 +22,7 @@ jobs:
             - name: Run src\kali_in_batch.bat
               shell: powershell
               run: |
-                src\kali_in_batch.bat automated
+                echo 1 | src\kali_in_batch.bat automated
                 if ($LASTEXITCODE -ne 0) { throw "Command failed" }
                 Write-Output "Success"
             - name: Run kib-pkg.bat
