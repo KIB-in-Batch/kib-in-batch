@@ -105,11 +105,11 @@ if defined WINEARCH set WINE_DETECTED=1
 
 rem Fail if Wine is detected
 if %WINE_DETECTED% equ 1 (
-    echo/
+    echo.
     echo ERROR: Wine environment detected!
     echo This script requires native Windows PowerShell.
     echo Wine's PowerShell implementation is incomplete and will cause failures.
-    echo/
+    echo.
     echo Please run this script on native Windows.
     exit /b 1
 )
@@ -174,7 +174,7 @@ if defined missing (
     echo ^| * Press 3 to enter manual install ^(live shell^).   ^|
     echo ^| * Press 4 to visit the GitHub page.               ^|
     echo -----------------------------------------------------!COLOR_RESET!
-    echo/
+    echo.
     choice /c 1234 /n /m ""
     if errorlevel 4 (
         start https://github.com/Kali-in-Batch/kali-in-batch
@@ -305,7 +305,7 @@ if defined input (
         echo !COLOR_INFO!  - boot: Boots the Kali in Batch installation. !COLOR_RESET!
         echo !COLOR_INFO!  - clear: Clears the screen. !COLOR_RESET!
         echo !COLOR_INFO!  - wipe: Wipes the Kali in Batch installation. !COLOR_RESET!
-        echo/
+        echo.
     ) else if "!input!"=="exit" (
         echo !COLOR_INFO!Exiting live shell...!COLOR_RESET!
         goto wipe
@@ -379,7 +379,7 @@ goto live_shell_loop
 
 :wipe
 echo Wiping kali rootfs...
-echo/
+echo.
 rem Remove the subst drive
 set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
 subst !kaliroot! /d >nul 2>&1
@@ -444,7 +444,7 @@ for /f "usebackq delims=" %%L in ("%APPDATA%\kali_in_batch\errors.log") do (
 
 if !lines! geq 100 (
     echo More than 100 errors logged, cleaning up
-    echo/ > "%APPDATA%\kali_in_batch\errors.log" 2>nul
+    echo. > "%APPDATA%\kali_in_batch\errors.log" 2>nul
 )
 
 rem Boot process for Kali in Batch
@@ -460,7 +460,7 @@ if not exist "%USERPROFILE%\kali" (
 
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
 
-echo/
+echo.
 echo Welcome to Kali in Batch 9.9.0 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
@@ -476,7 +476,7 @@ if exist !kaliroot! (
 )
 
 <nul set /p "=[ !COLOR_SUCCESS!OK!COLOR_RESET! ]"
-echo/
+echo.
 
 ::                                                                 |
 <nul set /p "=Checking if rescue is required...                    "
@@ -536,7 +536,7 @@ if %rescue_required%==1 (
 )
 
 <nul set /p "=[ !COLOR_SUCCESS!OK!COLOR_RESET! ]"
-echo/
+echo.
 
 ::                                                                 |
 <nul set /p "=Initializing ROOT environment variable...            "
@@ -545,14 +545,14 @@ rem Initialize ROOT variable
 set "ROOT=0"
 
 <nul set /p "=[ !COLOR_SUCCESS!OK!COLOR_RESET! ]"
-echo/
+echo.
 
 ::                                                                 |
 <nul set /p "=Copying core files...                                "
 
 (
     echo #!/bin/bash
-    echo/
+    echo.
     echo ########################
     echo #                      #
     echo #       WARNING        #
@@ -572,29 +572,29 @@ echo/
     echo #  instead.            #
     echo #                      #
     echo ########################
-    echo/
+    echo.
     echo ## Kali Linux shell prompt ##
-    echo/
+    echo.
     echo # Check if ROOT is 1
-    echo/
+    echo.
     echo if [ "$ROOT" == "1" ]; then
     echo     PS1=$'\[\e[34m\]┌──^(\[\e[31m\]root㉿\h\[\e[34m\]^)-[\[\e[0m\]\w\[\e[34m\]]\n\[\e[34m\]└─\[\e[31m\]# \[\e[0m\]'
     echo else
     echo     PS1=$'\[\e[32m\]┌──^(\[\e[34m\]\u㉿\h\[\e[32m\]^)-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]$ \[\e[0m\]'
     echo fi
-    echo/
+    echo.
     echo ## Changes to PATH ##
-    echo/
+    echo.
     echo export PATH="C:/Users/$USERNAME/kali/usr/bin:$PATH"
-    echo/
+    echo.
     echo ## Applet overrides ##
-    echo/
+    echo.
     echo export BB_OVERRIDE_APPLETS="clear touch uname which whoami msfconsole kib-pkg"
-    echo/
+    echo.
     echo alias netcat="nc"
-    echo/
+    echo.
     echo ## Functions ##
-    echo/
+    echo.
     echo sudo^(^) {
     echo     export PREVROOTVAL="$ROOT"
     echo     export PREVUSERVAL="$USER"
@@ -604,14 +604,14 @@ echo/
     echo     export ROOT="$PREVROOTVAL"
     echo     export USER="$PREVUSERVAL"
     echo }
-    echo/
+    echo.
     echo su^(^) {
     echo     export ROOT="1"
     echo     export USER="root"
     echo     export HOME="!kaliroot!/root"
     echo     PS1=$'\[\e[34m\]┌──^(\[\e[31m\]root㉿\h\[\e[34m\]^)-[\[\e[0m\]\w\[\e[34m\]]\n\[\e[34m\]└─\[\e[31m\]# \[\e[0m\]'
     echo }
-    echo/
+    echo.
     echo unsu^(^) {
     echo     if [ "$ROOT" == "0" ]; then
     echo        echo "You are not root"
@@ -622,9 +622,9 @@ echo/
     echo     export HOME="!kaliroot!/home/$USERNAME"
     echo     PS1=$'\[\e[32m\]┌──^(\[\e[34m\]\u㉿\h\[\e[32m\]^)-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]$ \[\e[0m\]'
     echo }
-    echo/
+    echo.
     echo ## Load ~/.bashrc ##
-    echo/
+    echo.
     echo source ~/.bashrc
 ) > "!kaliroot!\etc\.kibenv" 2>>"%APPDATA%\kali_in_batch\errors.log"
 
@@ -680,11 +680,11 @@ xcopy "%~dp0include\*" "!kaliroot!\usr\include\" /s /y >nul 2>>"%APPDATA%\kali_i
 
 if !errorlevel! neq 0 (
     <nul set /p "=[ !COLOR_ERROR!FAILED!COLOR_RESET! ]"
-    echo/
+    echo.
     echo Note: It is very likely that the script did not fail to copy files.
 ) else (
     <nul set /p "=[ !COLOR_SUCCESS!OK!COLOR_RESET! ]"
-    echo/
+    echo.
 )
 
 rem Check if VERSION.txt exists and delete it if it does
@@ -700,10 +700,10 @@ echo 9.9.0>"%APPDATA%\kali_in_batch\VERSION.txt"
 where nmap >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 if !errorlevel! neq 0 (
     <nul set /p "=[ !COLOR_ERROR!FAILED!COLOR_RESET! ]"
-    echo/
+    echo.
 ) else (
     <nul set /p "=[ !COLOR_SUCCESS!OK!COLOR_RESET! ]"
-    echo/
+    echo.
 )
 
 ::                                                                 |
@@ -712,10 +712,10 @@ if !errorlevel! neq 0 (
 where nvim >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 if !errorlevel! neq 0 (
     <nul set /p "=[ !COLOR_ERROR!FAILED!COLOR_RESET! ]"
-    echo/
+    echo.
 ) else (
     <nul set /p "=[ !COLOR_SUCCESS!OK!COLOR_RESET! ]"
-    echo/
+    echo.
 )
 
 ::                                                                 |
@@ -732,7 +732,7 @@ if not exist "!kaliroot!\usr\bin\busybox.exe" (
 )
 
 <nul set /p "=[ !COLOR_SUCCESS!OK!COLOR_RESET! ]"
-echo/
+echo.
 
 set "busybox_path=!kaliroot!\usr\bin\busybox.exe"
 
@@ -744,7 +744,7 @@ if "%~1"=="automated" (
     set "USER=!username!"
     set "ROOT=0"
     echo Connecting to Bash service...
-    echo/
+    echo.
     goto startup
 ) else (
     goto login
@@ -752,12 +752,12 @@ if "%~1"=="automated" (
 
 :login
 
-echo/
+echo.
 echo Kali in Batch 9.9.0
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
-echo/
+echo.
 echo Users on this system: !username!, root
-echo/
+echo.
 set /p loginkibusername=%COMPUTERNAME% login: 
 if "!loginkibusername!"=="!username!" (
     rem Correct
@@ -778,7 +778,7 @@ if "!loginkibusername!"=="!username!" (
     goto login
 )
 
-echo/
+echo.
 goto startup
 
 :startup
@@ -816,16 +816,16 @@ rem    echo ██  ██  ██   ██ ██      ██     ██ ██
 rem    echo █████   ███████ ██      ██     ██ ██ ██  ██     ██████  ███████    ██    ██      ███████
 rem    echo ██  ██  ██   ██ ██      ██     ██ ██  ██ ██     ██   ██ ██   ██    ██    ██      ██   ██
 rem    echo ██   ██ ██   ██ ███████ ██     ██ ██   ████     ██████  ██   ██    ██     ██████ ██   ██
-rem    echo/
+rem    echo.
     echo For a guide on how to use Kali in Batch, run 'ls !kaliroot!/usr/share/guide' and
     echo open the text file that you think will help you.
-    echo/
+    echo.
     echo Example:
     echo $ notepad !kaliroot!/usr/share/guide/hacking.txt
-    echo/
+    echo.
     echo You can just copy and paste that command and adjust the file name.
     echo To disable this message, create a file called .hushlogin in your home directory.
-    echo/
+    echo.
 )
 
 "!busybox_path!" bash -l

@@ -40,7 +40,7 @@ exit /b 0
 :help
 
 echo Usage: lsb_release [options]
-echo/
+echo.
 echo Options:
 echo   -h, --help         show this help message and exit
 echo   -v, --version      show LSB modules this system supports

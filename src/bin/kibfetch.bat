@@ -94,4 +94,4 @@ echo                           %COLOR_DEBUG%CPU Identifier%COLOR_RESET%: %PROCES
 echo                           %COLOR_DEBUG%CPU Level%COLOR_RESET%: %PROCESSOR_LEVEL%
 echo                           %COLOR_DEBUG%Number of CPU cores%COLOR_RESET%: %NUMBER_OF_PROCESSORS%
 echo                           %COLOR_DEBUG%CPU Revision%COLOR_RESET%: %PROCESSOR_REVISION%
-echo/
+echo.
