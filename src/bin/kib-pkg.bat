@@ -196,7 +196,7 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
-curl -f -# https://raw.githubusercontent.com/Kali-in-Batch/pkg-v3/refs/heads/main/packages.list -o "%APPDATA%\kali_in_batch\packages.list"
+curl -f -s https://raw.githubusercontent.com/Kali-in-Batch/pkg-v3/refs/heads/main/packages.list >"%APPDATA%\kali_in_batch\packages.list"
 
 if %errorlevel% neq 0 (
     echo !COLOR_ERROR!Failed to update package database. Check your internet connection.!COLOR_RESET!
@@ -592,6 +592,8 @@ findstr /i /c:"%2" "%APPDATA%\kali_in_batch\packages.list"
 if %errorlevel% neq 0 (
     echo !COLOR_INFO!No packages found matching !COLOR_PACKAGE!"%2"!COLOR_RESET!!COLOR_INFO!.!COLOR_RESET!
 )
+
+echo.
 
 exit /b
 
