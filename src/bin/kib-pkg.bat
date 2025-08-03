@@ -142,6 +142,7 @@ echo   !COLOR_COMMAND!remove!COLOR_RESET!          - Remove an installed package
 echo   !COLOR_COMMAND!upgrade!COLOR_RESET!         - Upgrade an installed package to the latest version.
 echo   !COLOR_COMMAND!search!COLOR_RESET!          - Search for packages in the package database.
 echo   !COLOR_COMMAND!list!COLOR_RESET!            - List all installed packages.
+echo   !COLOR_COMMAND!list-available!COLOR_RESET!  - List all available packages.
 echo   !COLOR_COMMAND!update!COLOR_RESET!          - Update the package database cache.
 echo   !COLOR_COMMAND!help!COLOR_RESET!            - Display this help message.
 exit /b
@@ -177,6 +178,8 @@ if "%1"=="install" (
     goto search
 ) else if "%1"=="list" (
     goto list
+) else if "%1"=="list-available" (
+    goto list-available
 ) else if "%1"=="update" (
     goto update
 ) else (
@@ -593,8 +596,6 @@ if %errorlevel% neq 0 (
     echo !COLOR_INFO!No packages found matching !COLOR_PACKAGE!"%2"!COLOR_RESET!!COLOR_INFO!.!COLOR_RESET!
 )
 
-echo.
-
 exit /b
 
 :list
@@ -620,5 +621,11 @@ for /f "usebackq delims=" %%a in ("%APPDATA%\kali_in_batch\installed.packages.li
 if !count! equ 0 (
     echo !COLOR_INFO!No packages are currently installed.!COLOR_RESET!
 )
+
+exit /b
+
+:list-available
+
+type "%APPDATA%\kali_in_batch\packages.list" 2>nul
 
 exit /b
