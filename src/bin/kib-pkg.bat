@@ -196,7 +196,7 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
-curl -f -s https://raw.githubusercontent.com/Kali-in-Batch/pkg-v3/refs/heads/main/packages.list >"%APPDATA%\kali_in_batch\packages.list"
+curl -f -s https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages.list >"%APPDATA%\kali_in_batch\packages.list"
 
 if %errorlevel% neq 0 (
     echo !COLOR_ERROR!Failed to update package database. Check your internet connection.!COLOR_RESET!
@@ -277,7 +277,7 @@ if exist "!kaliroot!\tmp\%1_dependencies.txt" (
     del "!kaliroot!\tmp\%1_dependencies.txt"
 )
 
-curl -f -s https://raw.githubusercontent.com/Kali-in-Batch/pkg-v3/refs/heads/main/packages/%1/DEPENDENCIES.txt -o "!kaliroot!\tmp\%1_dependencies.txt" 2>nul
+curl -f -s https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%1/DEPENDENCIES.txt -o "!kaliroot!\tmp\%1_dependencies.txt" 2>nul
 
 if %errorlevel% neq 0 (
     echo !COLOR_INFO!No dependencies found for !COLOR_PACKAGE!%1!COLOR_RESET!
@@ -339,8 +339,8 @@ if exist "!kaliroot!\tmp\!kib-pkg_name!_package" (
 rem Download the entire package directory using PowerShell
 echo !COLOR_INFO!Downloading package files for !COLOR_PACKAGE!!kib-pkg_name!!COLOR_RESET!...
 
-powershell -ExecutionPolicy Bypass -Command "& { try { $ErrorActionPreference = 'Stop'; $owner='Kali-in-Batch'; $repo='pkg-v3'; $targetDir='packages/!kib-pkg_name!'; $localDir='!kaliroot!\tmp\!kib-pkg_name!_package'; if(Test-Path $localDir){Remove-Item $localDir -Recurse -Force}; function Download-GitHubDirectory { param($owner,$repo,$path,$localPath); $apiUrl=\"https://api.github.com/repos/$owner/$repo/contents/$path\"; try { $headers = @{}; if($env:GITHUB_TOKEN) { $headers['Authorization'] = \"token $env:GITHUB_TOKEN\" }; $response = Invoke-RestMethod -Uri $apiUrl -Headers $headers -TimeoutSec 30; if(-not(Test-Path $localPath)){New-Item -ItemType Directory -Path $localPath -Force | Out-Null}; foreach($item in $response) { $itemLocalPath = Join-Path $localPath $item.name; if($item.type -eq 'file') { Write-Host \"Downloading: $($item.name)\"; Invoke-WebRequest -Uri $item.download_url -OutFile $itemLocalPath -TimeoutSec 30 } elseif($item.type -eq 'dir') { Download-GitHubDirectory $owner $repo \"$path/$($item.name)\" $itemLocalPath } } } catch { Write-Error \"Failed to download $path : $_\"; throw } }; Download-GitHubDirectory $owner $repo $targetDir $localDir; Write-Host 'Download completed successfully.' } catch { Write-Error \"PowerShell download failed: $_\"; exit 1 } }"
-powershell -ExecutionPolicy Bypass -Command "& { try { $ErrorActionPreference = 'Stop'; $owner='Kali-in-Batch'; $repo='pkg-v3'; $targetDir='packages/!kib-pkg_name!/files'; $localDir='!kaliroot!\tmp\!kib-pkg_name!_package\files'; if(Test-Path $localDir){Remove-Item $localDir -Recurse -Force}; function Download-GitHubDirectory { param($owner,$repo,$path,$localPath); $apiUrl=\"https://api.github.com/repos/$owner/$repo/contents/$path\"; try { $headers = @{}; if($env:GITHUB_TOKEN) { $headers['Authorization'] = \"token $env:GITHUB_TOKEN\" }; $response = Invoke-RestMethod -Uri $apiUrl -Headers $headers -TimeoutSec 30; if(-not(Test-Path $localPath)){New-Item -ItemType Directory -Path $localPath -Force | Out-Null}; foreach($item in $response) { $itemLocalPath = Join-Path $localPath $item.name; if($item.type -eq 'file') { Write-Host \"Downloading: $($item.name)\"; Invoke-WebRequest -Uri $item.download_url -OutFile $itemLocalPath -TimeoutSec 30 } elseif($item.type -eq 'dir') { Download-GitHubDirectory $owner $repo \"$path/$($item.name)\" $itemLocalPath } } } catch { Write-Error \"Failed to download $path : $_\"; throw } }; Download-GitHubDirectory $owner $repo $targetDir $localDir; Write-Host 'Download completed successfully.' } catch { Write-Error \"PowerShell download failed: $_\"; exit 1 } }"
+powershell -ExecutionPolicy Bypass -Command "& { try { $ErrorActionPreference = 'Stop'; $owner='Kali-in-Batch'; $repo='pkg'; $targetDir='packages/!kib-pkg_name!'; $localDir='!kaliroot!\tmp\!kib-pkg_name!_package'; if(Test-Path $localDir){Remove-Item $localDir -Recurse -Force}; function Download-GitHubDirectory { param($owner,$repo,$path,$localPath); $apiUrl=\"https://api.github.com/repos/$owner/$repo/contents/$path\"; try { $headers = @{}; if($env:GITHUB_TOKEN) { $headers['Authorization'] = \"token $env:GITHUB_TOKEN\" }; $response = Invoke-RestMethod -Uri $apiUrl -Headers $headers -TimeoutSec 30; if(-not(Test-Path $localPath)){New-Item -ItemType Directory -Path $localPath -Force | Out-Null}; foreach($item in $response) { $itemLocalPath = Join-Path $localPath $item.name; if($item.type -eq 'file') { Write-Host \"Downloading: $($item.name)\"; Invoke-WebRequest -Uri $item.download_url -OutFile $itemLocalPath -TimeoutSec 30 } elseif($item.type -eq 'dir') { Download-GitHubDirectory $owner $repo \"$path/$($item.name)\" $itemLocalPath } } } catch { Write-Error \"Failed to download $path : $_\"; throw } }; Download-GitHubDirectory $owner $repo $targetDir $localDir; Write-Host 'Download completed successfully.' } catch { Write-Error \"PowerShell download failed: $_\"; exit 1 } }"
+powershell -ExecutionPolicy Bypass -Command "& { try { $ErrorActionPreference = 'Stop'; $owner='Kali-in-Batch'; $repo='pkg'; $targetDir='packages/!kib-pkg_name!/files'; $localDir='!kaliroot!\tmp\!kib-pkg_name!_package\files'; if(Test-Path $localDir){Remove-Item $localDir -Recurse -Force}; function Download-GitHubDirectory { param($owner,$repo,$path,$localPath); $apiUrl=\"https://api.github.com/repos/$owner/$repo/contents/$path\"; try { $headers = @{}; if($env:GITHUB_TOKEN) { $headers['Authorization'] = \"token $env:GITHUB_TOKEN\" }; $response = Invoke-RestMethod -Uri $apiUrl -Headers $headers -TimeoutSec 30; if(-not(Test-Path $localPath)){New-Item -ItemType Directory -Path $localPath -Force | Out-Null}; foreach($item in $response) { $itemLocalPath = Join-Path $localPath $item.name; if($item.type -eq 'file') { Write-Host \"Downloading: $($item.name)\"; Invoke-WebRequest -Uri $item.download_url -OutFile $itemLocalPath -TimeoutSec 30 } elseif($item.type -eq 'dir') { Download-GitHubDirectory $owner $repo \"$path/$($item.name)\" $itemLocalPath } } } catch { Write-Error \"Failed to download $path : $_\"; throw } }; Download-GitHubDirectory $owner $repo $targetDir $localDir; Write-Host 'Download completed successfully.' } catch { Write-Error \"PowerShell download failed: $_\"; exit 1 } }"
 
 if %errorlevel% neq 0 (
     echo !COLOR_ERROR!Failed to download package !COLOR_PACKAGE!!kib-pkg_name!!COLOR_RESET!.
@@ -358,7 +358,7 @@ if not exist "!kaliroot!\tmp\!kib-pkg_name!_package" (
 )
 
 if not exist "!kaliroot!\usr\share\%1" mkdir "!kaliroot!\usr\share\%1" >nul 2>&1
-curl -s -f https://raw.githubusercontent.com/Kali-in-Batch/pkg-v3/refs/heads/main/packages/%1/VERSION.txt >"!kaliroot!\usr\share\%1\VERSION.txt" 2>nul
+curl -s -f https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%1/VERSION.txt >"!kaliroot!\usr\share\%1\VERSION.txt" 2>nul
 
 rem Check if contents are "404: Not Found"
 
@@ -442,7 +442,7 @@ if exist "!kaliroot!\tmp\%2_uninstall.sh" (
 )
 
 rem Download and run UNINSTALL.sh if it exists
-curl -f -s https://raw.githubusercontent.com/Kali-in-Batch/pkg-v3/refs/heads/main/packages/%2/UNINSTALL.sh -o "!kaliroot!\tmp\%2_uninstall.sh" 2>nul
+curl -f -s https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/UNINSTALL.sh -o "!kaliroot!\tmp\%2_uninstall.sh" 2>nul
 
 if %errorlevel% equ 0 (
     if exist "!kaliroot!\tmp\%2_uninstall.sh" (
@@ -541,7 +541,7 @@ if exist "!kaliroot!\tmp\%2_new_version.txt" (
 )
 
 rem Get current version
-curl -f -s https://raw.githubusercontent.com/Kali-in-Batch/pkg-v3/refs/heads/main/packages/%2/VERSION.txt -o "!kaliroot!\tmp\%2_new_version.txt" 2>nul
+curl -f -s https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/VERSION.txt -o "!kaliroot!\tmp\%2_new_version.txt" 2>nul
 
 if %errorlevel% neq 0 (
     echo !COLOR_ERROR!Cannot determine version for package !COLOR_PACKAGE!%2!COLOR_RESET!
