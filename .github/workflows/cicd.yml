@@ -38,6 +38,9 @@ jobs:
           & "$kaliPath\kib-pkg.bat" install hello-world
           & "$kaliPath\kib-pkg.bat" list
           & "$kaliPath\kib-pkg.bat" remove hello-world
+          & "$kaliPath\kib-pkg.bat" install bat
+          & "$kaliPath\kib-pkg.bat" list
+          & "$kaliPath\kib-pkg.bat" remove bat
           Get-Content "$env:APPDATA\kali_in_batch\errors.log" | Out-File -FilePath "ci_logs\packages_$timestamp.log" -Append
           if ($LASTEXITCODE -ne 0) { throw "Package manager failed" }
 
