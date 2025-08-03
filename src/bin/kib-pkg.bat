@@ -378,7 +378,7 @@ if exist "!kaliroot!\tmp\!kib-pkg_name!_package\INSTALL.sh" (
     
     rem Check if bash exists
     if not exist "!kaliroot!\usr\bin\bash.exe" (
-        echo !COLOR_ERROR!what the hell why did you delete a critical file!COLOR_RESET!
+        echo !COLOR_ERROR!Bash not found!COLOR_RESET!
         exit /b 1
     ) else (
         set bash_path=!kaliroot!\usr\bin\bash.exe

@@ -283,6 +283,7 @@ goto boot
 
 echo !COLOR_INFO!Starting live shell...!COLOR_RESET!
 mkdir "%APPDATA%\kali_in_batch" >nul 2>&1
+cd /d "%APPDATA%\kali_in_batch" >nul 2>&1
 cls
 echo !COLOR_INFO!Type help for a list of commands.!COLOR_RESET!
 echo !COLOR_INFO!Note that kibstrap and mkdrive are REQUIRED for a functional installation.!COLOR_RESET!
@@ -292,8 +293,19 @@ echo !COLOR_INFO!Running getdeps is recommended because it installs Nmap ^(a pow
 goto live_shell_loop
 :live_shell_loop
 set "input="
-set /p "input=!COLOR_BRIGHT_RED!root!COLOR_RESET!@kibiso: !COLOR_BOLD!~!COLOR_RESET! # "
+set "args="
+set "currentdir=!cd!"
+rem Replace backslashes with forward slashes in currentdir
+set "currentdir=!currentdir:\=/!"
+set /p "input=!COLOR_BRIGHT_RED!root!COLOR_RESET!@kibiso: !COLOR_BOLD!!currentdir!!COLOR_RESET! # "
 if defined input (
+    for /f "tokens=1,*" %%a in ("!input!") do (
+        set "input=%%~a"
+        if not "%%~b"=="" (
+            set "args=%%~b"
+        )
+    )
+
     if "!input!"=="help" (
         echo !COLOR_INFO!Available commands: !COLOR_RESET!
         echo !COLOR_INFO!  - help: Displays this help message. !COLOR_RESET!
@@ -305,6 +317,13 @@ if defined input (
         echo !COLOR_INFO!  - boot: Boots the Kali in Batch installation. !COLOR_RESET!
         echo !COLOR_INFO!  - clear: Clears the screen. !COLOR_RESET!
         echo !COLOR_INFO!  - wipe: Wipes the Kali in Batch installation. !COLOR_RESET!
+        echo !COLOR_INFO!  - cd: Changes the current directory. !COLOR_RESET!
+        echo !COLOR_INFO!  - mkdir: Creates a new directory. !COLOR_RESET!
+        echo !COLOR_INFO!  - rmdir: Removes a directory. !COLOR_RESET!
+        echo !COLOR_INFO!  - rm: Removes a file. !COLOR_RESET!
+        echo !COLOR_INFO!  - cp: Copies a file. !COLOR_RESET!
+        echo !COLOR_INFO!  - mv: Moves a file. !COLOR_RESET!
+        echo !COLOR_INFO!  - ls: Lists the files in the current directory. !COLOR_RESET!
         echo.
     ) else if "!input!"=="exit" (
         echo !COLOR_INFO!Exiting live shell...!COLOR_RESET!
@@ -342,8 +361,22 @@ if defined input (
         echo # Add commands to run on startup here>"%USERPROFILE%\kali\root\.bashrc"
         curl -L -o "%USERPROFILE%\kali\usr\bin\busybox.exe" "https://web.archive.org/web/20250627230655/https://frippery.org/files/busybox/busybox64u.exe" -#
         mkdir "%APPDATA%\kali_in_batch" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        (
+            mklink "%USERPROFILE%\kali\usr\bin\ls.exe" "%USERPROFILE%\kali\usr\bin\busybox.exe"
+            mklink "%USERPROFILE%\kali\usr\bin\rm.exe" "%USERPROFILE%\kali\usr\bin\busybox.exe"
+            mklink "%USERPROFILE%\kali\usr\bin\cp.exe" "%USERPROFILE%\kali\usr\bin\busybox.exe"
+            mklink "%USERPROFILE%\kali\usr\bin\mv.exe" "%USERPROFILE%\kali\usr\bin\busybox.exe"
+            mklink "%USERPROFILE%\kali\usr\bin\sh.exe" "%USERPROFILE%\kali\usr\bin\busybox.exe"
+            mklink "%USERPROFILE%\kali\usr\bin\bash.exe" "%USERPROFILE%\kali\usr\bin\busybox.exe"
+            mklink "%USERPROFILE%\kali\usr\bin\echo.exe" "%USERPROFILE%\kali\usr\bin\busybox.exe"
+            mklink "%USERPROFILE%\kali\usr\bin\printf.exe" "%USERPROFILE%\kali\usr\bin\busybox.exe"
+        ) >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
     ) else if "!input!"=="mkdrive" (
-        set /p "kaliroot=Enter drive letter (e.g Z:): "
+        if not defined args (
+            echo !COLOR_ERROR!Please specify the drive letter.!COLOR_RESET!
+            goto live_shell_loop
+        )
+        set "kaliroot=!args!"
         if exist !kaliroot! (
             echo Drive letter already in use.
         )
@@ -369,10 +402,23 @@ if defined input (
     ) else if "!input!"=="kib-pkg" (
         set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
         set "kib-pkg_path=!kaliroot!\usr\bin\kib-pkg.bat"
-        set /p "args=Enter arguments to pass to kib-pkg: "
         call "!kib-pkg_path!" !args!
+    ) else if "!input!"=="cd" (
+        cd /d "!args!" >nul 2>&1
+    ) else if "!input!"=="mkdir" (
+        mkdir "!args!" >nul 2>&1
+    ) else if "!input!"=="rmdir" (
+        rmdir /s /q "!args!" >nul 2>&1
+    ) else if "!input!"=="rm" (
+        del /f /q "!args!" >nul 2>&1
+    ) else if "!input!"=="ls" (
+        dir !args!
+    ) else if "!input!"=="cp" (
+        copy !args!
+    ) else if "!input!"=="mv" (
+        ren !args!
     ) else (
-        echo !input!: command not found
+        !input! !args!
     )
 )
 goto live_shell_loop 
@@ -461,7 +507,7 @@ if not exist "%USERPROFILE%\kali" (
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
 
 echo.
-echo Welcome to Kali in Batch 9.9.2 LTS ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to Kali in Batch 9.10.0 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 ::                                                                 |
@@ -630,11 +676,11 @@ echo.
 
 (
     echo NAME="Kali in Batch"
-    echo VERSION="9.9.2 LTS"
+    echo VERSION="9.10.0"
     echo ID=kalibatch
     echo ID_LIKE=linux
-    echo VERSION_ID="9.9.2 LTS"
-    echo PRETTY_NAME="Kali in Batch 9.9.2 LTS"
+    echo VERSION_ID="9.10.0"
+    echo PRETTY_NAME="Kali in Batch 9.10.0"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kali-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
@@ -692,7 +738,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 9.9.2 LTS>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 9.10.0>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -753,7 +799,7 @@ if "%~1"=="automated" (
 :login
 
 echo.
-echo Kali in Batch 9.9.2 LTS
+echo Kali in Batch 9.10.0
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root

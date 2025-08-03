@@ -4,7 +4,7 @@
 
 The following versions of Kali in Batch are supported:
 
-* 9.9.2 LTS
+* 9.10.0
 * 9.10.0
 
 ## EOL Cycles
