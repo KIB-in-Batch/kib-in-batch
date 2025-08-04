@@ -86,7 +86,7 @@ set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
 
 echo ██   ██ ██ ██████         %COLOR_DEBUG%%USER%%COLOR_RESET%@%COLOR_DEBUG%%COMPUTERNAME%%COLOR_RESET%
 echo ██  ██  ██ ██   ██        -------------------------------
-echo █████   ██ ██████         %COLOR_DEBUG%OS%COLOR_RESET%: Kali in Batch 9.10.2
+echo █████   ██ ██████         %COLOR_DEBUG%OS%COLOR_RESET%: Kali in Batch 9.10.3
 echo ██  ██  ██ ██   ██        %COLOR_DEBUG%Kernel%COLOR_RESET%: KALI_IN_BATCH_%OS%
 echo ██   ██ ██ ██████         %COLOR_DEBUG%Kali in Batch Root%COLOR_RESET%: %kaliroot%/
 echo                           %COLOR_DEBUG%CPU Architecture%COLOR_RESET%: %PROCESSOR_ARCHITECTURE%
