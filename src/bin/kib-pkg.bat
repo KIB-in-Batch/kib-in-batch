@@ -506,20 +506,14 @@ if "!new_major!"=="" set new_major=0
 if "!new_minor!"=="" set new_minor=0
 if "!new_patch!"=="" set new_patch=0
 
-rem Compare major version
-if !new_major! gtr !curr_major! exit /b 0
-if !new_major! lss !curr_major! exit /b 1
-if !new_major! equ !curr_major! exit /b 1
+rem Compare patch version
+if !new_patch! gtr !curr_patch! exit /b 0
 
 rem Compare minor version
 if !new_minor! gtr !curr_minor! exit /b 0
-if !new_minor! lss !curr_minor! exit /b 1
-if !new_minor! equ !curr_minor! exit /b 1
 
-rem Compare patch version
-if !new_patch! gtr !curr_patch! exit /b 0
-if !new_patch! lss !curr_patch! exit /b 1
-if !new_patch! equ !curr_patch! exit /b 1
+rem Compare major version
+if !new_major! gtr !curr_major! exit /b 0
 
 exit /b 1
 
