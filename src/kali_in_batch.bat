@@ -589,7 +589,7 @@ echo.
     echo.
     echo ## Applet overrides ##
     echo.
-    echo export BB_OVERRIDE_APPLETS="clear touch uname which whoami msfconsole kib-pkg"
+    echo export BB_OVERRIDE_APPLETS="clear touch uname which whoami msfconsole kib-pkg make"
     echo.
     echo alias netcat="nc"
     echo.
