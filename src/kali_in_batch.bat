@@ -507,7 +507,7 @@ if not exist "%USERPROFILE%\kali" (
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
 
 echo.
-echo Welcome to Kali in Batch 9.10.0 ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to Kali in Batch 9.10.1 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 ::                                                                 |
@@ -635,7 +635,7 @@ echo.
     echo.
     echo ## Applet overrides ##
     echo.
-    echo export BB_OVERRIDE_APPLETS="clear touch uname which whoami msfconsole kib-pkg"
+    echo export BB_OVERRIDE_APPLETS="clear touch uname which whoami msfconsole kib-pkg make"
     echo.
     echo alias netcat="nc"
     echo.
@@ -676,11 +676,11 @@ echo.
 
 (
     echo NAME="Kali in Batch"
-    echo VERSION="9.10.0"
+    echo VERSION="9.10.1"
     echo ID=kalibatch
     echo ID_LIKE=linux
-    echo VERSION_ID="9.10.0"
-    echo PRETTY_NAME="Kali in Batch 9.10.0"
+    echo VERSION_ID="9.10.1"
+    echo PRETTY_NAME="Kali in Batch 9.10.1"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kali-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
@@ -738,7 +738,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 9.10.0>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 9.10.1>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -799,7 +799,7 @@ if "%~1"=="automated" (
 :login
 
 echo.
-echo Kali in Batch 9.10.0
+echo Kali in Batch 9.10.1
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root
