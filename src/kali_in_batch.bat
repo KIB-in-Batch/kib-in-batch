@@ -272,6 +272,10 @@ if defined missing (
     @echo off
     rem Set install part to the txt file created in installer
     set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
+    echo Installing core packages...
+    "!kaliroot!\usr\bin\kib-pkg.bat" update
+    "!kaliroot!\usr\bin\kib-pkg.bat" install make & rem Build system for any kind of software
+    "!kaliroot!\usr\bin\kib-pkg.bat" install file & rem Essential utility
 )
 rem Set install part to the txt file created in installer
 set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
@@ -394,6 +398,11 @@ if defined input (
     ) else if "!input!"=="boot" (
         set "busybox_path=!kaliroot!\usr\bin\busybox.exe"
         copy "%~dp0kibenv" "!kaliroot!\etc\.kibenv" /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        echo Installing core packages...
+        "!kaliroot!\usr\bin\kib-pkg.bat" update
+        "!kaliroot!\usr\bin\kib-pkg.bat" install make & rem Build system for any kind of software
+        "!kaliroot!\usr\bin\kib-pkg.bat" install file & rem Essential utility
+        echo.
         goto boot
     ) else if "!input!"=="wipe" (
         goto wipe
@@ -507,7 +516,7 @@ if not exist "%USERPROFILE%\kali" (
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
 
 echo.
-echo Welcome to Kali in Batch 9.10.3 ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to Kali in Batch 9.11.0 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 ::                                                                 |
@@ -676,11 +685,11 @@ echo.
 
 (
     echo NAME="Kali in Batch"
-    echo VERSION="9.10.3"
+    echo VERSION="9.11.0"
     echo ID=kalibatch
     echo ID_LIKE=linux
-    echo VERSION_ID="9.10.3"
-    echo PRETTY_NAME="Kali in Batch 9.10.3"
+    echo VERSION_ID="9.11.0"
+    echo PRETTY_NAME="Kali in Batch 9.11.0"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kali-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
@@ -738,7 +747,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 9.10.3>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 9.11.0>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -799,7 +808,7 @@ if "%~1"=="automated" (
 :login
 
 echo.
-echo Kali in Batch 9.10.3
+echo Kali in Batch 9.11.0
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root
