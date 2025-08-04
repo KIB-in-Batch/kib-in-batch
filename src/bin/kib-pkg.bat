@@ -319,11 +319,11 @@ rem Install a single package (used for dependencies)
 set kib-pkg_name=%~1
 
 rem Check if already installed
-call :check_package_installed "!kib-pkg_name!"
-if %errorlevel% equ 0 (
-    echo !COLOR_INFO!Package !COLOR_PACKAGE!!kib-pkg_name!!COLOR_RESET!!COLOR_INFO! is already installed.!COLOR_RESET!
-    goto :eof
-)
+::call :check_package_installed "!kib-pkg_name!"
+::if %errorlevel% equ 0 (
+::    echo !COLOR_INFO!Package !COLOR_PACKAGE!!kib-pkg_name!!COLOR_RESET!!COLOR_INFO! is already installed.!COLOR_RESET!
+::    goto :eof
+::)
 
 rem Check if package exists
 call :check_package_exists "!kib-pkg_name!"
@@ -479,11 +479,11 @@ exit /b
 :compare_versions
 
 rem Compare two version strings (format: x.y.z)
-rem %3 = current version, %4 = new version
+rem %1 = current version, %2 = new version
 rem Returns 0 if new version is greater, 1 if not
 
-set current_ver=%3
-set new_ver=%4
+set current_ver=%1
+set new_ver=%2
 
 rem Split versions by dots
 for /f "tokens=1,2,3 delims=." %%a in ("%current_ver%") do (
