@@ -272,10 +272,6 @@ if defined missing (
     @echo off
     rem Set install part to the txt file created in installer
     set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
-    echo Installing core packages...
-    "!kaliroot!\usr\bin\kib-pkg.bat" update
-    "!kaliroot!\usr\bin\kib-pkg.bat" install make & rem Build system for any kind of software
-    "!kaliroot!\usr\bin\kib-pkg.bat" install file & rem Essential utility
 )
 rem Set install part to the txt file created in installer
 set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
@@ -398,11 +394,6 @@ if defined input (
     ) else if "!input!"=="boot" (
         set "busybox_path=!kaliroot!\usr\bin\busybox.exe"
         copy "%~dp0kibenv" "!kaliroot!\etc\.kibenv" /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
-        echo Installing core packages...
-        "!kaliroot!\usr\bin\kib-pkg.bat" update
-        "!kaliroot!\usr\bin\kib-pkg.bat" install make & rem Build system for any kind of software
-        "!kaliroot!\usr\bin\kib-pkg.bat" install file & rem Essential utility
-        echo.
         goto boot
     ) else if "!input!"=="wipe" (
         goto wipe
@@ -880,6 +871,11 @@ rem    echo.
     echo.
     echo You can just copy and paste that command and adjust the file name.
     echo To disable this message, create a file called .hushlogin in your home directory.
+    echo.
+    echo For the best experience, run the following commands:
+    echo $ sudo kib-pkg update
+    echo $ sudo kib-pkg install make # Build system
+    echo $ sudo kib-pkg install file # Classic UNIX utility
     echo.
 )
 
