@@ -44,10 +44,13 @@ jobs:
           & "$kaliPath\kib-pkg.bat" list
           & "$kaliPath\kib-pkg.bat" remove bat
           & "$kaliPath\kib-pkg.bat" install make
-          make --version
-          make --help
+          & "$kaliPath\make" --version
+          & "$kaliPath\make" --help
           & "$kaliPath\kib-pkg.bat" remove make
           & "$kaliPath\kib-pkg.bat" list
+          & "$kaliPath\kib-pkg.bat" install file
+          & "$kaliPath\kib-pkg.bat" list
+          & "$env:USERPROFILE\kali\usr\lib\file\file.exe" --version
           Get-Content "$env:APPDATA\kali_in_batch\errors.log" | Out-File -FilePath "ci_logs\packages_$timestamp.log" -Append
           if ($LASTEXITCODE -ne 0) { throw "Package manager failed" }
 
