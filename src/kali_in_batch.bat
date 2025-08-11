@@ -838,11 +838,15 @@ echo.
 
 set "busybox_path=!kaliroot!\usr\bin\busybox.exe"
 
-choice /c yn /n /m "Do you wish to update BusyBox? [Y/N]"
+rem Check if %~1 isn't "automated"
 
-if "%errorlevel%"=="1" (
-    curl -L -o "!kaliroot!\usr\bin\busybox.exe" "https://github.com/Kali-in-Batch/busybox-w32/releases/latest/download/busybox64.exe" -#
-    set "busybox_path=!kaliroot!\usr\bin\busybox.exe"
+if not "%~1"=="automated" (
+    choice /c yn /n /m "Do you wish to update BusyBox? [Y/N] "
+    
+    if "%errorlevel%"=="1" (
+        curl -L -o "!kaliroot!\usr\bin\busybox.exe" "https://github.com/Kali-in-Batch/busybox-w32/releases/latest/download/busybox64.exe" -#
+        set "busybox_path=!kaliroot!\usr\bin\busybox.exe"
+    )
 )
 
 echo ------------------------------------------------
