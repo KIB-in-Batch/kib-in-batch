@@ -4,7 +4,7 @@
 
 The following versions of Kali in Batch are supported:
 
-* 9.9.2 LTS (Released: August 3, 2025)
+* 9.9.2 LTS (Supported until August 3 2026)
 * 9.12.x
 
 ## EOL Cycles
