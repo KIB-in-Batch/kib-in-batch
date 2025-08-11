@@ -70,11 +70,11 @@ Download the latest release from the [releases page](https://github.com/Kali-in-
 
 ### How do I update Kali in Batch?
 
-Kali in Batch checks for updates on startup. For minor updates, download the latest release and run `.\src\kali_in_batch.bat`. For major updates, uninstall first using `.\uninstall.bat` then reinstall.
+For minor updates, download the latest release and run `.\src\kali_in_batch.bat`. For major updates, uninstall first using `.\uninstall.bat` then reinstall. The uninstaller creates a backup of your Kali in Batch home directory which Kali in Batch automatically detects and restores upon reinstalling.
 
 ### How do I uninstall Kali in Batch?
 
-Run the `uninstall.bat` script from the extracted release directory in PowerShell or Command Prompt.
+Run the `uninstall.bat` script from the extracted release directory in PowerShell or Command Prompt. The uninstaller creates a backup of your Kali in Batch home directory which Kali in Batch automatically detects and restores upon reinstalling.
 
 ### How do I manage packages?
 

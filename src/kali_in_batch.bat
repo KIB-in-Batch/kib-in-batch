@@ -151,6 +151,40 @@ if !errorlevel! neq 0 (
     exit /b 1
 )
 
+rem Check if %APPDATA%\kali_in_batch\VERSION.txt exists
+
+if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
+    rem Split by . using a for loop
+    for /f "tokens=1 delims=." %%a in ('type "%APPDATA%\kali_in_batch\VERSION.txt"') do (
+        set /a "version=%%a"
+        if !version! lss 9 (
+            echo Please reinstall Kali in Batch. This release has breaking changes.
+            pause >nul
+            exit /b 1
+        )
+    )
+)
+
+if "%PROCESSOR_ARCHITECTURE%"=="x86" (
+    echo !COLOR_ERROR!CRITICAL: Kali in Batch is 64-bit only. Please use a supported processor.!COLOR_RESET!
+    pause >nul
+    exit /b 1
+) else if "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
+    set archType=64-bit
+) else if "%PROCESSOR_ARCHITECTURE%"=="ARM64" (
+    set archType=ARM64
+) else (
+    set archType=Unknown
+)
+
+if /i "!archType!"=="ARM64" (
+    echo !COLOR_WARNING!Running Kali in Batch on ARM64 may work, but is unsupported. Proceed with caution.!COLOR_RESET!
+) else if /i "!archType!"=="ARM" (
+    echo !COLOR_ERROR!CRITICAL: Kali in Batch is not supported on ARM-based systems that are 32-bit. Please use a 64-bit ARM-based system.!COLOR_RESET!
+    pause >nul
+    exit /b 1
+)
+
 cls
 set "username=%USERNAME%"
 title Kali in Batch
@@ -216,6 +250,8 @@ if defined missing (
         echo Creating directories...
         mkdir "!kaliroot!\home" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         mkdir "!kaliroot!\home\!username!" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        rem Copy all files from %USERPROFILE%\kalihome.bak.d\* to %USERPROFILE%\kali\home\!username!
+        xcopy /s /i /h /y "%USERPROFILE%\kalihome.bak.d\*" "%USERPROFILE%\kali\home\!username!\"
         mkdir "!kaliroot!\tmp" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         mkdir "!kaliroot!\usr" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         mkdir "!kaliroot!\etc" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
@@ -264,7 +300,7 @@ if defined missing (
         )
     )
     echo Downloading busybox...
-    curl -L -o "!kaliroot!\usr\bin\busybox.exe" "https://web.archive.org/web/20250627230655/https://frippery.org/files/busybox/busybox64u.exe" -#
+    curl -L -o "!kaliroot!\usr\bin\busybox.exe" "https://github.com/Kali-in-Batch/busybox-w32/releases/latest/download/busybox64.exe" -#
     set "busybox_path=!kaliroot!\usr\bin\busybox.exe"
     mkdir "%APPDATA%\kali_in_batch" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
     @echo on
@@ -331,6 +367,8 @@ if defined input (
     ) else if "!input!"=="kibstrap" (
         mkdir "%USERPROFILE%\kali\home" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         mkdir "%USERPROFILE%\kali\home\!username!" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        rem Copy all files from %USERPROFILE%\kalihome.bak.d\* to %USERPROFILE%\kali\home\!username!
+        xcopy /s /i /h /y "%USERPROFILE%\kalihome.bak.d\*" "%USERPROFILE%\kali\home\!username!\"
         mkdir "%USERPROFILE%\kali\tmp" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         mkdir "%USERPROFILE%\kali\usr" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         mkdir "%USERPROFILE%\kali\etc" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
@@ -359,7 +397,7 @@ if defined input (
         xcopy "%~dp0libexec\*" "%USERPROFILE%\kali\usr\libexec\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         echo # Add commands to run on startup here>"%USERPROFILE%\kali\home\!username!\.bashrc"
         echo # Add commands to run on startup here>"%USERPROFILE%\kali\root\.bashrc"
-        curl -L -o "%USERPROFILE%\kali\usr\bin\busybox.exe" "https://web.archive.org/web/20250627230655/https://frippery.org/files/busybox/busybox64u.exe" -#
+        curl -L -o "%USERPROFILE%\kali\usr\bin\busybox.exe" "https://github.com/Kali-in-Batch/busybox-w32/releases/latest/download/busybox64.exe" -#
         mkdir "%APPDATA%\kali_in_batch" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         (
             mklink "%USERPROFILE%\kali\usr\bin\ls.exe" "%USERPROFILE%\kali\usr\bin\busybox.exe"
@@ -507,7 +545,7 @@ if not exist "%USERPROFILE%\kali" (
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
 
 echo.
-echo Welcome to Kali in Batch 9.11.0 ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to Kali in Batch 9.12.0 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 ::                                                                 |
@@ -640,8 +678,14 @@ echo.
     echo alias netcat="nc"
     echo.
     echo ## Functions ##
-    echo.
+    echo.   
     echo sudo^(^) {
+    echo     # Check if the first argument is --help
+    echo     if [ "$1" == "--help" ]; then
+    echo        echo "Usage: sudo <command> [args]"
+    echo        echo "Note: This is not the real sudo, neither is it a port of the real sudo."
+    echo        return
+    echo     fi
     echo     export PREVROOTVAL="$ROOT"
     echo     export PREVUSERVAL="$USER"
     echo     export ROOT="1"
@@ -652,6 +696,12 @@ echo.
     echo }
     echo.
     echo su^(^) {
+    echo     # Check if the first argument is --help
+    echo     if [ "$1" == "--help" ]; then
+    echo        echo "Usage: su"
+    echo        echo "Use this command to become the root user."
+    echo        return
+    echo     fi
     echo     export ROOT="1"
     echo     export USER="root"
     echo     export HOME="!kaliroot!/root"
@@ -659,6 +709,12 @@ echo.
     echo }
     echo.
     echo unsu^(^) {
+    echo     # Check if the first argument is --help
+    echo     if [ "$1" == "--help" ]; then
+    echo        echo "Usage: unsu"
+    echo        echo "Use this command to become the regular user."
+    echo        return
+    echo     fi
     echo     if [ "$ROOT" == "0" ]; then
     echo        echo "You are not root"
     echo        return 69
@@ -676,11 +732,11 @@ echo.
 
 (
     echo NAME="Kali in Batch"
-    echo VERSION="9.11.0"
+    echo VERSION="9.12.0"
     echo ID=kalibatch
     echo ID_LIKE=linux
-    echo VERSION_ID="9.11.0"
-    echo PRETTY_NAME="Kali in Batch 9.11.0"
+    echo VERSION_ID="9.12.0"
+    echo PRETTY_NAME="Kali in Batch 9.12.0"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kali-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
@@ -738,7 +794,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 9.11.0>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 9.12.0>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -768,7 +824,7 @@ if !errorlevel! neq 0 (
 <nul set /p "=Starting Bash service...                             "
 
 if not exist "!kaliroot!\usr\bin\busybox.exe" (
-    curl -L -o "!kaliroot!\usr\bin\busybox.exe" "https://web.archive.org/web/20250627230655/https://frippery.org/files/busybox/busybox64u.exe" -s
+    curl -L -o "!kaliroot!\usr\bin\busybox.exe" "https://github.com/Kali-in-Batch/busybox-w32/releases/latest/download/busybox64.exe" -s
 
     if errorlevel 1 (
         <nul set /p "=[ !COLOR_ERROR!FAILED!COLOR_RESET! ]"
@@ -781,6 +837,13 @@ if not exist "!kaliroot!\usr\bin\busybox.exe" (
 echo.
 
 set "busybox_path=!kaliroot!\usr\bin\busybox.exe"
+
+choice /c yn /n /m "Do you wish to update BusyBox? [Y/N]"
+
+if "%errorlevel%"=="1" (
+    curl -L -o "!kaliroot!\usr\bin\busybox.exe" "https://github.com/Kali-in-Batch/busybox-w32/releases/latest/download/busybox64.exe" -#
+    set "busybox_path=!kaliroot!\usr\bin\busybox.exe"
+)
 
 echo ------------------------------------------------
 
@@ -799,7 +862,7 @@ if "%~1"=="automated" (
 :login
 
 echo.
-echo Kali in Batch 9.11.0
+echo Kali in Batch 9.12.0
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root
@@ -870,12 +933,13 @@ rem    echo.
     echo $ notepad !kaliroot!/usr/share/guide/hacking.txt
     echo.
     echo You can just copy and paste that command and adjust the file name.
-    echo To disable this message, create a file called .hushlogin in your home directory.
     echo.
     echo For the best experience, run the following commands:
     echo $ sudo kib-pkg update
     echo $ sudo kib-pkg install make # Build system
-    echo $ sudo kib-pkg install file # Classic UNIX utility
+    echo $ sudo kib-pkg install file # Classic UNIX utility ^(source ~/.bashrc after install^)
+    echo.
+    echo To disable this message, create a file called .hushlogin in your home directory.
     echo.
 )
 

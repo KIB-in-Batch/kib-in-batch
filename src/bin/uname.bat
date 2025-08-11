@@ -102,7 +102,7 @@ goto :eof
 
 :version
 
-echo Uname for Kali in Batch 9.11.0
+echo Uname for Kali in Batch 9.12.0
 echo This is GPL-2.0-only licensed free software. There is NO WARRANTY.
 goto :eof
 
@@ -129,6 +129,8 @@ echo --version                  output version
 echo.
 echo About the use of the word "Linux", see below:
 echo Linux is a registered trademark of Linus Torvalds.
+echo About the use of the word "GNU", see below:
+echo GNU is a registered trademark of the Free Software Foundation.
 
 :check_again
 set "flag_s=0"

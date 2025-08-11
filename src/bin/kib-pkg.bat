@@ -137,6 +137,7 @@ exit /b 64
 echo !COLOR_HEADER!Usage: %~0 (install/remove/upgrade/search/list/update/help)!COLOR_RESET!
 echo.
 echo !COLOR_UNDERLINE!Commands:!COLOR_RESET!
+echo.
 echo   !COLOR_COMMAND!install!COLOR_RESET!         - Install a package by name.
 echo   !COLOR_COMMAND!remove!COLOR_RESET!          - Remove an installed package by name.
 echo   !COLOR_COMMAND!upgrade!COLOR_RESET!         - Upgrade an installed package to the latest version.
@@ -250,16 +251,21 @@ goto :eof
 :add_to_installed
 
 rem Add package to installed list
-set kib-pkg_to_add=%1
+set kib-pkg_to_add=%~1
 if not "!kib-pkg_to_add!"=="" (
-    echo !kib-pkg_to_add!>>"%APPDATA%\kali_in_batch\installed.packages.list"
+    rem Make sure not in installed list
+    findstr /c:"!kib-pkg_to_add!" "%APPDATA%\kali_in_batch\installed.packages.list" >nul 2>&1
+    rem If not in list, add it
+    if %errorlevel% equ 0 (
+        echo !kib-pkg_to_add! >> "%APPDATA%\kali_in_batch\installed.packages.list"
+    )
 )
 goto :eof
 
 :remove_from_installed
 
 rem Remove package from installed list
-set kib-pkg_to_remove=%1
+set kib-pkg_to_remove=%~1
 if exist "%APPDATA%\kali_in_batch\installed.packages.list" (
     if not "!kib-pkg_to_remove!"=="" (
         findstr /v /c:"!kib-pkg_to_remove!" "%APPDATA%\kali_in_batch\installed.packages.list" >"%APPDATA%\kali_in_batch\temp.list"
