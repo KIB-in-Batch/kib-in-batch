@@ -23,7 +23,6 @@ Kali in Batch is a batch script-based environment that runs a bash shell with ma
   * Whois
   * Usable shell scripting environment
 * Simple package manager accessible via the `kib-pkg` command.
-* Update checking mechanism that compares local and remote versions to notify if the installation is outdated.
 * Custom shell prompt and aliases for common commands to enhance usability.
 * [POSIX API reimplementations](./src/lib/posix/README.md).
 
