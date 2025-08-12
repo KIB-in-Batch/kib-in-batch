@@ -766,9 +766,13 @@ echo.
     echo     PS1=$'\[\e[32m\]┌──^(\[\e[34m\]\u㉿\h\[\e[32m\]^)-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]$ \[\e[0m\]'
     echo }
     echo.
+    echo ## Exit if not interactive ##
+    echo.
+    echo [[ $- != *i* ]] ^&^& return
+    echo.
     echo ## Load ~/.bashrc ##
     echo.
-    echo [[ $- = *i* ]] && source ~/.bashrc
+    echo source ~/.bashrc
 ) > "!kaliroot!\etc\.kibenv" 2>>"%APPDATA%\kali_in_batch\errors.log"
 
 (
