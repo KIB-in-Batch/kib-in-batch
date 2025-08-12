@@ -83,6 +83,12 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
           & "$env:USERPROFILE\kali\usr\bin\kibfetch.bat"
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
+          & "$env:USERPROFILE\kali\usr\bin\ls.exe" "$env:USERPROFILE\kali\usr\bin"
+          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
+          & "$env:USERPROFILE\kali\usr\bin\ls.exe" "$env:USERPROFILE\kali\bin\"
+          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
+          & "$env:USERPROFILE\kali\usr\bin\ls.exe" "$env:USERPROFILE\kali\" -lahF
+          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
           Get-Content "$env:APPDATA\kali_in_batch\errors.log" | Out-File -FilePath "ci_logs\other_tools_$timestamp.log" -Append
 
       # Always upload logs
