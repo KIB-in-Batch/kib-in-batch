@@ -768,7 +768,7 @@ echo.
     echo.
     echo ## Exit if not interactive ##
     echo.
-    echo [[ $- != *i* ]] ^&^& return
+    echo [[ $- != *i* ]] && return
     echo.
     echo ## Load ~/.bashrc ##
     echo.
