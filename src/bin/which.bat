@@ -46,13 +46,13 @@ for %%a in (%*) do (
         echo Consider contributing to this project as this is an incomplete which implementation.
         exit /b 0
     ) else if "!arg!"=="--version" (
-        echo which for Kali in Batch 9.12.2
+        echo which for Kali in Batch 9.12.3
         echo This is GPL-2.0-only licensed free software. There is NO WARRANTY.
     ) else if "!arg!"=="-v" (
-        echo which for Kali in Batch 9.12.2
+        echo which for Kali in Batch 9.12.3
         echo This is GPL-2.0-only licensed free software. There is NO WARRANTY.
     ) else if "!arg!"=="-V" (
-        echo which for Kali in Batch 9.12.2
+        echo which for Kali in Batch 9.12.3
         echo This is GPL-2.0-only licensed free software. There is NO WARRANTY.
     )
 )
