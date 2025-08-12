@@ -35,20 +35,20 @@ jobs:
         run: |
           $kaliPath = "$env:USERPROFILE\kali\usr\bin"
           & "$kaliPath\kib-pkg.bat" update
-          & "$kaliPath\kib-pkg.bat" install hello-world
+          echo y | & "$kaliPath\kib-pkg.bat" install hello-world
           & "$kaliPath\kib-pkg.bat" list
-          & "$kaliPath\kib-pkg.bat" remove hello-world
-          & "$kaliPath\kib-pkg.bat" install bat
+          echo y | & "$kaliPath\kib-pkg.bat" remove hello-world
+          echo y | & "$kaliPath\kib-pkg.bat" install bat
           & "$kaliPath\bat.exe" --help
           & "$kaliPath\bat.exe" "$env:USERPROFILE\kali\etc\.kibenv"
           & "$kaliPath\kib-pkg.bat" list
-          & "$kaliPath\kib-pkg.bat" remove bat
-          & "$kaliPath\kib-pkg.bat" install make
+          echo y | & "$kaliPath\kib-pkg.bat" remove bat
+          echo y | & "$kaliPath\kib-pkg.bat" install make
           & "$kaliPath\make" --version
           & "$kaliPath\make" --help
-          & "$kaliPath\kib-pkg.bat" remove make
+          echo y | & "$kaliPath\kib-pkg.bat" remove make
           & "$kaliPath\kib-pkg.bat" list
-          & "$kaliPath\kib-pkg.bat" install file
+          echo y | & "$kaliPath\kib-pkg.bat" install file
           & "$kaliPath\kib-pkg.bat" list
           & "$env:USERPROFILE\kali\usr\lib\file\file.exe" --version
           Get-Content "$env:APPDATA\kali_in_batch\errors.log" | Out-File -FilePath "ci_logs\packages_$timestamp.log" -Append
@@ -82,6 +82,12 @@ jobs:
           & "$env:USERPROFILE\kali\usr\bin\rm.exe" -rf test.txt
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
           & "$env:USERPROFILE\kali\usr\bin\kibfetch.bat"
+          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
+          & "$env:USERPROFILE\kali\usr\bin\ls.exe" "$env:USERPROFILE\kali\usr\bin"
+          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
+          & "$env:USERPROFILE\kali\usr\bin\ls.exe" "$env:USERPROFILE\kali\bin\"
+          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
+          & "$env:USERPROFILE\kali\usr\bin\ls.exe" "$env:USERPROFILE\kali\" -lahF
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
           Get-Content "$env:APPDATA\kali_in_batch\errors.log" | Out-File -FilePath "ci_logs\other_tools_$timestamp.log" -Append
 

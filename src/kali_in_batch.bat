@@ -185,6 +185,23 @@ if /i "!archType!"=="ARM64" (
     exit /b 1
 )
 
+rem Check if symlink creation is available
+
+mkdir "%TEMP%\dummy.kib.d" >nul 2>&1
+
+mklink /d "%~dp0test" "%TEMP%\dummy.kib.d" >nul 2>&1
+
+if errorlevel 1 (
+    echo !COLOR_ERROR!CRITICAL: Symlink creation is not available. Please run this script as administrator or enable developer mode.!COLOR_RESET!
+    rmdir /s /q "%~dp0test" >nul 2>&1
+    rmdir /s /q "%TEMP%\dummy.kib.d" >nul 2>&1
+    pause >nul
+    exit /b 1
+)
+
+rmdir /s /q "%~dp0test" >nul 2>&1
+rmdir /s /q "%TEMP%\dummy.kib.d" >nul 2>&1
+
 cls
 set "username=%USERNAME%"
 title Kali in Batch
@@ -398,17 +415,14 @@ if defined input (
         echo # Add commands to run on startup here>"%USERPROFILE%\kali\home\!username!\.bashrc"
         echo # Add commands to run on startup here>"%USERPROFILE%\kali\root\.bashrc"
         curl -L -o "%USERPROFILE%\kali\usr\bin\busybox.exe" "https://github.com/Kali-in-Batch/busybox-w32/releases/latest/download/busybox64.exe" -#
+        if errorlevel 1 (
+            echo !COLOR_ERROR!Could not download busybox. Please check your internet connection.!COLOR_RESET
+            pause >nul
+            goto wipe
+        )
+        set "busybox_path=%USERPROFILE%\kali\usr\bin\busybox.exe"
         mkdir "%APPDATA%\kali_in_batch" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
-        (
-            mklink "%USERPROFILE%\kali\usr\bin\ls.exe" "%USERPROFILE%\kali\usr\bin\busybox.exe"
-            mklink "%USERPROFILE%\kali\usr\bin\rm.exe" "%USERPROFILE%\kali\usr\bin\busybox.exe"
-            mklink "%USERPROFILE%\kali\usr\bin\cp.exe" "%USERPROFILE%\kali\usr\bin\busybox.exe"
-            mklink "%USERPROFILE%\kali\usr\bin\mv.exe" "%USERPROFILE%\kali\usr\bin\busybox.exe"
-            mklink "%USERPROFILE%\kali\usr\bin\sh.exe" "%USERPROFILE%\kali\usr\bin\busybox.exe"
-            mklink "%USERPROFILE%\kali\usr\bin\bash.exe" "%USERPROFILE%\kali\usr\bin\busybox.exe"
-            mklink "%USERPROFILE%\kali\usr\bin\echo.exe" "%USERPROFILE%\kali\usr\bin\busybox.exe"
-            mklink "%USERPROFILE%\kali\usr\bin\printf.exe" "%USERPROFILE%\kali\usr\bin\busybox.exe"
-        ) >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
+        call :create_symlinks
     ) else if "!input!"=="mkdrive" (
         if not defined args (
             echo !COLOR_ERROR!Please specify the drive letter.!COLOR_RESET!
@@ -545,7 +559,7 @@ if not exist "%USERPROFILE%\kali" (
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
 
 echo.
-echo Welcome to Kali in Batch 9.12.0 ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to Kali in Batch 9.12.1 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 ::                                                                 |
@@ -657,6 +671,24 @@ echo.
     echo #                      #
     echo ########################
     echo.
+    echo ## Locale fixes ##
+    echo.
+    echo export LANG=C.UTF-8
+    echo export LANGUAGE=C.UTF-8
+    echo export LC_CTYPE=C.UTF-8
+    echo export LC_NUMERIC=C.UTF-8
+    echo export LC_TIME=C.UTF-8
+    echo export LC_COLLATE=C.UTF-8
+    echo export LC_MONETARY=C.UTF-8
+    echo export LC_MESSAGES=C.UTF-8
+    echo export LC_PAPER=C.UTF-8
+    echo export LC_NAME=C.UTF-8
+    echo export LC_ADDRESS=C.UTF-8
+    echo export LC_TELEPHONE=C.UTF-8
+    echo export LC_MEASUREMENT=C.UTF-8
+    echo export LC_IDENTIFICATION=C.UTF-8
+    echo export LC_ALL=C.UTF-8
+    echo.
     echo ## Kali Linux shell prompt ##
     echo.
     echo # Check if ROOT is 1
@@ -669,13 +701,22 @@ echo.
     echo.
     echo ## Changes to PATH ##
     echo.
-    echo export PATH="C:/Users/$USERNAME/kali/usr/bin:$PATH"
+    echo export PATH="$USERPROFILE/kali/usr/bin:$USERPROFILE/kali/usr/lib/file:$PATH"
     echo.
     echo ## Applet overrides ##
     echo.
-    echo export BB_OVERRIDE_APPLETS="clear touch uname which whoami msfconsole kib-pkg make"
+    echo export BB_OVERRIDE_APPLETS="clear touch uname which whoami msfconsole kib-pkg make file"
     echo.
     echo alias netcat="nc"
+    echo.
+    echo ## Aliases ##
+    echo.
+    echo alias ls='ls --color=auto'
+    echo alias grep='grep --color=auto'
+    echo alias ll='ls -lahF'
+    echo alias la='ls -A'
+    echo alias l='ls -lhF'
+    echo alias apt='kib-pkg'
     echo.
     echo ## Functions ##
     echo.   
@@ -690,7 +731,7 @@ echo.
     echo     export PREVUSERVAL="$USER"
     echo     export ROOT="1"
     echo     export USER="root"
-    echo     "$@" # Run the arguments
+    echo     eval "$@" # Run the arguments
     echo     export ROOT="$PREVROOTVAL"
     echo     export USER="$PREVUSERVAL"
     echo }
@@ -725,6 +766,10 @@ echo.
     echo     PS1=$'\[\e[32m\]┌──^(\[\e[34m\]\u㉿\h\[\e[32m\]^)-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]$ \[\e[0m\]'
     echo }
     echo.
+    echo ## Exit if not interactive ##
+    echo.
+    echo [[ $- != *i* ]] && return
+    echo.
     echo ## Load ~/.bashrc ##
     echo.
     echo source ~/.bashrc
@@ -732,46 +777,16 @@ echo.
 
 (
     echo NAME="Kali in Batch"
-    echo VERSION="9.12.0"
+    echo VERSION="9.12.1"
     echo ID=kalibatch
     echo ID_LIKE=linux
-    echo VERSION_ID="9.12.0"
-    echo PRETTY_NAME="Kali in Batch 9.12.0"
+    echo VERSION_ID="9.12.1"
+    echo PRETTY_NAME="Kali in Batch 9.12.1"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kali-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
     echo BUG_REPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/issues"
 ) > "!kaliroot!\etc\os-release" 2>>"%APPDATA%\kali_in_batch\errors.log"
-
-rem Create applet symlinks so many tools don't break because something is missing from /bin
-
-(
-    del /s /q "!kaliroot!\usr\bin\ls.exe"
-    del /s /q "!kaliroot!\usr\bin\rm.exe"
-    del /s /q "!kaliroot!\usr\bin\cp.exe"
-    del /s /q "!kaliroot!\usr\bin\mv.exe"
-    del /s /q "!kaliroot!\usr\bin\sh.exe"
-    del /s /q "!kaliroot!\usr\bin\bash.exe"
-    del /s /q "!kaliroot!\usr\bin\echo.exe"
-    del /s /q "!kaliroot!\usr\bin\printf.exe"
-) >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
-
-(
-    mklink "!kaliroot!\usr\bin\ls.exe" "!kaliroot!\usr\bin\busybox.exe"
-    mklink "!kaliroot!\usr\bin\rm.exe" "!kaliroot!\usr\bin\busybox.exe"
-    mklink "!kaliroot!\usr\bin\cp.exe" "!kaliroot!\usr\bin\busybox.exe"
-    mklink "!kaliroot!\usr\bin\mv.exe" "!kaliroot!\usr\bin\busybox.exe"
-    mklink "!kaliroot!\usr\bin\sh.exe" "!kaliroot!\usr\bin\busybox.exe"
-    mklink "!kaliroot!\usr\bin\bash.exe" "!kaliroot!\usr\bin\busybox.exe"
-    mklink "!kaliroot!\usr\bin\echo.exe" "!kaliroot!\usr\bin\busybox.exe"
-    mklink "!kaliroot!\usr\bin\printf.exe" "!kaliroot!\usr\bin\busybox.exe"
-) >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
-
-if errorlevel 1 (
-    echo !COLOR_ERROR!Could not create symlinks. Please run as admin or enable developer mode in settings.!COLOR_RESET!
-    pause >nul
-    exit /b 1
-)
 
 xcopy "%~dp0etc\*" "!kaliroot!\etc\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 xcopy "%~dp0lib\*" "!kaliroot!\usr\lib\" /s /y >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
@@ -794,7 +809,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 9.12.0>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 9.12.1>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -838,16 +853,32 @@ echo.
 
 set "busybox_path=!kaliroot!\usr\bin\busybox.exe"
 
+::                                                                 |
+<nul set /p "=Creating BusyBox symlinks...                         "
+
+call :create_symlinks
+
+<nul set /p "=[ !COLOR_SUCCESS!OK!COLOR_RESET! ]"
+echo.
+
 rem Check if %~1 isn't "automated"
 
 if not "%~1"=="automated" (
     choice /c yn /n /m "Do you wish to update BusyBox? [Y/N] "
     
-    if "%errorlevel%"=="1" (
+    if errorlevel 2 (
+        echo Skipping BusyBox update
+        goto skip_bb_update
+    )
+
+    if errorlevel 1 (
         curl -L -o "!kaliroot!\usr\bin\busybox.exe" "https://github.com/Kali-in-Batch/busybox-w32/releases/latest/download/busybox64.exe" -#
         set "busybox_path=!kaliroot!\usr\bin\busybox.exe"
+        goto skip_bb_update
     )
 )
+
+:skip_bb_update
 
 echo ------------------------------------------------
 
@@ -866,7 +897,7 @@ if "%~1"=="automated" (
 :login
 
 echo.
-echo Kali in Batch 9.12.0
+echo Kali in Batch 9.12.1
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root
@@ -948,3 +979,26 @@ rem    echo.
 )
 
 "!busybox_path!" bash -l
+
+goto :eof
+
+:create_symlinks
+
+rem This subroutine creates symlinks to BusyBox
+
+if not defined busybox_path (
+    echo Undefined variable busybox_path
+    exit /b 1
+)
+
+rem Loop for each BusyBox applet
+
+for /f "tokens=*" %%a in ('!busybox_path! --list ^| findstr /i /v "busybox" ^| findstr /i /v "make"') do (
+    set "applet=%%a"
+    set "applet_path=%USERPROFILE%\kali\usr\bin\!applet!"
+    if not exist "!applet_path!.bat" (
+        mklink "!applet_path!.exe" "!busybox_path!" >nul 2>&1
+    )
+)
+
+goto :eof

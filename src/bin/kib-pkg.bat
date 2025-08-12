@@ -89,8 +89,8 @@ goto start
 
 rem Check if ROOT is set to 0
 if "%ROOT%" == "0" (
-    echo !COLOR_ERROR!Please log in as the root user to run kib-pkg, or you can:!COLOR_RESET!
-    echo 1. Run kib-pkg with sudo !COLOR_ITALIC!^(e.g. sudo kib-pkg %*!COLOR_RESET!^)
+    echo !COLOR_ERROR!Please log in as the root user to run %~0, or you can:!COLOR_RESET!
+    echo 1. Run %~0 with sudo !COLOR_ITALIC!^(e.g. sudo %~0 %*!COLOR_RESET!^)
     echo 2. Use the su command to become root, then run unsu after you don't need root anymore.
     exit /b 1
 )
@@ -185,7 +185,7 @@ if "%1"=="install" (
     goto update
 ) else (
     echo !COLOR_ERROR!Invalid argument: !COLOR_PACKAGE!%1!COLOR_RESET!
-    echo Run '!COLOR_COMMAND!kib-pkg help!COLOR_RESET!' for usage information.
+    echo Run '!COLOR_COMMAND!%~0 help!COLOR_RESET!' for usage information.
     exit /b 1
 )
 
@@ -220,14 +220,14 @@ if "!kib-pkg_to_check!"=="" (
 )
 
 if not exist "%APPDATA%\kali_in_batch\packages.list" (
-    echo !COLOR_ERROR!Package database not found. Please run: !COLOR_COMMAND!kib-pkg update!COLOR_RESET!
+    echo !COLOR_ERROR!Package database not found. Please run: !COLOR_COMMAND!%~0 update!COLOR_RESET!
     exit /b 1
 )
 
 findstr /c:"!kib-pkg_to_check!" "%APPDATA%\kali_in_batch\packages.list" >nul
 if %errorlevel% neq 0 (
-    echo !COLOR_ERROR!Package !COLOR_PACKAGE!!kib-pkg_to_check!!COLOR_RESET!!COLOR_ERROR! is not available in the repository.!COLOR_RESET!
-    echo Try running '!COLOR_COMMAND!kib-pkg search !kib-pkg_to_check!!COLOR_RESET!' to find similar packages.
+    echo !COLOR_ERROR!Package !COLOR_PACKAGE!!%~0_to_check!!COLOR_RESET!!COLOR_ERROR! is not available in the repository.!COLOR_RESET!
+    echo Try running '!COLOR_COMMAND!%~0 search !kib-pkg_to_check!!COLOR_RESET!' to find similar packages.
     exit /b 1
 )
 goto :eof
@@ -349,7 +349,6 @@ rem Download the entire package directory using PowerShell
 echo !COLOR_INFO!Downloading package files for !COLOR_PACKAGE!!kib-pkg_name!!COLOR_RESET!...
 
 powershell -ExecutionPolicy Bypass -Command "& { try { $ErrorActionPreference = 'Stop'; $owner='Kali-in-Batch'; $repo='pkg'; $targetDir='packages/!kib-pkg_name!'; $localDir='!kaliroot!\tmp\!kib-pkg_name!_package'; if(Test-Path $localDir){Remove-Item $localDir -Recurse -Force}; function Download-GitHubDirectory { param($owner,$repo,$path,$localPath); $apiUrl=\"https://api.github.com/repos/$owner/$repo/contents/$path\"; try { $headers = @{}; if($env:GITHUB_TOKEN) { $headers['Authorization'] = \"token $env:GITHUB_TOKEN\" }; $response = Invoke-RestMethod -Uri $apiUrl -Headers $headers -TimeoutSec 30; if(-not(Test-Path $localPath)){New-Item -ItemType Directory -Path $localPath -Force | Out-Null}; foreach($item in $response) { $itemLocalPath = Join-Path $localPath $item.name; if($item.type -eq 'file') { Write-Host \"Downloading: $($item.name)\"; Invoke-WebRequest -Uri $item.download_url -OutFile $itemLocalPath -TimeoutSec 30 } elseif($item.type -eq 'dir') { Download-GitHubDirectory $owner $repo \"$path/$($item.name)\" $itemLocalPath } } } catch { Write-Error \"Failed to download $path : $_\"; throw } }; Download-GitHubDirectory $owner $repo $targetDir $localDir; Write-Host 'Download completed successfully.' } catch { Write-Error \"PowerShell download failed: $_\"; exit 1 } }"
-powershell -ExecutionPolicy Bypass -Command "& { try { $ErrorActionPreference = 'Stop'; $owner='Kali-in-Batch'; $repo='pkg'; $targetDir='packages/!kib-pkg_name!/files'; $localDir='!kaliroot!\tmp\!kib-pkg_name!_package\files'; if(Test-Path $localDir){Remove-Item $localDir -Recurse -Force}; function Download-GitHubDirectory { param($owner,$repo,$path,$localPath); $apiUrl=\"https://api.github.com/repos/$owner/$repo/contents/$path\"; try { $headers = @{}; if($env:GITHUB_TOKEN) { $headers['Authorization'] = \"token $env:GITHUB_TOKEN\" }; $response = Invoke-RestMethod -Uri $apiUrl -Headers $headers -TimeoutSec 30; if(-not(Test-Path $localPath)){New-Item -ItemType Directory -Path $localPath -Force | Out-Null}; foreach($item in $response) { $itemLocalPath = Join-Path $localPath $item.name; if($item.type -eq 'file') { Write-Host \"Downloading: $($item.name)\"; Invoke-WebRequest -Uri $item.download_url -OutFile $itemLocalPath -TimeoutSec 30 } elseif($item.type -eq 'dir') { Download-GitHubDirectory $owner $repo \"$path/$($item.name)\" $itemLocalPath } } } catch { Write-Error \"Failed to download $path : $_\"; throw } }; Download-GitHubDirectory $owner $repo $targetDir $localDir; Write-Host 'Download completed successfully.' } catch { Write-Error \"PowerShell download failed: $_\"; exit 1 } }"
 
 if %errorlevel% neq 0 (
     echo !COLOR_ERROR!Failed to download package !COLOR_PACKAGE!!kib-pkg_name!!COLOR_RESET!.
@@ -380,6 +379,20 @@ if "%vercontents%" == "404: Not Found" (
 
 rem Run INSTALL.sh if it exists
 if exist "!kaliroot!\tmp\!kib-pkg_name!_package\INSTALL.sh" (
+
+    rem Display install script contents
+    echo !COLOR_INFO!I will show install script contents. Press any key to continue...!COLOR_RESET!
+    pause >nul
+    type "!kaliroot!\tmp\!kib-pkg_name!_package\INSTALL.sh"
+
+    echo !COLOR_INFO!Do you want to run the install script? [Y/N]!COLOR_RESET!
+    choice /c yn /n /m ""
+
+    if errorlevel 2 (
+        echo !COLOR_INFO!Installation cancelled.!COLOR_RESET!
+        exit /b 0
+    )
+
     echo !COLOR_INFO!Running install script for !COLOR_PACKAGE!!kib-pkg_name!!COLOR_RESET!...
     
     rem Check if bash exists
@@ -439,7 +452,7 @@ exit /b
 rem Check if package is installed
 call :check_package_installed "%2"
 if %errorlevel% neq 0 (
-    echo !COLOR_ERROR!Package !COLOR_PACKAGE!%2!COLOR_RESET!!COLOR_ERROR! is not installed. Install it by running: !COLOR_COMMAND!kib-pkg install %2!COLOR_RESET!
+    echo !COLOR_ERROR!Package !COLOR_PACKAGE!%2!COLOR_RESET!!COLOR_ERROR! is not installed. Install it by running: !COLOR_COMMAND!%~0 install %2!COLOR_RESET!
     exit /b 1
 )
 
@@ -455,6 +468,20 @@ curl -f -s https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/p
 
 if %errorlevel% equ 0 (
     if exist "!kaliroot!\tmp\%2_uninstall.sh" (
+        echo !COLOR_INFO!I will show uninstall script contents. Press any key to continue...!COLOR_RESET!
+
+        pause >nul
+
+        type "!kaliroot!\tmp\%2_uninstall.sh"
+
+        echo !COLOR_INFO!Do you want to run the uninstall script? [Y/N]!COLOR_RESET!
+        choice /c yn /n /m ""
+    
+        if errorlevel 2 (
+            echo !COLOR_INFO!Uninstallation cancelled.!COLOR_RESET!
+            exit /b 0
+        )
+
         echo !COLOR_INFO!Running uninstall script for !COLOR_PACKAGE!%2!COLOR_RESET!...
         
         rem Find bash interpreter
@@ -528,7 +555,7 @@ exit /b 1
 rem Check if package is installed
 call :check_package_installed "%2"
 if %errorlevel% neq 0 (
-    echo !COLOR_ERROR!Package !COLOR_PACKAGE!%2!COLOR_RESET!!COLOR_ERROR! is not installed. Install it by running: !COLOR_COMMAND!kib-pkg install %2!COLOR_RESET!
+    echo !COLOR_ERROR!Package !COLOR_PACKAGE!%2!COLOR_RESET!!COLOR_ERROR! is not installed. Install it by running: !COLOR_COMMAND!%~0 install %2!COLOR_RESET!
     exit /b 1
 )
 
@@ -587,7 +614,7 @@ exit /b
 rem Search for packages
 echo !COLOR_INFO!Searching for packages containing "!COLOR_PACKAGE!%2!COLOR_RESET!!COLOR_INFO!"...!COLOR_RESET!
 if not exist "%APPDATA%\kali_in_batch\packages.list" (
-    echo !COLOR_ERROR!Package cache not found. Please run: !COLOR_COMMAND!kib-pkg update!COLOR_RESET!
+    echo !COLOR_ERROR!Package cache not found. Please run: !COLOR_COMMAND!%~0 update!COLOR_RESET!
     exit /b 1
 )
 
