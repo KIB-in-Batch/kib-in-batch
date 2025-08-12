@@ -625,7 +625,7 @@ echo.
     echo.
     echo ## Load ~/.bashrc ##
     echo.
-    echo [[ $- = *i* ]] ^&^& source ~/.bashrc
+    echo [[ -f ~/.bashrc ]] ^&^& [[ $- = *i* ]] ^&^& source ~/.bashrc
 ) > "!kaliroot!\etc\.kibenv" 2>>"%APPDATA%\kali_in_batch\errors.log"
 
 (
