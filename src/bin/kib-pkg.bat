@@ -417,6 +417,9 @@ if exist "!kaliroot!\tmp\!kib-pkg_name!_package\INSTALL.sh" (
     exit /b 1
 )
 
+rem Remove from installed packages list
+call :remove_from_installed "!kib-pkg_name!"
+
 rem Add to installed packages
 call :add_to_installed "!kib-pkg_name!"
 
