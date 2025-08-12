@@ -10,7 +10,7 @@ if %errorlevel%==1 (
     rem Create the backup directory if it doesn't exist
     if not exist "%USERPROFILE%\kalihome.bak.d\" mkdir "%USERPROFILE%\kalihome.bak.d"
     rem Copy all files with xcopy
-    xcopy /s /i /h /y "%kaliroot%\home\%USERNAME%\*" "%USERPROFILE%\kalihome.bak.d\"
+    robocopy "%kaliroot%\home\%USERNAME%" "%USERPROFILE%\kalihome.bak.d" /E /COPY:DATS /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
     echo Back up complete. This will automatically be restored if you reinstall Kali in Batch.
 )
 

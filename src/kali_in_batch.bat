@@ -268,7 +268,7 @@ if defined missing (
         mkdir "!kaliroot!\home" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         mkdir "!kaliroot!\home\!username!" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         rem Copy all files from %USERPROFILE%\kalihome.bak.d\* to %USERPROFILE%\kali\home\!username!
-        xcopy /s /i /h /y "%USERPROFILE%\kalihome.bak.d\*" "%USERPROFILE%\kali\home\!username!\"
+        robocopy "%USERPROFILE%\kalihome.bak.d" "%USERPROFILE%\kali\home\!username!" /E /COPY:DATS /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
         mkdir "!kaliroot!\tmp" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         mkdir "!kaliroot!\usr" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         mkdir "!kaliroot!\etc" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
@@ -385,7 +385,7 @@ if defined input (
         mkdir "%USERPROFILE%\kali\home" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         mkdir "%USERPROFILE%\kali\home\!username!" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         rem Copy all files from %USERPROFILE%\kalihome.bak.d\* to %USERPROFILE%\kali\home\!username!
-        xcopy /s /i /h /y "%USERPROFILE%\kalihome.bak.d\*" "%USERPROFILE%\kali\home\!username!\"
+        robocopy "%USERPROFILE%\kalihome.bak.d" "%USERPROFILE%\kali\home\!username!" /E /COPY:DATS /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
         mkdir "%USERPROFILE%\kali\tmp" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         mkdir "%USERPROFILE%\kali\usr" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
         mkdir "%USERPROFILE%\kali\etc" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
@@ -559,7 +559,7 @@ if not exist "%USERPROFILE%\kali" (
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
 
 echo.
-echo Welcome to Kali in Batch 9.12.1 ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to Kali in Batch 9.12.2 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 ::                                                                 |
@@ -777,11 +777,11 @@ echo.
 
 (
     echo NAME="Kali in Batch"
-    echo VERSION="9.12.1"
+    echo VERSION="9.12.2"
     echo ID=kalibatch
     echo ID_LIKE=linux
-    echo VERSION_ID="9.12.1"
-    echo PRETTY_NAME="Kali in Batch 9.12.1"
+    echo VERSION_ID="9.12.2"
+    echo PRETTY_NAME="Kali in Batch 9.12.2"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kali-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
@@ -809,7 +809,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 9.12.1>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 9.12.2>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -897,7 +897,7 @@ if "%~1"=="automated" (
 :login
 
 echo.
-echo Kali in Batch 9.12.1
+echo Kali in Batch 9.12.2
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root
