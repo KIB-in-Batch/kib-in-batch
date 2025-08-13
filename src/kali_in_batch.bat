@@ -641,7 +641,7 @@ echo.
     echo ID=kalibatch
     echo ID_LIKE=linux
     echo VERSION_ID="9.9.2 LTS"
-    echo PRETTY_NAME="Kali in Batch / KIB in Batch 9.9.2 LTS"
+    echo PRETTY_NAME="KIB in Batch 9.9.2 LTS"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kali-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
