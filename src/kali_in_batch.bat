@@ -623,6 +623,13 @@ echo.
     echo     PS1=$'\[\e[32m\]┌──^(\[\e[34m\]\u㉿\h\[\e[32m\]^)-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]$ \[\e[0m\]'
     echo }
     echo.
+    echo ## Exit if not interactive ##
+    echo.
+    echo case $- in
+    echo     *i*^) ;;
+    echo     *^)   return ;;
+    echo esac
+    echo.
     echo ## Load ~/.bashrc ##
     echo.
     echo source ~/.bashrc
