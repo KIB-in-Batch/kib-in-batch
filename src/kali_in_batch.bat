@@ -3,7 +3,7 @@ chcp 65001 >nul
 setlocal enabledelayedexpansion
 
 rem kali_in_batch.bat
-rem    * Main script for the Kali in Batch project.
+rem    * Main script for the KIB in Batch project.
 rem    * Handles installation, boot process and sets up the bash environment.
 rem    * Licensed under the GPL-2.0-only.
 rem Copyright (C) 2025 benja2998
@@ -153,7 +153,7 @@ if !errorlevel! neq 0 (
 
 cls
 set "username=%USERNAME%"
-title Kali in Batch
+title KIB in Batch
 set "missing="
 if not exist "%APPDATA%\kali_in_batch" set "missing=1"
 if not exist "%USERPROFILE%\kali" set "missing=1"
@@ -167,9 +167,9 @@ if defined missing (
     )
     
     cls
-    echo !COLOR_INFO!Kali in Batch Installer!COLOR_RESET!
+    echo !COLOR_INFO!KIB in Batch Installer!COLOR_RESET!
     echo !COLOR_BG_BLUE!-----------------------------------------------------
-    echo ^| * Press 1 to install Kali in Batch.               ^|
+    echo ^| * Press 1 to install KIB in Batch.               ^|
     echo ^| * Press 2 to exit.                                ^|
     echo ^| * Press 3 to enter manual install ^(live shell^).   ^|
     echo ^| * Press 4 to visit the GitHub page.               ^|
@@ -300,11 +300,11 @@ if defined input (
         echo !COLOR_INFO!  - exit: Exits the live shell. !COLOR_RESET!
         echo !COLOR_INFO!  - kibstrap: Bootstraps a minimal base system at %USERPROFILE%\kali. !COLOR_RESET!
         echo !COLOR_INFO!  - kib-pkg: Package manager. Use it if you want packages in your base system. !COLOR_RESET!
-        echo !COLOR_INFO!  - getdeps: Installs dependencies of Kali in Batch. !COLOR_RESET!
-        echo !COLOR_INFO!  - mkdrive: Uses subst to create a drive letter for the Kali in Batch root. !COLOR_RESET!
-        echo !COLOR_INFO!  - boot: Boots the Kali in Batch installation. !COLOR_RESET!
+        echo !COLOR_INFO!  - getdeps: Installs dependencies of KIB in Batch. !COLOR_RESET!
+        echo !COLOR_INFO!  - mkdrive: Uses subst to create a drive letter for the KIB in Batch root. !COLOR_RESET!
+        echo !COLOR_INFO!  - boot: Boots the KIB in Batch installation. !COLOR_RESET!
         echo !COLOR_INFO!  - clear: Clears the screen. !COLOR_RESET!
-        echo !COLOR_INFO!  - wipe: Wipes the Kali in Batch installation. !COLOR_RESET!
+        echo !COLOR_INFO!  - wipe: Wipes the KIB in Batch installation. !COLOR_RESET!
         echo.
     ) else if "!input!"=="exit" (
         echo !COLOR_INFO!Exiting live shell...!COLOR_RESET!
@@ -383,7 +383,7 @@ echo.
 rem Remove the subst drive
 set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
 subst !kaliroot! /d >nul 2>&1
-rem Delete all files Kali in Batch creates
+rem Delete all files KIB in Batch creates
 rmdir /s /q "%USERPROFILE%\kali" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 rmdir /s /q "%APPDATA%\kali_in_batch" >nul 2>&1
 echo Done, press any key to exit...
@@ -429,7 +429,7 @@ for /f "usebackq delims=" %%L in ("%APPDATA%\kali_in_batch\errors.log") do (
 
 gh issue create ^
   --repo Kali-in-Batch/kali-in-batch ^
-  --title "Kali in Batch startup errors on %COMPUTERNAME%" ^
+  --title "KIB in Batch startup errors on %COMPUTERNAME%" ^
   --body "%issue_body%"
 
 :after_issue_prompt
@@ -447,8 +447,8 @@ if !lines! geq 100 (
     echo. > "%APPDATA%\kali_in_batch\errors.log" 2>nul
 )
 
-rem Boot process for Kali in Batch
-rem It handles essential checks to make sure Kali in Batch can boot properly.
+rem Boot process for KIB in Batch
+rem It handles essential checks to make sure KIB in Batch can boot properly.
 
 if not exist "%USERPROFILE%\kali" (
     echo Your installation is broken
@@ -461,7 +461,7 @@ if not exist "%USERPROFILE%\kali" (
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
 
 echo.
-echo Welcome to Kali in Batch 9.9.2 LTS ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to KIB in Batch 9.9.2 LTS ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 ::                                                                 |
@@ -471,7 +471,7 @@ rem Check if the !kaliroot! virtual drive letter is still assigned
 if exist !kaliroot! (
     rem Nothing to do
 ) else (
-    rem Fix for Kali in Batch not booting after a Windows reboot due to it deleting the virtual drive
+    rem Fix for KIB in Batch not booting after a Windows reboot due to it deleting the virtual drive
     subst !kaliroot! "%USERPROFILE%\kali" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 )
 
@@ -560,7 +560,7 @@ echo.
     echo #  This script is      #
     echo #  NOT intended for    #
     echo #  modification in the #
-    echo #  Kali in Batch       #
+    echo #  KIB in Batch       #
     echo #  environment. It is  #
     echo #  overwritten when    #
     echo #  you boot Kali in    #
@@ -636,12 +636,12 @@ echo.
 ) > "!kaliroot!\etc\.kibenv" 2>>"%APPDATA%\kali_in_batch\errors.log"
 
 (
-    echo NAME="Kali in Batch"
+    echo NAME="KIB in Batch"
     echo VERSION="9.9.2 LTS"
     echo ID=kalibatch
     echo ID_LIKE=linux
     echo VERSION_ID="9.9.2 LTS"
-    echo PRETTY_NAME="Kali in Batch 9.9.2 LTS"
+    echo PRETTY_NAME="Kali in Batch / KIB in Batch 9.9.2 LTS"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kali-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
@@ -760,7 +760,7 @@ if "%~1"=="automated" (
 :login
 
 echo.
-echo Kali in Batch 9.9.2 LTS
+echo KIB in Batch 9.9.2 LTS
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root
@@ -824,7 +824,7 @@ rem    echo █████   ███████ ██      ██     █�
 rem    echo ██  ██  ██   ██ ██      ██     ██ ██  ██ ██     ██   ██ ██   ██    ██    ██      ██   ██
 rem    echo ██   ██ ██   ██ ███████ ██     ██ ██   ████     ██████  ██   ██    ██     ██████ ██   ██
 rem    echo.
-    echo For a guide on how to use Kali in Batch, run 'ls !kaliroot!/usr/share/guide' and
+    echo For a guide on how to use KIB in Batch, run 'ls !kaliroot!/usr/share/guide' and
     echo open the text file that you think will help you.
     echo.
     echo Example:

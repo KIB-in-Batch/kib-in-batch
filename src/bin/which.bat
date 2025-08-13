@@ -1,7 +1,7 @@
 @echo off
 
 rem which.bat
-rem    * "Which" reimplementation for the Kali in Batch project.
+rem    * "Which" reimplementation for the KIB in Batch project.
 rem    * Wrapper for "where"
 rem    * Licensed under the GPL-2.0-only.
 rem Copyright (C) 2025 benja2998
@@ -46,13 +46,13 @@ for %%a in (%*) do (
         echo Consider contributing to this project as this is an incomplete which implementation.
         exit /b 0
     ) else if "!arg!"=="--version" (
-        echo which for Kali in Batch 9.9.2 LTS
+        echo which for KIB in Batch 9.9.2 LTS
         echo This is GPL-2.0-only licensed free software. There is NO WARRANTY.
     ) else if "!arg!"=="-v" (
-        echo which for Kali in Batch 9.9.2 LTS
+        echo which for KIB in Batch 9.9.2 LTS
         echo This is GPL-2.0-only licensed free software. There is NO WARRANTY.
     ) else if "!arg!"=="-V" (
-        echo which for Kali in Batch 9.9.2 LTS
+        echo which for KIB in Batch 9.9.2 LTS
         echo This is GPL-2.0-only licensed free software. There is NO WARRANTY.
     )
 )

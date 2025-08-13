@@ -3,7 +3,7 @@
 chcp 65001 >nul
 
 rem mkdir.bat
-rem    * mkdir API reimplementation for the Kali in Batch project.
+rem    * mkdir API reimplementation for the KIB in Batch project.
 rem    * Usage: mkdir pathname mode
 rem    * Licensed under the GPL-2.0-only.
 rem Copyright (C) 2025 benja2998

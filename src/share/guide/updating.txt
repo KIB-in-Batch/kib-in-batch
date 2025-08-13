@@ -1,13 +1,13 @@
 Introduction
 ============
 
-Kali in Batch behaves similarly to a Linux system, but with some differences and additions.
-Here you can see how to upgrade your Kali in Batch to the latest version.
+KIB in Batch behaves similarly to a Linux system, but with some differences and additions.
+Here you can see how to upgrade your KIB in Batch to the latest version.
 
 Checking If Your Version Is Outdated
 ====================================
 
-See the GitHub page for the latest version of Kali in Batch: <https://github.com/Kali-in-Batch/kali-in-batch>
+See the GitHub page for the latest version of KIB in Batch: <https://github.com/Kali-in-Batch/kali-in-batch>
 
 Checking If You Can Upgrade
 ===========================

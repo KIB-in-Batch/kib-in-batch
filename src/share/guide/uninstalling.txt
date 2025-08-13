@@ -1,8 +1,8 @@
 Introduction
 ============
 
-Kali in Batch behaves similarly to a Linux system, but with some differences and additions.
-Here you can see how to remove Kali in Batch from your system.
+KIB in Batch behaves similarly to a Linux system, but with some differences and additions.
+Here you can see how to remove KIB in Batch from your system.
 
 Uninstallation
 ==============
@@ -16,4 +16,4 @@ You should first download the source code archive from <https://github.com/Kali-
 End
 ===
 
-After following this, you should have succesfully removed Kali in Batch from your system.
+After following this, you should have succesfully removed KIB in Batch from your system.

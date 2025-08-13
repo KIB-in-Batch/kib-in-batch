@@ -3,7 +3,7 @@
 chcp 65001 >nul
 
 rem rmdir.bat
-rem    * rmdir API reimplementation for the Kali in Batch project.
+rem    * rmdir API reimplementation for the KIB in Batch project.
 rem    * Usage: rmdir pathname
 rem    * Licensed under the GPL-2.0-only.
 rem Copyright (C) 2025 benja2998

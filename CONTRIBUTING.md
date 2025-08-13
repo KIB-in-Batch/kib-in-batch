@@ -1,6 +1,6 @@
-# Contributing to Kali in Batch
+# Contributing to KIB in Batch
 
-The Kali in Batch project welcomes contributions from anyone, but they must follow the guidelines below:
+The KIB in Batch project welcomes contributions from anyone, but they must follow the guidelines below:
 
 * Make sure your contributions match the coding style of the code they change or interact with.
 * Do not use any compiled languages as the project is written in Windows Batch. Header files in [./src/include](./src/include/) are an exception, but they are only to be used by apps that run in the environment.

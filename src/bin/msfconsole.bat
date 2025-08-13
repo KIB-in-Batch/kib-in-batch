@@ -3,7 +3,7 @@
 setlocal enabledelayedexpansion
 
 rem msfconsole.bat
-rem    * Metasploit wrapper for the Kali in Batch project.
+rem    * Metasploit wrapper for the KIB in Batch project.
 rem    * Launches Kali Linux WSL to launch msfconsole.
 rem    * Licensed under the GPL-2.0-only.
 rem Copyright (C) 2025 benja2998

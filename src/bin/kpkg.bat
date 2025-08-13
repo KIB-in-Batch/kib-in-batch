@@ -3,7 +3,7 @@
 chcp 65001 >nul
 
 rem kpkg.bat
-rem    * Package manager for the Kali in Batch project.
+rem    * Package manager for the KIB in Batch project.
 rem    * Wrapper for kib-pkg.
 rem    * Licensed under the GPL-2.0-only.
 rem Copyright (C) 2025 benja2998

@@ -30,16 +30,16 @@ This directory contains batch file implementations of POSIX APIs. For a referenc
 
 Other APIs will be implemented in the future.
 
-## Running UNIX Programs On Kali In Batch
+## Running UNIX Programs On KIB in Batch
 
 You simply just recompile the program with a C compiler that supports the -I flag:
 
 ```shell
-# Ensure you are in the drive letter where Kali in Batch is installed
+# Ensure you are in the drive letter where KIB in Batch is installed
 pwd
-# That should display something like "Z:/path/to/directory" if you installed Kali in Batch in the Z: drive
+# That should display something like "Z:/path/to/directory" if you installed KIB in Batch in the Z: drive
 # If not, navigate to the correct location
-# This is because otherwise / won't be the Kali in Batch root directory
+# This is because otherwise / won't be the KIB in Batch root directory
 clang -I/usr/include -o demo.exe demo.c
 ./demo.exe
 cd demo_directory
@@ -92,7 +92,7 @@ int main() {
 }
 ```
 
-After following this, you will have successfully ran a UNIX program on Kali in Batch!
+After following this, you will have successfully ran a UNIX program on KIB in Batch!
 
 ## Using These APIs From A Batch File
 
