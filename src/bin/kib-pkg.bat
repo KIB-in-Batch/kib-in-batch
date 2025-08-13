@@ -129,7 +129,7 @@ if "%*"=="" (
 
 :noargs
 
-echo !COLOR_HEADER!Usage: %~0 (install/remove/upgrade/search/list/update/help)!COLOR_RESET!
+echo !COLOR_HEADER!Usage: %~0 (install/remove/upgrade/search/list/update/help/info)!COLOR_RESET!
 exit /b 64
 
 :help
@@ -145,6 +145,7 @@ echo   !COLOR_COMMAND!search!COLOR_RESET!          - Search for packages in the 
 echo   !COLOR_COMMAND!list!COLOR_RESET!            - List all installed packages.
 echo   !COLOR_COMMAND!list-available!COLOR_RESET!  - List all available packages.
 echo   !COLOR_COMMAND!update!COLOR_RESET!          - Update the package database cache.
+echo   !COLOR_COMMAND!info!COLOR_RESET!            - Show package information.
 echo   !COLOR_COMMAND!help!COLOR_RESET!            - Display this help message.
 exit /b
 
@@ -183,6 +184,8 @@ if "%1"=="install" (
     goto list-available
 ) else if "%1"=="update" (
     goto update
+) else if "%1"=="info" (
+    goto info
 ) else (
     echo !COLOR_ERROR!Invalid argument: !COLOR_PACKAGE!%1!COLOR_RESET!
     echo Run '!COLOR_COMMAND!%~0 help!COLOR_RESET!' for usage information.
@@ -413,6 +416,9 @@ if exist "!kaliroot!\tmp\!kib-pkg_name!_package\INSTALL.sh" (
     echo !COLOR_ERROR!No install script found for !COLOR_PACKAGE!!kib-pkg_name!!COLOR_RESET!.
     exit /b 1
 )
+
+rem Remove from installed packages list
+call :remove_from_installed "!kib-pkg_name!"
 
 rem Add to installed packages
 call :add_to_installed "!kib-pkg_name!"
@@ -656,3 +662,42 @@ exit /b
 type "%APPDATA%\kali_in_batch\packages.list" 2>nul
 
 exit /b
+
+:info
+
+echo !COLOR_INFO!Loading package metadata...!COLOR_RESET!
+
+curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%~2/DESCRIPTION.txt -o "!kaliroot!\tmp\%~2_description.txt"
+
+if exist "!kaliroot!\tmp\%~2_description.txt" (
+    set /p description=<"!kaliroot!\tmp\%~2_description.txt" 2>nul
+    if "!description!"=="404: Not Found" (
+        set "description=Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+    )
+) else (
+    set "description=Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+)
+
+rem Get current version
+curl -f -s https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/VERSION.txt -o "!kaliroot!\tmp\%2_new_version.txt" 2>nul
+
+if %errorlevel% neq 0 (
+    echo !COLOR_ERROR!Cannot determine version for package !COLOR_PACKAGE!%2!COLOR_RESET!
+    exit /b 1
+)
+
+set /p new_version=<"!kaliroot!\tmp\%2_new_version.txt"
+
+rem Try to get current installed version
+set current_version=0.0.0
+if exist "!kaliroot!\usr\share\%2\VERSION.txt" (
+    set /p current_version=<"!kaliroot!\usr\share\%2\VERSION.txt"
+)
+
+echo.
+echo !COLOR_HEADER!Package information for !COLOR_PACKAGE!%~2!COLOR_RESET!!COLOR_RESET!
+echo.
+echo Name: !COLOR_PACKAGE!%~2!COLOR_RESET!!COLOR_RESET!
+echo Installed version: !COLOR_INFO!%current_version%!COLOR_RESET!
+echo Latest version: !COLOR_INFO!%new_version%!COLOR_RESET!
+echo Description: !COLOR_INFO!!description!!COLOR_RESET!
