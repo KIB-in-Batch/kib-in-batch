@@ -1,18 +1,18 @@
 Introduction
 ============
 
-Kali in Batch behaves similarly to a Linux system, but with some differences and additions.
-Here you can see how to benefit from Kali in Batch's features without directly using Kali in Batch.
+KIB in Batch behaves similarly to a Linux system, but with some differences and additions.
+Here you can see how to benefit from KIB in Batch's features without directly using KIB in Batch.
 
 Executables
 ===========
 
-A base installation of Kali in Batch contains the following executables in the "/usr/bin" directory:
+A base installation of KIB in Batch contains the following executables in the "/usr/bin" directory:
 
 * clear.bat - Clears the screen
 * kibfetch.bat - Simple neofetch clone
 * msfconsole.bat - Wrapper for Metasploit that uses WSL
-* kib-pkg.bat - Package manager for Kali in Batch
+* kib-pkg.bat - Package manager for KIB in Batch
 * touch.bat - Creates a new empty file
 * uname.bat - Displays system information
 * which.bat - Displays location of a file in the PATH
@@ -27,8 +27,8 @@ A base installation of Kali in Batch contains the following executables in the "
 * rm.exe - Symlink to BusyBox
 * sh.exe - Symlink to BusyBox
 
-This collection of various useful utilities can be used outside of Kali in Batch for an easier Windows experience.
-Here is an example of using them from command prompt, assuming the drive letter for Kali in Batch is "Z:":
+This collection of various useful utilities can be used outside of KIB in Batch for an easier Windows experience.
+Here is an example of using them from command prompt, assuming the drive letter for KIB in Batch is "Z:":
 
 ```code
 C:\Users\benja>Z:
@@ -97,9 +97,9 @@ drwxrwxr-x    2 benja    benja          0 Jul 21 17:19 var/
 Z:\>\bin\kibfetch.bat
 ██   ██ ██ ██████         benja@ACERB
 ██  ██  ██ ██   ██        -------------------------------
-█████   ██ ██████         OS: Kali in Batch 9.12.4
+█████   ██ ██████         OS: KIB in Batch 9.13.0
 ██  ██  ██ ██   ██        Kernel: KALI_IN_BATCH_Windows_NT
-██   ██ ██ ██████         Kali in Batch Root: Z:/
+██   ██ ██ ██████         KIB in Batch Root: Z:/
                           CPU Architecture: AMD64
                           CPU Level: 6
                           Number of CPU cores: 12
@@ -111,8 +111,8 @@ Z:\>\bin\kibfetch.bat
 Packages
 ========
 
-You are able to manage packages using kib-pkg.bat even outside Kali in Batch, which will add even more executables to "/usr/bin". 
-Here's an example of using kib-pkg.bat from the command prompt, assuming you have the Kali in Batch root directory set to "Z:":
+You are able to manage packages using kib-pkg.bat even outside KIB in Batch, which will add even more executables to "/usr/bin". 
+Here's an example of using kib-pkg.bat from the command prompt, assuming you have the KIB in Batch root directory set to "Z:":
 
 ```code
 C:\Users\benja>Z:\usr\bin\kib-pkg.bat install example-package
@@ -137,7 +137,7 @@ Hello, world!
 Even Further
 ============
 
-You can also improve the experience even more by adding Z:\usr\bin to your system's PATH environment variable. This will allow you to run Kali in Batch executables from anywhere without typing out the full path.
+You can also improve the experience even more by adding Z:\usr\bin to your system's PATH environment variable. This will allow you to run KIB in Batch executables from anywhere without typing out the full path.
 
 After that, you can just run things like:
 
@@ -145,9 +145,9 @@ After that, you can just run things like:
 C:\Users\benja>kibfetch
 ██   ██ ██ ██████         benja@ACERB
 ██  ██  ██ ██   ██        -------------------------------
-█████   ██ ██████         OS: Kali in Batch 9.12.4
+█████   ██ ██████         OS: KIB in Batch 9.13.0
 ██  ██  ██ ██   ██        Kernel: KALI_IN_BATCH_Windows_NT
-██   ██ ██ ██████         Kali in Batch Root: Z:/
+██   ██ ██ ██████         KIB in Batch Root: Z:/
                           CPU Architecture: AMD64
                           CPU Identifier: Intel64 Family 6 Model 141 Stepping 1, GenuineIntel
                           CPU Level: 6

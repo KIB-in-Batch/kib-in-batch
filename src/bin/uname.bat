@@ -3,7 +3,7 @@
 setlocal enabledelayedexpansion
 
 rem uname.bat
-rem    * Uname reimplementation for the Kali in Batch project.
+rem    * Uname reimplementation for the KIB in Batch project.
 rem    * Displays basic system information.
 rem    * Licensed under the GPL-2.0-only.
 rem Copyright (C) 2025 benja2998
@@ -102,7 +102,7 @@ goto :eof
 
 :version
 
-echo Uname for Kali in Batch 9.12.4
+echo Uname for KIB in Batch 9.13.0
 echo This is GPL-2.0-only licensed free software. There is NO WARRANTY.
 goto :eof
 

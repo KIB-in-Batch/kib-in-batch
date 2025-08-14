@@ -3,7 +3,7 @@
 setlocal enabledelayedexpansion
 
 rem kib-pkg.bat
-rem    * Package manager for the Kali in Batch project.
+rem    * Package manager for the KIB in Batch project.
 rem    * Manages packages.
 rem    * Licensed under the GPL-2.0-only.
 rem Copyright (C) 2025 benja2998
@@ -96,7 +96,7 @@ if "%ROOT%" == "0" (
 )
 
 if not exist "%APPDATA%\kali_in_batch" (
-    echo !COLOR_ERROR!Error: Kali in Batch is not installed on your system.!COLOR_RESET!
+    echo !COLOR_ERROR!Error: KIB in Batch is not installed on your system.!COLOR_RESET!
     exit /b 1
 )
 

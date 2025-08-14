@@ -1,13 +1,13 @@
 Introduction
 ============
 
-Kali in Batch behaves similarly to a Linux system, but with some differences and additions.
-Here you can see how to install and use some common (ethical) hacking or penetration testing commands in Kali in Batch.
+KIB in Batch behaves similarly to a Linux system, but with some differences and additions.
+Here you can see how to install and use some common (ethical) hacking or penetration testing commands in KIB in Batch.
 
 Reconnaissance
 ==============
 
-Kali in Batch automatically installs Nmap, a powerful port scanner that can allow thorough reconnaissance.
+KIB in Batch automatically installs Nmap, a powerful port scanner that can allow thorough reconnaissance.
 Here's an example:
 
 ```code
@@ -21,7 +21,7 @@ Follow any additional instructions given by the commands mentioned.
 Post-Exploitation
 =================
 
-Because Kali in Batch uses BusyBox for the userland, you can use BusyBox nc for a simple reverse shell:
+Because KIB in Batch uses BusyBox for the userland, you can use BusyBox nc for a simple reverse shell:
 
 ```code
 nc -l -p 6969 # Replace this with your preferred port
@@ -40,7 +40,7 @@ Follow any additional instructions given by the commands mentioned.
 Any Exploitation
 ================
 
-Kali in Batch comes with an msfconsole wrapper, which is a batch file that uses the Windows Subsystem for Linux to launch the Metasploit Framework.
+KIB in Batch comes with an msfconsole wrapper, which is a batch file that uses the Windows Subsystem for Linux to launch the Metasploit Framework.
 
 You can run it just like this:
 
@@ -51,7 +51,7 @@ msfconsole
 End
 ===
 
-THE KALI IN BATCH DEVELOPERS DO NOT CONDONE ANY FORM OF ILLEGAL ACTIVITY.
+THE KIB in Batch DEVELOPERS DO NOT CONDONE ANY FORM OF ILLEGAL ACTIVITY.
 THIS IS FOR EDUCATIONAL PURPOSES AND ETHICAL HACKING PURPOSES **ONLY**.
 YOU MAY ONLY PERFORM ANY TECHNIQUES THAT ARE BEYOND RECONNAISSANCE **ONLY** WITH PERMISSION FROM THE OWNER OF THE SYSTEM.
 

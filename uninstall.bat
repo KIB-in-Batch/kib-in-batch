@@ -11,7 +11,7 @@ if %errorlevel%==1 (
     if not exist "%USERPROFILE%\kalihome.bak.d\" mkdir "%USERPROFILE%\kalihome.bak.d"
     rem Copy all files with xcopy
     robocopy "%kaliroot%\home\%USERNAME%" "%USERPROFILE%\kalihome.bak.d" /E /COPY:DATS /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
-    echo Back up complete. This will automatically be restored if you reinstall Kali in Batch.
+    echo Back up complete. This will automatically be restored if you reinstall KIB in Batch.
 )
 
 echo Deleting %kaliroot%\...

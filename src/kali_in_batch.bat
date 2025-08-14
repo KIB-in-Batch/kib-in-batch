@@ -3,7 +3,7 @@ chcp 65001 >nul
 setlocal enabledelayedexpansion
 
 rem kali_in_batch.bat
-rem    * Main script for the Kali in Batch project.
+rem    * Main script for the KIB in Batch project.
 rem    * Handles installation, boot process and sets up the bash environment.
 rem    * Licensed under the GPL-2.0-only.
 rem Copyright (C) 2025 benja2998
@@ -33,6 +33,7 @@ rem * %~dp0bin\which.bat - Displays location of a file or directory in the PATH
 rem * %~dp0bin\whoami.bat - Displays the current user
 rem * %~dp0bin\msfconsole.bat - Uses the Windows Subsystem for Linux to launch the Metasploit Framework
 rem * %~dp0bin\kibfetch.bat - Simple neofetch-like program
+rem * %~dp0bin\chsh.bat - Changes default shell
 
 rem Color Definitions
 set "COLOR_RESET=[0m"
@@ -158,7 +159,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     for /f "tokens=1 delims=." %%a in ('type "%APPDATA%\kali_in_batch\VERSION.txt"') do (
         set /a "version=%%a"
         if !version! lss 9 (
-            echo Please reinstall Kali in Batch. This release has breaking changes.
+            echo Please reinstall KIB in Batch. This release has breaking changes.
             pause >nul
             exit /b 1
         )
@@ -166,7 +167,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
 )
 
 if "%PROCESSOR_ARCHITECTURE%"=="x86" (
-    echo !COLOR_ERROR!CRITICAL: Kali in Batch is 64-bit only. Please use a supported processor.!COLOR_RESET!
+    echo !COLOR_ERROR!CRITICAL: KIB in Batch is 64-bit only. Please use a supported processor.!COLOR_RESET!
     pause >nul
     exit /b 1
 ) else if "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
@@ -178,9 +179,9 @@ if "%PROCESSOR_ARCHITECTURE%"=="x86" (
 )
 
 if /i "!archType!"=="ARM64" (
-    echo !COLOR_WARNING!Running Kali in Batch on ARM64 may work, but is unsupported. Proceed with caution.!COLOR_RESET!
+    echo !COLOR_WARNING!Running KIB in Batch on ARM64 may work, but is unsupported. Proceed with caution.!COLOR_RESET!
 ) else if /i "!archType!"=="ARM" (
-    echo !COLOR_ERROR!CRITICAL: Kali in Batch is not supported on ARM-based systems that are 32-bit. Please use a 64-bit ARM-based system.!COLOR_RESET!
+    echo !COLOR_ERROR!CRITICAL: KIB in Batch is not supported on ARM-based systems that are 32-bit. Please use a 64-bit ARM-based system.!COLOR_RESET!
     pause >nul
     exit /b 1
 )
@@ -204,7 +205,7 @@ rmdir /s /q "%TEMP%\dummy.kib.d" >nul 2>&1
 
 cls
 set "username=%USERNAME%"
-title Kali in Batch
+title KIB in Batch
 set "missing="
 if not exist "%APPDATA%\kali_in_batch" set "missing=1"
 if not exist "%USERPROFILE%\kali" set "missing=1"
@@ -218,9 +219,9 @@ if defined missing (
     )
     
     cls
-    echo !COLOR_INFO!Kali in Batch Installer!COLOR_RESET!
+    echo !COLOR_INFO!KIB in Batch Installer!COLOR_RESET!
     echo !COLOR_BG_BLUE!-----------------------------------------------------
-    echo ^| * Press 1 to install Kali in Batch.               ^|
+    echo ^| * Press 1 to install KIB in Batch.               ^|
     echo ^| * Press 2 to exit.                                ^|
     echo ^| * Press 3 to enter manual install ^(live shell^).   ^|
     echo ^| * Press 4 to visit the GitHub page.               ^|
@@ -365,11 +366,11 @@ if defined input (
         echo !COLOR_INFO!  - exit: Exits the live shell. !COLOR_RESET!
         echo !COLOR_INFO!  - kibstrap: Bootstraps a minimal base system at %USERPROFILE%\kali. !COLOR_RESET!
         echo !COLOR_INFO!  - kib-pkg: Package manager. Use it if you want packages in your base system. !COLOR_RESET!
-        echo !COLOR_INFO!  - getdeps: Installs dependencies of Kali in Batch. !COLOR_RESET!
-        echo !COLOR_INFO!  - mkdrive: Uses subst to create a drive letter for the Kali in Batch root. !COLOR_RESET!
-        echo !COLOR_INFO!  - boot: Boots the Kali in Batch installation. !COLOR_RESET!
+        echo !COLOR_INFO!  - getdeps: Installs dependencies of KIB in Batch. !COLOR_RESET!
+        echo !COLOR_INFO!  - mkdrive: Uses subst to create a drive letter for the KIB in Batch root. !COLOR_RESET!
+        echo !COLOR_INFO!  - boot: Boots the KIB in Batch installation. !COLOR_RESET!
         echo !COLOR_INFO!  - clear: Clears the screen. !COLOR_RESET!
-        echo !COLOR_INFO!  - wipe: Wipes the Kali in Batch installation. !COLOR_RESET!
+        echo !COLOR_INFO!  - wipe: Wipes the KIB in Batch installation. !COLOR_RESET!
         echo !COLOR_INFO!  - cd: Changes the current directory. !COLOR_RESET!
         echo !COLOR_INFO!  - mkdir: Creates a new directory. !COLOR_RESET!
         echo !COLOR_INFO!  - rmdir: Removes a directory. !COLOR_RESET!
@@ -481,7 +482,7 @@ echo.
 rem Remove the subst drive
 set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
 subst !kaliroot! /d >nul 2>&1
-rem Delete all files Kali in Batch creates
+rem Delete all files KIB in Batch creates
 rmdir /s /q "%USERPROFILE%\kali" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 rmdir /s /q "%APPDATA%\kali_in_batch" >nul 2>&1
 echo Done, press any key to exit...
@@ -527,7 +528,7 @@ for /f "usebackq delims=" %%L in ("%APPDATA%\kali_in_batch\errors.log") do (
 
 gh issue create ^
   --repo Kali-in-Batch/kali-in-batch ^
-  --title "Kali in Batch startup errors on %COMPUTERNAME%" ^
+  --title "KIB in Batch startup errors on %COMPUTERNAME%" ^
   --body "%issue_body%"
 
 :after_issue_prompt
@@ -545,8 +546,8 @@ if !lines! geq 100 (
     echo. > "%APPDATA%\kali_in_batch\errors.log" 2>nul
 )
 
-rem Boot process for Kali in Batch
-rem It handles essential checks to make sure Kali in Batch can boot properly.
+rem Boot process for KIB in Batch
+rem It handles essential checks to make sure KIB in Batch can boot properly.
 
 if not exist "%USERPROFILE%\kali" (
     echo Your installation is broken
@@ -559,7 +560,7 @@ if not exist "%USERPROFILE%\kali" (
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
 
 echo.
-echo Welcome to Kali in Batch 9.12.4 ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to KIB in Batch 9.13.0 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 ::                                                                 |
@@ -569,7 +570,7 @@ rem Check if the !kaliroot! virtual drive letter is still assigned
 if exist !kaliroot! (
     rem Nothing to do
 ) else (
-    rem Fix for Kali in Batch not booting after a Windows reboot due to it deleting the virtual drive
+    rem Fix for KIB in Batch not booting after a Windows reboot due to it deleting the virtual drive
     subst !kaliroot! "%USERPROFILE%\kali" >nul 2>>"%APPDATA%\kali_in_batch\errors.log"
 )
 
@@ -641,6 +642,8 @@ echo.
 
 rem Initialize ROOT variable
 set "ROOT=0"
+rem Initialize LOGGED_IN_AS_ROOT variable
+set "LOGGED_IN_AS_ROOT=0"
 
 <nul set /p "=[ !COLOR_SUCCESS!OK!COLOR_RESET! ]"
 echo.
@@ -658,7 +661,7 @@ echo.
     echo #  This script is      #
     echo #  NOT intended for    #
     echo #  modification in the #
-    echo #  Kali in Batch       #
+    echo #  KIB in Batch       #
     echo #  environment. It is  #
     echo #  overwritten when    #
     echo #  you boot Kali in    #
@@ -757,18 +760,47 @@ echo.
     echo        return
     echo     fi
     echo     if [ "$ROOT" == "0" ]; then
-    echo        echo "You are not root"
-    echo        return 69
+    echo        echo "Unsu cannot be run as the regular user"
+    echo        return 1
     echo     fi
+    echo.
+    echo     if [ "$LOGGED_IN_AS_ROOT" == "1" ]; then
+    echo         echo "Unsu cannot be ran as you were never the regular user"
+    echo         return 1
+    echo     fi
+    echo.
     echo     export ROOT="0"
     echo     export USER="$USERNAME"
     echo     export HOME="!kaliroot!/home/$USERNAME"
     echo     PS1=$'\[\e[32m\]┌──^(\[\e[34m\]\u㉿\h\[\e[32m\]^)-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]$ \[\e[0m\]'
     echo }
     echo.
+    echo exit^(^) {
+    echo     if [ "$LOGGED_IN_AS_ROOT" == "1" ]; then
+    echo         exit $1
+    echo     fi
+    echo.
+    echo     if [ "$ROOT" == "1" ]; then
+    echo        export ROOT="0"
+    echo        export USER="$USERNAME"
+    echo        export HOME="!kaliroot!/home/$USERNAME"
+    echo        PS1=$'\[\e[32m\]┌──^(\[\e[34m\]\u㉿\h\[\e[32m\]^)-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]$ \[\e[0m\]'
+    echo        return $1
+    echo     fi
+    echo.
+    echo     exit $1
+    echo }
+    echo.
+    echo ## Change to ~ ##
+    echo.
+    echo cd ~
+    echo.
     echo ## Exit if not interactive ##
     echo.
-    echo [[ $- != *i* ]] && return
+    echo case $- in
+    echo     *i*^) ;;
+    echo     *^)   return ;;
+    echo esac
     echo.
     echo ## Load ~/.bashrc ##
     echo.
@@ -776,12 +808,12 @@ echo.
 ) > "!kaliroot!\etc\.kibenv" 2>>"%APPDATA%\kali_in_batch\errors.log"
 
 (
-    echo NAME="Kali in Batch"
-    echo VERSION="9.12.4"
+    echo NAME="KIB in Batch"
+    echo VERSION="9.13.0"
     echo ID=kalibatch
     echo ID_LIKE=linux
-    echo VERSION_ID="9.12.4"
-    echo PRETTY_NAME="Kali in Batch 9.12.4"
+    echo VERSION_ID="9.13.0"
+    echo PRETTY_NAME="KIB in Batch 9.13.0"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kali-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
@@ -809,7 +841,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 9.12.4>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 9.13.0>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -897,21 +929,26 @@ if "%~1"=="automated" (
 :login
 
 echo.
-echo Kali in Batch 9.12.4
+echo KIB in Batch 9.13.0
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root
+echo.
+echo !COLOR_WARNING!If you set gnu-bash-wrapper as default shell,
+echo logging in directly as root or using su and unsu will cause issues.!COLOR_RESET!
 echo.
 set /p loginkibusername=%COMPUTERNAME% login: 
 if "!loginkibusername!"=="!username!" (
     rem Correct
     set "USER=!username!"
     set "ROOT=0"
+    set "LOGGED_IN_AS_ROOT=0"
     echo !COLOR_SUCCESS!User found!COLOR_RESET!
     echo Connecting to Bash service...
 ) else if "!loginkibusername!"=="root" (
     set "ROOT=1"
     set "USER=root"
+    set "LOGGED_IN_AS_ROOT=1"
     echo !COLOR_SUCCESS!User found!COLOR_RESET!
     echo Connecting to Bash service...
 ) else (
@@ -961,7 +998,7 @@ rem    echo █████   ███████ ██      ██     █�
 rem    echo ██  ██  ██   ██ ██      ██     ██ ██  ██ ██     ██   ██ ██   ██    ██    ██      ██   ██
 rem    echo ██   ██ ██   ██ ███████ ██     ██ ██   ████     ██████  ██   ██    ██     ██████ ██   ██
 rem    echo.
-    echo For a guide on how to use Kali in Batch, run 'ls !kaliroot!/usr/share/guide' and
+    echo For a guide on how to use KIB in Batch, run 'ls !kaliroot!/usr/share/guide' and
     echo open the text file that you think will help you.
     echo.
     echo Example:
@@ -978,7 +1015,14 @@ rem    echo.
     echo.
 )
 
-"!busybox_path!" bash -l
+if not exist "!kaliroot!\etc\shell.bat" (
+    echo @echo off >"!kaliroot!\etc\shell.bat"
+    echo setlocal enabledelayedexpansion >>"!kaliroot!\etc\shell.bat"
+    echo "!busybox_path!" bash -l >> "!kaliroot!\etc\shell.bat"
+    call "!kaliroot!\etc\shell.bat" 
+) else (
+    call "!kaliroot!\etc\shell.bat"
+)
 
 goto :eof
 

@@ -3,7 +3,7 @@
 setlocal enabledelayedexpansion
 
 rem lsb_release.bat
-rem    * lsb_release reimplementation for the Kali in Batch project.
+rem    * lsb_release reimplementation for the KIB in Batch project.
 rem    * This is just here incase a shell script checks for lsb_release.
 rem    * Licensed under the GPL-2.0-only.
 rem Copyright (C) 2025 benja2998

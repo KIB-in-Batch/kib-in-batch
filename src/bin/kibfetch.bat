@@ -3,7 +3,7 @@
 chcp 65001 >nul
 
 rem kibfetch.bat
-rem    * Neofetch-like program for the Kali in Batch project.
+rem    * Neofetch-like program for the KIB in Batch project.
 rem    * Displays thorough system info with an ASCII banner.
 rem    * Licensed under the GPL-2.0-only.
 rem Copyright (C) 2025 benja2998
@@ -86,9 +86,9 @@ set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
 
 echo ██   ██ ██ ██████         %COLOR_DEBUG%%USER%%COLOR_RESET%@%COLOR_DEBUG%%COMPUTERNAME%%COLOR_RESET%
 echo ██  ██  ██ ██   ██        -------------------------------
-echo █████   ██ ██████         %COLOR_DEBUG%OS%COLOR_RESET%: Kali in Batch 9.12.4
+echo █████   ██ ██████         %COLOR_DEBUG%OS%COLOR_RESET%: KIB in Batch 9.13.0
 echo ██  ██  ██ ██   ██        %COLOR_DEBUG%Kernel%COLOR_RESET%: KALI_IN_BATCH_%OS%
-echo ██   ██ ██ ██████         %COLOR_DEBUG%Kali in Batch Root%COLOR_RESET%: %kaliroot%/
+echo ██   ██ ██ ██████         %COLOR_DEBUG%KIB in Batch Root%COLOR_RESET%: %kaliroot%/
 echo                           %COLOR_DEBUG%CPU Architecture%COLOR_RESET%: %PROCESSOR_ARCHITECTURE%
 echo                           %COLOR_DEBUG%CPU Level%COLOR_RESET%: %PROCESSOR_LEVEL%
 echo                           %COLOR_DEBUG%Number of CPU cores%COLOR_RESET%: %NUMBER_OF_PROCESSORS%

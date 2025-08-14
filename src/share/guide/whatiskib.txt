@@ -1,15 +1,15 @@
 Introduction
 ============
 
-Kali in Batch behaves similarly to a Linux system, but with some differences and additions.
-Here you can see what Kali in Batch is and isn't and how it works.
+KIB in Batch behaves similarly to a Linux system, but with some differences and additions.
+Here you can see what KIB in Batch is and isn't and how it works.
 
-Kali In Batch Is...
+KIB in Batch Is...
 ===================
 
 A lightweight shell environment providing Linux-like functionality to Microsoft Windows.
 
-Kali In Batch Isn't...
+KIB in Batch Isn't...
 ======================
 
 A Linux distro.

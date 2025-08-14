@@ -1,11 +1,11 @@
-# Kali in Batch Security Policy
+# KIB in Batch Security Policy
 
 ## Supported Versions
 
-The following versions of Kali in Batch are supported:
+The following versions of KIB in Batch are supported:
 
 * 9.9.2 LTS (Supported until August 3 2026)
-* 9.12.x
+* 9.13.x
 
 ## EOL Cycles
 

@@ -1,7 +1,7 @@
 @echo off
 
 rem touch.bat
-rem    * touch reimplementation for the Kali in Batch project.
+rem    * touch reimplementation for the KIB in Batch project.
 rem    * Creates an empty file.
 rem    * Licensed under the GPL-2.0-only.
 rem Copyright (C) 2025 benja2998

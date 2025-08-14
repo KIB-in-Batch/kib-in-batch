@@ -1,7 +1,7 @@
 @echo off
 
 rem whoami.bat
-rem    * whoami reimplementation for the Kali in Batch project.
+rem    * whoami reimplementation for the KIB in Batch project.
 rem    * Prints the current username.
 rem    * Licensed under the GPL-2.0-only.
 rem Copyright (C) 2025 benja2998
