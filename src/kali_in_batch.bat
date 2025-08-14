@@ -560,7 +560,7 @@ if not exist "%USERPROFILE%\kali" (
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
 
 echo.
-echo Welcome to KIB in Batch 9.13.0 ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to KIB in Batch 9.13.1 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 ::                                                                 |
@@ -809,11 +809,11 @@ echo.
 
 (
     echo NAME="KIB in Batch"
-    echo VERSION="9.13.0"
+    echo VERSION="9.13.1"
     echo ID=kalibatch
     echo ID_LIKE=linux
-    echo VERSION_ID="9.13.0"
-    echo PRETTY_NAME="KIB in Batch 9.13.0"
+    echo VERSION_ID="9.13.1"
+    echo PRETTY_NAME="KIB in Batch 9.13.1"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kali-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
@@ -841,7 +841,7 @@ if exist "%APPDATA%\kali_in_batch\VERSION.txt" (
     del "%APPDATA%\kali_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 9.13.0>"%APPDATA%\kali_in_batch\VERSION.txt"
+echo 9.13.1>"%APPDATA%\kali_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -929,7 +929,7 @@ if "%~1"=="automated" (
 :login
 
 echo.
-echo KIB in Batch 9.13.0
+echo KIB in Batch 9.13.1
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root
@@ -1009,7 +1009,9 @@ rem    echo.
     echo For the best experience, run the following commands:
     echo $ sudo kib-pkg update
     echo $ sudo kib-pkg install make # Build system
-    echo $ sudo kib-pkg install file # Classic UNIX utility ^(source ~/.bashrc after install^)
+    echo $ sudo kib-pkg install file # Classic UNIX utility
+    echo $ sudo kib-pkg install neofetch # Thorough system information tool written in Bash 3.2+
+    echo $ notepad ~/.bashrc # Customize your shell
     echo.
     echo To disable this message, create a file called .hushlogin in your home directory.
     echo.
