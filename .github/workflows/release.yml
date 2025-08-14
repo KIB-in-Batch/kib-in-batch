@@ -1,0 +1,33 @@
+name: Release Kali Batch ZIP
+
+permissions:
+  contents: write
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Install zip utility
+        run: sudo apt-get update && sudo apt-get install -y zip
+
+      - name: Compress ./src to kali_in_batch.zip
+        run: zip -r kali_in_batch.zip src
+
+      - name: Publish Release & Upload ZIP
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: |
+            kali_in_batch.zip
+            LICENSE.txt
+            uninstall.bat
+            README.md

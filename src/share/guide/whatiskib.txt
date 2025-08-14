@@ -1,0 +1,34 @@
+Introduction
+============
+
+KIB in Batch behaves similarly to a Linux system, but with some differences and additions.
+Here you can see what KIB in Batch is and isn't and how it works.
+
+KIB in Batch Is...
+===================
+
+A lightweight shell environment providing Linux-like functionality to Microsoft Windows.
+
+KIB in Batch Isn't...
+======================
+
+A Linux distro.
+A drop-in replacement for Cygwin and Msys. We might try to get there in the future.
+A way to run unmodified Linux binaries on Windows. Use WSL for that.
+
+How It Works
+============
+
+When you run "kali_in_batch.bat", it sets up the following:
+
+* A root file system
+* A virtual drive for the root file system using subst
+* Downloads BusyBox to /usr/bin
+* Sets up the essential environment variables
+* Copies essential binaries and creates essential files and directories, making it structurally similar to a UNIX system
+* Launches the BusyBox bash applet with /etc/.kibenv set as the ENV variable
+
+End
+===
+
+There is nothing else to say.
