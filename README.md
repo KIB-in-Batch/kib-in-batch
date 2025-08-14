@@ -37,16 +37,7 @@ KIB in Batch is a batch script-based environment that runs a bash shell with man
 
 ## Preview
 
-<details>
-<summary>Terminal Screenshots</summary>
-
-![Terminal screenshot showing a user listing and displaying the contents of posix_test.c, a C source file. The code demonstrates POSIX file I/O operations including opening, writing, reading, and closing a file named testfile.txt. The terminal prompt is green and blue, indicating the user benja is working in the tests directory. The environment is a dark-themed terminal window. The code includes comments and error handling, and prints the number of bytes written and read. The overall tone is technical and focused on programming tasks.](./assets/image1.png)
-
-![Terminal window showing a user compiling and running a C program named posix_test.c. The terminal displays compiler warnings about macro redefinition and format specifiers for ssize_t types, followed by successful output: Wrote 27 bytes and Read 27 bytes: POSIX file I/O test string. The prompt is green and blue, indicating the user benja is in the tests directory. The environment is a dark-themed terminal, and the overall tone is technical and focused on programming tasks.](./assets/image2.png)
-
-![Terminal window displaying the results of an nmap scan on scanme.nmap.org. The output shows several open TCP ports including SSH on port 22, HTTP on port 80, nping-echo on port 9929, and Elite on port 31337. Some ports such as telnet and SMTP are filtered. The scan summary indicates one IP address was scanned in 8.63 seconds. The terminal prompt is green and blue, showing the user benja is working in a dark-themed environment. The tone is technical and focused on network security tasks.](./assets/image3.png)
-
-![Terminal window displaying the output of kibfetch, a system information tool. The left side shows a large ASCII art logo reading KIB. The right side lists system details: user benja at ACERB, OS KIB in Batch 9.7.1, kernel KALI_IN_BATCH_Windows_NT, root Z:/, CPU architecture AMD64, identifier Intel64 Family 6 Model 141 Stepping 1 GenuineIntel, CPU level 6, 12 CPU cores, revision 8d01. The prompt is green and blue, indicating user benja is in the home directory. The environment is a dark-themed terminal, and the tone is technical and focused on system configuration and hardware information.](./assets/image4.png)
+![Terminal window divided into three panes. Top left pane displays system information: OS: KIB in Batch 9.13.1 x86_64, Kernel: 6.6.87.2-kib, Uptime: 6 hours 42 mins. Top right pane shows CPU details: OS: KIB in Batch 9.13.1, Number of CPU cores: 12. Bottom right pane shows nmap scan results: PORT STATE SERVICE 80/tcp open http 443/tcp open https. The environment is a split terminal interface with command outputs and system diagnostics.](./assets/image.png)
 
 </details>
 

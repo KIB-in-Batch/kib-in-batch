@@ -97,8 +97,8 @@ drwxrwxr-x    2 benja    benja          0 Jul 21 17:19 var/
 Z:\>\bin\kibfetch.bat
 ██   ██ ██ ██████         benja@ACERB
 ██  ██  ██ ██   ██        -------------------------------
-█████   ██ ██████         OS: KIB in Batch 9.13.0
-██  ██  ██ ██   ██        Kernel: KALI_IN_BATCH_Windows_NT
+█████   ██ ██████         OS: KIB in Batch 9.13.1
+██  ██  ██ ██   ██        Kernel: KIB_Windows_NT
 ██   ██ ██ ██████         KIB in Batch Root: Z:/
                           CPU Architecture: AMD64
                           CPU Level: 6
@@ -145,8 +145,8 @@ After that, you can just run things like:
 C:\Users\benja>kibfetch
 ██   ██ ██ ██████         benja@ACERB
 ██  ██  ██ ██   ██        -------------------------------
-█████   ██ ██████         OS: KIB in Batch 9.13.0
-██  ██  ██ ██   ██        Kernel: KALI_IN_BATCH_Windows_NT
+█████   ██ ██████         OS: KIB in Batch 9.13.1
+██  ██  ██ ██   ██        Kernel: KIB_Windows_NT
 ██   ██ ██ ██████         KIB in Batch Root: Z:/
                           CPU Architecture: AMD64
                           CPU Identifier: Intel64 Family 6 Model 141 Stepping 1, GenuineIntel
