@@ -80,15 +80,15 @@ if not defined USER (
     set "USER=%USERNAME%"
 )
 
-rem Fetch kaliroot
+rem Fetch kibroot
 
-set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
+set /p kibroot=<"%APPDATA%\kib_in_batch\kibroot.txt"
 
 echo ██   ██ ██ ██████         %COLOR_DEBUG%%USER%%COLOR_RESET%@%COLOR_DEBUG%%COMPUTERNAME%%COLOR_RESET%
 echo ██  ██  ██ ██   ██        -------------------------------
-echo █████   ██ ██████         %COLOR_DEBUG%OS%COLOR_RESET%: KIB in Batch 9.13.1
+echo █████   ██ ██████         %COLOR_DEBUG%OS%COLOR_RESET%: KIB in Batch 10.0.0
 echo ██  ██  ██ ██   ██        %COLOR_DEBUG%Kernel%COLOR_RESET%: KIB_%OS%
-echo ██   ██ ██ ██████         %COLOR_DEBUG%KIB in Batch Root%COLOR_RESET%: %kaliroot%/
+echo ██   ██ ██ ██████         %COLOR_DEBUG%KIB in Batch Root%COLOR_RESET%: %kibroot%/
 echo                           %COLOR_DEBUG%CPU Architecture%COLOR_RESET%: %PROCESSOR_ARCHITECTURE%
 echo                           %COLOR_DEBUG%CPU Level%COLOR_RESET%: %PROCESSOR_LEVEL%
 echo                           %COLOR_DEBUG%Number of CPU cores%COLOR_RESET%: %NUMBER_OF_PROCESSORS%

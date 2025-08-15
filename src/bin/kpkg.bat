@@ -21,10 +21,10 @@ rem You should have received a copy of the GNU General Public License
 rem along with this program; if not, write to the Free Software
 rem Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-rem Fetch kaliroot
+rem Fetch kibroot
 
-set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
+set /p kibroot=<"%APPDATA%\kib_in_batch\kibroot.txt"
 
 rem Run kib-pkg
 
-"%kaliroot%\usr\bin\kib-pkg.bat" %*
+"%kibroot%\usr\bin\kib-pkg.bat" %*

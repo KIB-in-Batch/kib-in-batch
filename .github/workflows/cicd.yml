@@ -25,71 +25,71 @@ jobs:
       - name: Install and validate KiB
         shell: powershell
         run: |
-          echo 1 | src\kali_in_batch.bat automated
-          Get-Content "$env:APPDATA\kali_in_batch\errors.log" | Out-File -FilePath "ci_logs\install_$timestamp.log" -Append
+          echo 1 | src\kib_in_batch.bat automated
+          Get-Content "$env:APPDATA\kib_in_batch\errors.log" | Out-File -FilePath "ci_logs\install_$timestamp.log" -Append
           if ($LASTEXITCODE -ne 0) { throw "Installation failed" }
 
       # Test package manager
       - name: Test kib-pkg.bat
         shell: powershell
         run: |
-          $kaliPath = "$env:USERPROFILE\kali\usr\bin"
-          & "$kaliPath\kib-pkg.bat" update
-          echo y | & "$kaliPath\kib-pkg.bat" install hello-world
-          & "$kaliPath\kib-pkg.bat" list
-          echo y | & "$kaliPath\kib-pkg.bat" remove hello-world
-          echo y | & "$kaliPath\kib-pkg.bat" install bat
-          & "$kaliPath\bat.exe" --help
-          & "$kaliPath\bat.exe" "$env:USERPROFILE\kali\etc\.kibenv"
-          & "$kaliPath\kib-pkg.bat" list
-          echo y | & "$kaliPath\kib-pkg.bat" remove bat
-          echo y | & "$kaliPath\kib-pkg.bat" install make
-          & "$kaliPath\make" --version
-          & "$kaliPath\make" --help
-          echo y | & "$kaliPath\kib-pkg.bat" remove make
-          & "$kaliPath\kib-pkg.bat" list
-          echo y | & "$kaliPath\kib-pkg.bat" install file
-          & "$kaliPath\kib-pkg.bat" list
-          & "$env:USERPROFILE\kali\usr\lib\file\file.exe" --version
-          Get-Content "$env:APPDATA\kali_in_batch\errors.log" | Out-File -FilePath "ci_logs\packages_$timestamp.log" -Append
+          $kibPath = "$env:USERPROFILE\kib\usr\bin"
+          & "$kibPath\kib-pkg.bat" update
+          echo y | & "$kibPath\kib-pkg.bat" install hello-world
+          & "$kibPath\kib-pkg.bat" list
+          echo y | & "$kibPath\kib-pkg.bat" remove hello-world
+          echo y | & "$kibPath\kib-pkg.bat" install bat
+          & "$kibPath\bat.exe" --help
+          & "$kibPath\bat.exe" "$env:USERPROFILE\kib\etc\.kibenv"
+          & "$kibPath\kib-pkg.bat" list
+          echo y | & "$kibPath\kib-pkg.bat" remove bat
+          echo y | & "$kibPath\kib-pkg.bat" install make
+          & "$kibPath\make" --version
+          & "$kibPath\make" --help
+          echo y | & "$kibPath\kib-pkg.bat" remove make
+          & "$kibPath\kib-pkg.bat" list
+          echo y | & "$kibPath\kib-pkg.bat" install file
+          & "$kibPath\kib-pkg.bat" list
+          & "$env:USERPROFILE\kib\usr\lib\file\file.exe" --version
+          Get-Content "$env:APPDATA\kib_in_batch\errors.log" | Out-File -FilePath "ci_logs\packages_$timestamp.log" -Append
           if ($LASTEXITCODE -ne 0) { throw "Package manager failed" }
 
       # Test BusyBox
       - name: Test BusyBox
         shell: powershell
         run: |
-          & "$env:USERPROFILE\kali\usr\bin\busybox.exe" --help
-          Get-Content "$env:APPDATA\kali_in_batch\errors.log" | Out-File -FilePath "ci_logs\busybox_$timestamp.log" -Append
+          & "$env:USERPROFILE\kib\usr\bin\busybox.exe" --help
+          Get-Content "$env:APPDATA\kib_in_batch\errors.log" | Out-File -FilePath "ci_logs\busybox_$timestamp.log" -Append
           if ($LASTEXITCODE -ne 0) { throw "BusyBox test failed" }
       
       - name: Test other tools
         shell: powershell
         run: |
-          & "$env:USERPROFILE\kali\usr\bin\bash.exe" -c "echo 'Hello world!'"
+          & "$env:USERPROFILE\kib\usr\bin\bash.exe" -c "echo 'Hello world!'"
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kali\usr\bin\sh.exe" -c "echo 'Hello world!'"
+          & "$env:USERPROFILE\kib\usr\bin\sh.exe" -c "echo 'Hello world!'"
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kali\usr\bin\lsb_release.bat" --help
+          & "$env:USERPROFILE\kib\usr\bin\lsb_release.bat" --help
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kali\usr\bin\uname.bat" -a
+          & "$env:USERPROFILE\kib\usr\bin\uname.bat" -a
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kali\usr\bin\whoami.bat"
+          & "$env:USERPROFILE\kib\usr\bin\whoami.bat"
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kali\usr\bin\which.bat" cmd -a
+          & "$env:USERPROFILE\kib\usr\bin\which.bat" cmd -a
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kali\usr\bin\touch.bat" test.txt
+          & "$env:USERPROFILE\kib\usr\bin\touch.bat" test.txt
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kali\usr\bin\rm.exe" -rf test.txt
+          & "$env:USERPROFILE\kib\usr\bin\rm.exe" -rf test.txt
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kali\usr\bin\kibfetch.bat"
+          & "$env:USERPROFILE\kib\usr\bin\kibfetch.bat"
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kali\usr\bin\ls.exe" "$env:USERPROFILE\kali\usr\bin"
+          & "$env:USERPROFILE\kib\usr\bin\ls.exe" "$env:USERPROFILE\kib\usr\bin"
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kali\usr\bin\ls.exe" "$env:USERPROFILE\kali\bin\"
+          & "$env:USERPROFILE\kib\usr\bin\ls.exe" "$env:USERPROFILE\kib\bin\"
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kali\usr\bin\ls.exe" "$env:USERPROFILE\kali\" -lahF
+          & "$env:USERPROFILE\kib\usr\bin\ls.exe" "$env:USERPROFILE\kib\" -lahF
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          Get-Content "$env:APPDATA\kali_in_batch\errors.log" | Out-File -FilePath "ci_logs\other_tools_$timestamp.log" -Append
+          Get-Content "$env:APPDATA\kib_in_batch\errors.log" | Out-File -FilePath "ci_logs\other_tools_$timestamp.log" -Append
 
       # Always upload logs
       - name: Upload all logs

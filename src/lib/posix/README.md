@@ -104,9 +104,9 @@ You can also use these APIs directly from a batch script. Example:
 set /p dir=Enter the directory name: 
 set /p mode=Enter the mode: 
 
-set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
+set /p kibroot=<"%APPDATA%\kib_in_batch\kibroot.txt"
 
 rem You can also use any other implemented API here
 
-"%kaliroot%\usr\lib\posix\mkdir.bat" %dir% %mode%
+"%kibroot%\usr\lib\posix\mkdir.bat" %dir% %mode%
 ```

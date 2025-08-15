@@ -7,7 +7,7 @@ Here you can see how to remove KIB in Batch from your system.
 Uninstallation
 ==============
 
-You should first download the source code archive from <https://github.com/Kali-in-Batch/kali-in-batch/releases/latest>, extract it and run this in PowerShell or Command Prompt in the directory you extracted the archive to:
+You should first download the source code archive from <https://github.com/KIB-in-Batch/kib-in-batch/releases/latest>, extract it and run this in PowerShell or Command Prompt in the directory you extracted the archive to:
 
 ```code
 .\uninstall.bat

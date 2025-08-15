@@ -21,7 +21,7 @@ rem You should have received a copy of the GNU General Public License
 rem along with this program; if not, write to the Free Software
 rem Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
+set /p kibroot=<"%APPDATA%\kib_in_batch\kibroot.txt"
 
 if "%~1"=="" goto usage
 
@@ -133,7 +133,7 @@ exit /b 1
 
 rem Write the shell start command to a file
 
-set "shell.bat=!kaliroot!\etc\shell.bat"
+set "shell.bat=!kibroot!\etc\shell.bat"
 
 echo.
 echo ----------------------------
@@ -144,7 +144,7 @@ echo.
 rem Check if the shell supports the --rcfile option
 <nul set /p "=Checking if shell supports --rcfile option... "
 
-%callornot%"%~1" --rcfile "!kaliroot!/etc/.kibenv" -c "echo Hello" >nul 2>&1
+%callornot%"%~1" --rcfile "!kibroot!/etc/.kibenv" -c "echo Hello" >nul 2>&1
 
 if !errorlevel! equ 0 (
     echo yes
@@ -166,7 +166,7 @@ rem Check if first character of shell name is a slash
 
 if "!shell_name:~0,1!"=="/" (
     rem Set shell name
-    set "shell_name=!kaliroot!!shell_name!"
+    set "shell_name=!kibroot!!shell_name!"
 )
 
 rem Check if second character of shell name is not a :
@@ -176,7 +176,7 @@ if not "!shell_name:~1,1!"==":" (
     exit /b 1
 )
 
-del /s /q "!kaliroot!\tmp\*" >nul 2>nul & rem Nothing there is important since it is the tmp dir
+del /s /q "!kibroot!\tmp\*" >nul 2>nul & rem Nothing there is important since it is the tmp dir
 
 echo.
 echo ---------------------------------------
@@ -186,14 +186,14 @@ echo.
 
 echo @echo off > "%shell.bat%"
 echo setlocal enabledelayedexpansion >> "%shell.bat%"
-echo set "ENV=!kaliroot!/etc/.kibenv" >> "%shell.bat%"
-echo set "BASH_ENV=!kaliroot!/etc/.kibenv" >> "%shell.bat%"
+echo set "ENV=!kibroot!/etc/.kibenv" >> "%shell.bat%"
+echo set "BASH_ENV=!kibroot!/etc/.kibenv" >> "%shell.bat%"
 if "!has_rcfile!"=="0" (
     echo has_rcfile = false
     echo %callornot%!shell_name! >> "%shell.bat%"
 ) else if "!has_rcfile!"=="1" (
     echo has_rcfile = true
-    echo %callornot%!shell_name! --rcfile "!kaliroot!/etc/.kibenv" >> "%shell.bat%"
+    echo %callornot%!shell_name! --rcfile "!kibroot!/etc/.kibenv" >> "%shell.bat%"
 ) else (
     echo has_rcfile = false
     echo %callornot%!shell_name! >> "%shell.bat%"

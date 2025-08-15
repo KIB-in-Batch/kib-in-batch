@@ -74,9 +74,9 @@ set "COLOR_INFO=%COLOR_BRIGHT_CYAN%%COLOR_BOLD%"
 set "COLOR_DEBUG=%COLOR_BRIGHT_MAGENTA%%COLOR_BOLD%"
 set "COLOR_PROMPT=%COLOR_BRIGHT_BLUE%%COLOR_BOLD%"
 
-rem Fetch kaliroot
+rem Fetch kibroot
 
-set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
+set /p kibroot=<"%APPDATA%\kib_in_batch\kibroot.txt"
 
 rem Run kib-pkg
 
@@ -86,4 +86,4 @@ echo %COLOR_ITALIC%kpkg%COLOR_RESET% is a wrapper for %COLOR_ITALIC%kib-pkg%COLO
 echo may be removed in the future.
 echo.
 
-"%kaliroot%\usr\bin\kib-pkg.bat" %*
+"%kibroot%\usr\bin\kib-pkg.bat" %*

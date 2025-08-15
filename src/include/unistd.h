@@ -82,24 +82,24 @@ static HANDLE get_handle(int fd) {
     return fd_table[fd];
 }
 
-/* Helper to read kaliroot from file, returns 0 on success, -1 on failure */
-static inline int read_kaliroot(char *kaliroot, size_t size) {
+/* Helper to read kibroot from file, returns 0 on success, -1 on failure */
+static inline int read_kibroot(char *kibroot, size_t size) {
     const char *appdata = getenv("APPDATA");
     if (!appdata) {
         errno = EIO;
         return -1;
     }
 
-    char kaliroot_file[MAX_PATH_LEN];
-    snprintf(kaliroot_file, sizeof(kaliroot_file), "%s/kali_in_batch/kaliroot.txt", appdata);
+    char kibroot_file[MAX_PATH_LEN];
+    snprintf(kibroot_file, sizeof(kibroot_file), "%s/kib_in_batch/kibroot.txt", appdata);
 
-    FILE *froot = fopen(kaliroot_file, "r");
+    FILE *froot = fopen(kibroot_file, "r");
     if (!froot) {
         errno = EIO;
         return -1;
     }
 
-    if (!fgets(kaliroot, (int)size, froot)) {
+    if (!fgets(kibroot, (int)size, froot)) {
         fclose(froot);
         errno = EIO;
         return -1;
@@ -107,27 +107,27 @@ static inline int read_kaliroot(char *kaliroot, size_t size) {
     fclose(froot);
 
     /* Strip newline */
-    size_t len = strlen(kaliroot);
-    while (len > 0 && (kaliroot[len - 1] == '\n' || kaliroot[len - 1] == '\r'))
-        kaliroot[--len] = '\0';
+    size_t len = strlen(kibroot);
+    while (len > 0 && (kibroot[len - 1] == '\n' || kibroot[len - 1] == '\r'))
+        kibroot[--len] = '\0';
 
     /* Replace backslashes with forward slashes */
     for (size_t i = 0; i < len; i++) {
-        if (kaliroot[i] == '\\') kaliroot[i] = '/';
+        if (kibroot[i] == '\\') kibroot[i] = '/';
     }
 
     return 0;
 }
 
 static inline unsigned int sleep(unsigned int seconds) {
-    // Get kali root
-    char kaliroot[MAX_PATH_LEN];
-    if (read_kaliroot(kaliroot, sizeof(kaliroot)) < 0)
+    // Get kib root
+    char kibroot[MAX_PATH_LEN];
+    if (read_kibroot(kibroot, sizeof(kibroot)) < 0)
         return 1;
 
     char cmd[2048];
-    // We use kaliroot/usr/lib/posix/sleep.bat to sleep
-    snprintf(cmd, sizeof(cmd), "%s/usr/lib/posix/sleep.bat %d", kaliroot, seconds);
+    // We use kibroot/usr/lib/posix/sleep.bat to sleep
+    snprintf(cmd, sizeof(cmd), "%s/usr/lib/posix/sleep.bat %d", kibroot, seconds);
     // Execute the command
     system(cmd);
 }
@@ -159,8 +159,8 @@ static inline int chdir(const char* path) {
 }
 
 static inline int posix_execl(const char *path, const char *arg, ...) {
-    char kaliroot[MAX_PATH_LEN];
-    if (read_kaliroot(kaliroot, sizeof(kaliroot)) < 0)
+    char kibroot[MAX_PATH_LEN];
+    if (read_kibroot(kibroot, sizeof(kibroot)) < 0)
         return -1;
     
     char cmd[2048];
@@ -168,7 +168,7 @@ static inline int posix_execl(const char *path, const char *arg, ...) {
     
     // Build command with execl.bat
     int needed = snprintf(cmd + pos, sizeof(cmd) - pos, 
-                         "%s/usr/lib/posix/execl.bat %s", kaliroot, path);
+                         "%s/usr/lib/posix/execl.bat %s", kibroot, path);
     if (needed < 0 || needed >= (int)(sizeof(cmd) - pos)) {
         return -1;
     }
@@ -200,8 +200,8 @@ static inline pid_t fork(void) {
         return 0; // Child process, don't fork
     }
     
-    char kaliroot[MAX_PATH_LEN];
-    if (read_kaliroot(kaliroot, sizeof(kaliroot)) < 0)
+    char kibroot[MAX_PATH_LEN];
+    if (read_kibroot(kibroot, sizeof(kibroot)) < 0)
         return -1;
    
     // Get command line arguments
@@ -212,7 +212,7 @@ static inline pid_t fork(void) {
     int pos = 0;
    
     // Start with setting environment variable and fork.bat path
-    int needed = snprintf(cmd + pos, sizeof(cmd) - pos, "set FORK_CHILD=1 && \"%s/usr/lib/posix/fork.bat\"", kaliroot);
+    int needed = snprintf(cmd + pos, sizeof(cmd) - pos, "set FORK_CHILD=1 && \"%s/usr/lib/posix/fork.bat\"", kibroot);
     if (needed < 0 || needed >= (int)(sizeof(cmd) - pos)) {
         return -1;
     }
@@ -240,30 +240,30 @@ static inline pid_t fork(void) {
 }
 
 static inline int mkdir(const char *path, mode_t mode) {
-    char kaliroot[MAX_PATH_LEN];
-    if (read_kaliroot(kaliroot, sizeof(kaliroot)) < 0)
+    char kibroot[MAX_PATH_LEN];
+    if (read_kibroot(kibroot, sizeof(kibroot)) < 0)
         return -1;
 
     char cmd[512];
-    int needed = snprintf(NULL, 0, "%s/usr/lib/posix/mkdir.bat \"%s\" %o", kaliroot, path, mode);
+    int needed = snprintf(NULL, 0, "%s/usr/lib/posix/mkdir.bat \"%s\" %o", kibroot, path, mode);
     if (needed < 0 || needed >= (int)sizeof(cmd)) {
         return -1;  // Avoid overflow
     }
-    snprintf(cmd, sizeof(cmd), "%s/usr/lib/posix/mkdir.bat \"%s\" %o", kaliroot, path, mode);
+    snprintf(cmd, sizeof(cmd), "%s/usr/lib/posix/mkdir.bat \"%s\" %o", kibroot, path, mode);
     return system(cmd);
 }
 
 static inline int rmdir(const char *path) {
-    char kaliroot[MAX_PATH_LEN];
-    if (read_kaliroot(kaliroot, sizeof(kaliroot)) < 0)
+    char kibroot[MAX_PATH_LEN];
+    if (read_kibroot(kibroot, sizeof(kibroot)) < 0)
         return -1;
 
     char cmd[512];
-    int needed = snprintf(NULL, 0, "%s/usr/lib/posix/rmdir.bat \"%s\"", kaliroot, path);
+    int needed = snprintf(NULL, 0, "%s/usr/lib/posix/rmdir.bat \"%s\"", kibroot, path);
     if (needed < 0 || needed >= (int)sizeof(cmd)) {
         return -1;  // Avoid overflow
     }
-    snprintf(cmd, sizeof(cmd), "%s/usr/lib/posix/rmdir.bat \"%s\"", kaliroot, path);
+    snprintf(cmd, sizeof(cmd), "%s/usr/lib/posix/rmdir.bat \"%s\"", kibroot, path);
     return system(cmd);
 }
 
@@ -286,8 +286,8 @@ static char *getcwd(char *buf, size_t size) {
         return NULL;
     }
 
-    char kaliroot[MAX_PATH_LEN];
-    if (read_kaliroot(kaliroot, sizeof(kaliroot)) < 0) {
+    char kibroot[MAX_PATH_LEN];
+    if (read_kibroot(kibroot, sizeof(kibroot)) < 0) {
         if (allocated) free(buf);
         return NULL;
     }
@@ -295,13 +295,13 @@ static char *getcwd(char *buf, size_t size) {
     /* Use a unique temp file to avoid conflicts */
     char tmpfile[MAX_PATH_LEN];
     snprintf(tmpfile, sizeof(tmpfile), "%s/tmp/getcwd_%d_%ld.tmp", 
-             kaliroot, getpid(), (long)time(NULL));
+             kibroot, getpid(), (long)time(NULL));
 
     /* Build command */
     char cmd[MAX_PATH_LEN * 2];
     snprintf(cmd, sizeof(cmd),
              "\"%s/usr/lib/posix/getcwd.bat\" > %s",
-             kaliroot, tmpfile);
+             kibroot, tmpfile);
 
     if (system(cmd) != 0) {
         if (allocated) free(buf);
