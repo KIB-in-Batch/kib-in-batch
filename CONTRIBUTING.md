@@ -38,14 +38,14 @@ The KIB in Batch project welcomes contributions from anyone, but they must follo
 
 ### Step 1: Fork the Repository
 
-Fork the repository [using this link](https://github.com/Kali-in-Batch/kali-in-batch/fork).
+Fork the repository [using this link](https://github.com/Kali-in-Batch/kib-in-batch/fork).
 
 ### Step 2: Clone the Repository
 
 Clone the forked repository to your local machine using the following command (replace `your-username` with your actual GitHub username):
 
 ```bat
-git clone https://github.com/your-username/kali-in-batch.git
+git clone https://github.com/your-username/kib-in-batch.git
 ```
 
 ### Step 3: Create a New Branch
@@ -78,6 +78,6 @@ git push origin your-branch-name
 
 ### Step 7: Create a Pull Request
 
-Create a pull request using [this link](https://github.com/Kali-in-Batch/kali-in-batch/compare).
+Create a pull request using [this link](https://github.com/Kali-in-Batch/kib-in-batch/compare).
 
 If the CI/CD fails, close the pull request until you fix it as to not waste the maintainers' time.

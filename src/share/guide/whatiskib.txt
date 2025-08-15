@@ -19,7 +19,7 @@ A way to run unmodified Linux binaries on Windows. Use WSL for that.
 How It Works
 ============
 
-When you run "kali_in_batch.bat", it sets up the following:
+When you run "kib_in_batch.bat", it sets up the following:
 
 * A root file system
 * A virtual drive for the root file system using subst

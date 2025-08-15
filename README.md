@@ -4,33 +4,39 @@ KIB in Batch is a batch script-based environment that runs a bash shell with man
 
 *Note: This project used to be named "Kali in Batch", but has been renamed to "KIB in Batch" (a recursive acronym) to avoid confusion with the Kali Linux project and OffSec trademarks.*
 
-[![CI/CD](https://github.com/Kali-in-Batch/kali-in-batch/actions/workflows/cicd.yml/badge.svg)](https://github.com/Kali-in-Batch/kali-in-batch/actions/workflows/cicd.yml)
+[![CI/CD](https://github.com/KIB-in-Batch/kib-in-batch/actions/workflows/cicd.yml/badge.svg)](https://github.com/KIB-in-Batch/kib-in-batch/actions/workflows/cicd.yml)
 
 ⭐ If you like this project or want to support development, please give it a star!
 
 ## Installation
 
-* Download a source code archive from the [latest release](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest).
-* Run [`src/kali_in_batch.bat`](./src/kali_in_batch.bat) to start the environment and perform the initial setup.
-* During the first run, you will be prompted to assign a drive letter to the root filesystem (e.g., Z:). This drive letter will be used to mount the Kali root filesystem.
+* Download a source code archive from the [latest release](https://github.com/KIB-in-Batch/kib-in-batch/releases/latest).
+* Run [`src/kib_in_batch.bat`](./src/kib_in_batch.bat) to start the environment and perform the initial setup.
+* During the first run, you will be prompted to assign a drive letter to the root filesystem (e.g., Z:). This drive letter will be used to mount the KIB root filesystem.
 * The installer will automatically download dependencies such as Nmap and Neovim using winget.
 * The environment will download and set up BusyBox automatically.
 
 ## Features
 
-* Bash environment with a KALI LINUX ™ style shell prompt.
-* Comes with KALI LINUX ™ utilities you would expect, including:
+* Bash environment with a custom shell prompt.
+* Comes with utilities you would expect, including:
   * Netcat
   * Nmap
   * Whois
   * Usable shell scripting environment
+* Requests admin privileges if cannot create symlinks.
 * Simple package manager accessible via the `kib-pkg` command.
 * Custom shell prompt and aliases for common commands to enhance usability.
 * [POSIX API reimplementations](./src/lib/posix/README.md).
+* [BusyBox](https://busybox.net/) for a lightweight, portable set of utilities.
+* [Neovim](https://neovim.io/) for a powerful, extensible text editor.
+* [Nmap](https://nmap.org/) for network scanning and discovery.
+* [KIBDock](./src/bin/kibdock.bat), our own software for managing containers.
+
 
 ## Usage
 
-1. Run [`src/kali_in_batch.bat`](./src/kali_in_batch.bat) to launch the KIB in Batch shell.
+1. Run [`src/kib_in_batch.bat`](./src/kib_in_batch.bat) to launch the KIB in Batch shell.
 2. On first run, follow the prompts to assign a drive letter and complete setup.
 3. Login with your username or root when prompted.
 4. Once setup is complete, enjoy the bash shell with UNIX® utilities.
@@ -47,8 +53,8 @@ This project is licensed under the GPL-2.0-only License. See the [LICENSE.txt](.
 
 ## Links
 
-* [GitHub Repository](https://github.com/Kali-in-Batch/kali-in-batch)
-* [Latest Releases](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest)
+* [GitHub Repository](https://github.com/KIB-in-Batch/kib-in-batch)
+* [Latest Releases](https://github.com/KIB-in-Batch/kib-in-batch/releases/latest)
 
 ## FAQ
 
@@ -58,11 +64,11 @@ KIB in Batch is a batch script-based environment that runs a bash shell with man
 
 ### How do I install KIB in Batch?
 
-Download the latest release from the [releases page](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest), run [`src/kali_in_batch.bat`](./src/kali_in_batch.bat), and follow the prompts to assign a drive letter and complete setup.
+Download the latest release from the [releases page](https://github.com/KIB-in-Batch/kib-in-batch/releases/latest), run [`src/kib_in_batch.bat`](./src/kib_in_batch.bat), and follow the prompts to assign a drive letter and complete setup.
 
 ### How do I update KIB in Batch?
 
-For minor updates, download the latest release and run `.\src\kali_in_batch.bat`. For major updates, uninstall first using `.\uninstall.bat` then reinstall. The uninstaller creates a backup of your KIB in Batch home directory which KIB in Batch automatically detects and restores upon reinstalling.
+For minor updates, download the latest release and run `.\src\kib_in_batch.bat`. For major updates, uninstall first using `.\uninstall.bat` then reinstall. The uninstaller creates a backup of your KIB in Batch home directory which KIB in Batch automatically detects and restores upon reinstalling.
 
 ### How do I uninstall KIB in Batch?
 
@@ -95,6 +101,97 @@ This is because you didn't run the file as Administrator when developer mode was
 ### Is KIB in Batch affiliated with Kali Linux?
 
 No, this project is not associated with KALI LINUX ™.
+
+### What is KIBDock?
+
+KIBDock is our own software for managing containers. When you run it without arguments, it displays the following:
+
+```plaintext
+$ kibdock
+kibdock [command]
+
+Deploy secure KIB containers.
+
+Commands:
+---------
+- init                : Enable the KIBDock service.
+- uninit              : Disable the KIBDock service. [deletes ALL kibdock data]
+- create              : Create a new KIB container.
+- deploy              : Deploy a KIB container.
+- delete              : Delete a KIB container.
+- list                : List all KIB containers.
+- list-img            : List all available KIB images.
+- help                : Display this help message.
+
+This software is licensed to [USERNAME] under the terms of the GNU General Public License, ONLY version 2 of it.
+There is no warranty, without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+```
+
+List the images using list-img. To create a container, use the create command. To deploy a container, use the deploy command. To delete a container, use the delete command. To list all containers, use the list command. To enable the KIBDock service (do before any other commands!), use the init command. To disable the KIBDock service (deletes all kibdock data!), use the uninit command.
+
+For example, here is how to create a new KIB container called mycontainer using the Ubuntu image:
+
+```plaintext
+$ kibdock create
+Enter container name: mycontainer
+Enter image name: ubuntu
+```
+
+Deploy it:
+
+```plaintext
+$ kibdock deploy
+Enter container name: mycontainer
+Deploying container "mycontainer"...
+Enter drive letter for container: X:
+Welcome to KIBDock on KIB in Batch 10.0.0. Image: ubuntu
+If you see this message and a command shell, it means your container has successfully been deployed
+wsl: Failed to translate 'Z:\home\benja'
+Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.6.87.2-microsoft-standard-WSL2 x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Thu Aug 14 21:35:18 -04 2025
+
+  System load:  0.37               Processes:             34
+  Usage of /:   0.5% of 218.95GB   Users logged in:       0
+  Memory usage: 2%                 IPv4 address for eth0: 172.20.220.231
+  Swap usage:   0%
+
+
+This message is shown once a day. To disable it please create the
+/root/.hushlogin file.
+root@acerb:~#
+```
+
+Linux® containers don't use the specified drive letter.
+
+To create a Windows container using the windows_minimal image:
+
+```plaintext
+$ kibdock create
+Enter container name: mycontainer_win
+Enter image name: windows_minimal
+```
+
+Deploy it:
+
+```plaintext
+$ kibdock deploy
+Enter container name: mycontainer_win
+Deploying container "mycontainer_win"...
+Enter drive letter for container: X:
+Welcome to KIBDock on KIB in Batch 10.0.0. Image: windows_minimal
+If you see this message and a command shell, it means your container has successfully been deployed
+Microsoft Windows [Versión 10.0.26100.4946]
+(c) Microsoft Corporation. Todos los derechos reservados.
+
+X:\Users\yourusername>
+```
+
+KIBDock can be used for running applications in containers.
 
 ---
 

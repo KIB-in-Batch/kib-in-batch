@@ -95,28 +95,28 @@ if "%ROOT%" == "0" (
     exit /b 1
 )
 
-if not exist "%APPDATA%\kali_in_batch" (
+if not exist "%APPDATA%\kib_in_batch" (
     echo !COLOR_ERROR!Error: KIB in Batch is not installed on your system.!COLOR_RESET!
     exit /b 1
 )
 
-if not exist "%APPDATA%\kali_in_batch\kaliroot.txt" (
-    echo !COLOR_ERROR!Error: kaliroot.txt not found.!COLOR_RESET!
+if not exist "%APPDATA%\kib_in_batch\kibroot.txt" (
+    echo !COLOR_ERROR!Error: kibroot.txt not found.!COLOR_RESET!
     exit /b 1
 )
 
-set /p kaliroot=<"%APPDATA%\kali_in_batch\kaliroot.txt"
+set /p kibroot=<"%APPDATA%\kib_in_batch\kibroot.txt"
 
-rem Validate kaliroot path
-if not exist "!kaliroot!" (
-    echo !COLOR_ERROR!Error: Kali root directory does not exist: !COLOR_PACKAGE!!kaliroot!!COLOR_RESET!
+rem Validate kibroot path
+if not exist "!kibroot!" (
+    echo !COLOR_ERROR!Error: KIB root directory does not exist: !COLOR_PACKAGE!!kibroot!!COLOR_RESET!
     exit /b 1
 )
 
 rem Ensure tmp directory exists
-if not exist "!kaliroot!\tmp" (
-    echo !COLOR_INFO!Creating tmp directory: !COLOR_PACKAGE!!kaliroot!\tmp!COLOR_RESET!
-    mkdir "!kaliroot!\tmp"
+if not exist "!kibroot!\tmp" (
+    echo !COLOR_INFO!Creating tmp directory: !COLOR_PACKAGE!!kibroot!\tmp!COLOR_RESET!
+    mkdir "!kibroot!\tmp"
 )
 
 :check_args
@@ -203,7 +203,7 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
-curl -f -s https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages.list >"%APPDATA%\kali_in_batch\packages.list"
+curl -f -s https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/main/packages.list >"%APPDATA%\kib_in_batch\packages.list"
 
 if %errorlevel% neq 0 (
     echo !COLOR_ERROR!Failed to update package database. Check your internet connection.!COLOR_RESET!
@@ -222,12 +222,12 @@ if "!kib-pkg_to_check!"=="" (
     exit /b 1
 )
 
-if not exist "%APPDATA%\kali_in_batch\packages.list" (
+if not exist "%APPDATA%\kib_in_batch\packages.list" (
     echo !COLOR_ERROR!Package database not found. Please run: !COLOR_COMMAND!%~0 update!COLOR_RESET!
     exit /b 1
 )
 
-findstr /c:"!kib-pkg_to_check!" "%APPDATA%\kali_in_batch\packages.list" >nul
+findstr /c:"!kib-pkg_to_check!" "%APPDATA%\kib_in_batch\packages.list" >nul
 if %errorlevel% neq 0 (
     echo !COLOR_ERROR!Package !COLOR_PACKAGE!!%~0_to_check!!COLOR_RESET!!COLOR_ERROR! is not available in the repository.!COLOR_RESET!
     echo Try running '!COLOR_COMMAND!%~0 search !kib-pkg_to_check!!COLOR_RESET!' to find similar packages.
@@ -239,13 +239,13 @@ goto :eof
 
 rem Check if package is installed
 set kib-pkg_to_check=%1
-if not exist "%APPDATA%\kali_in_batch\installed.packages.list" (
-    echo. >"%APPDATA%\kali_in_batch\installed.packages.list"
+if not exist "%APPDATA%\kib_in_batch\installed.packages.list" (
+    echo. >"%APPDATA%\kib_in_batch\installed.packages.list"
 )
 if "!kib-pkg_to_check!"=="" (
     exit /b 1
 )
-findstr /c:"!kib-pkg_to_check!" "%APPDATA%\kali_in_batch\installed.packages.list" >nul
+findstr /c:"!kib-pkg_to_check!" "%APPDATA%\kib_in_batch\installed.packages.list" >nul
 if %errorlevel% neq 0 (
     exit /b 1
 )
@@ -257,10 +257,10 @@ rem Add package to installed list
 set kib-pkg_to_add=%~1
 if not "!kib-pkg_to_add!"=="" (
     rem Make sure not in installed list
-    findstr /c:"!kib-pkg_to_add!" "%APPDATA%\kali_in_batch\installed.packages.list" >nul 2>&1
+    findstr /c:"!kib-pkg_to_add!" "%APPDATA%\kib_in_batch\installed.packages.list" >nul 2>&1
     rem If not in list, add it
     if %errorlevel% equ 0 (
-        echo !kib-pkg_to_add! >> "%APPDATA%\kali_in_batch\installed.packages.list"
+        echo !kib-pkg_to_add! >> "%APPDATA%\kib_in_batch\installed.packages.list"
     )
 )
 goto :eof
@@ -269,11 +269,11 @@ goto :eof
 
 rem Remove package from installed list
 set kib-pkg_to_remove=%~1
-if exist "%APPDATA%\kali_in_batch\installed.packages.list" (
+if exist "%APPDATA%\kib_in_batch\installed.packages.list" (
     if not "!kib-pkg_to_remove!"=="" (
-        findstr /v /c:"!kib-pkg_to_remove!" "%APPDATA%\kali_in_batch\installed.packages.list" >"%APPDATA%\kali_in_batch\temp.list"
-        if exist "%APPDATA%\kali_in_batch\temp.list" (
-            move "%APPDATA%\kali_in_batch\temp.list" "%APPDATA%\kali_in_batch\installed.packages.list" >nul
+        findstr /v /c:"!kib-pkg_to_remove!" "%APPDATA%\kib_in_batch\installed.packages.list" >"%APPDATA%\kib_in_batch\temp.list"
+        if exist "%APPDATA%\kib_in_batch\temp.list" (
+            move "%APPDATA%\kib_in_batch\temp.list" "%APPDATA%\kib_in_batch\installed.packages.list" >nul
         )
     )
 )
@@ -285,11 +285,11 @@ rem Check if DEPENDENCIES.txt exists and install dependencies
 echo !COLOR_INFO!Checking for dependencies...!COLOR_RESET!
 
 rem Clean up any existing dependency file
-if exist "!kaliroot!\tmp\%1_dependencies.txt" (
-    del "!kaliroot!\tmp\%1_dependencies.txt"
+if exist "!kibroot!\tmp\%1_dependencies.txt" (
+    del "!kibroot!\tmp\%1_dependencies.txt"
 )
 
-curl -f -s https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%1/DEPENDENCIES.txt -o "!kaliroot!\tmp\%1_dependencies.txt" 2>nul
+curl -f -s https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/main/packages/%1/DEPENDENCIES.txt -o "!kibroot!\tmp\%1_dependencies.txt" 2>nul
 
 if %errorlevel% neq 0 (
     echo !COLOR_INFO!No dependencies found for !COLOR_PACKAGE!%1!COLOR_RESET!
@@ -297,21 +297,21 @@ if %errorlevel% neq 0 (
 )
 
 rem Check if file was downloaded successfully and has content
-if not exist "!kaliroot!\tmp\%1_dependencies.txt" (
+if not exist "!kibroot!\tmp\%1_dependencies.txt" (
     echo !COLOR_INFO!No dependencies found for !COLOR_PACKAGE!%1!COLOR_RESET!
     goto :eof
 )
 
 rem Check file size
-for %%A in ("!kaliroot!\tmp\%1_dependencies.txt") do set size=%%~zA
+for %%A in ("!kibroot!\tmp\%1_dependencies.txt") do set size=%%~zA
 if !size! equ 0 (
     echo !COLOR_INFO!No dependencies found for !COLOR_PACKAGE!%1!COLOR_RESET!
-    del "!kaliroot!\tmp\%1_dependencies.txt" 2>nul
+    del "!kibroot!\tmp\%1_dependencies.txt" 2>nul
     goto :eof
 )
 
 echo !COLOR_INFO!Installing dependencies for !COLOR_PACKAGE!%1!COLOR_RESET!...
-for /f "usebackq delims=" %%i in ("!kaliroot!\tmp\%1_dependencies.txt") do (
+for /f "usebackq delims=" %%i in ("!kibroot!\tmp\%1_dependencies.txt") do (
     echo Installing dependency: !COLOR_PACKAGE!%%i!COLOR_RESET!
     call :install_single_package "%%i"
     if !errorlevel! neq 0 (
@@ -319,7 +319,7 @@ for /f "usebackq delims=" %%i in ("!kaliroot!\tmp\%1_dependencies.txt") do (
     )
 )
 
-del "!kaliroot!\tmp\%1_dependencies.txt" 2>nul
+del "!kibroot!\tmp\%1_dependencies.txt" 2>nul
 goto :eof
 
 :install_single_package
@@ -344,14 +344,14 @@ if %errorlevel% neq 0 (
 echo !COLOR_INFO!Installing !COLOR_PACKAGE!!kib-pkg_name!!COLOR_RESET!...
 
 rem Clean up any existing package directory
-if exist "!kaliroot!\tmp\!kib-pkg_name!_package" (
-    rmdir /s /q "!kaliroot!\tmp\!kib-pkg_name!_package"
+if exist "!kibroot!\tmp\!kib-pkg_name!_package" (
+    rmdir /s /q "!kibroot!\tmp\!kib-pkg_name!_package"
 )
 
 rem Download the entire package directory using PowerShell
 echo !COLOR_INFO!Downloading package files for !COLOR_PACKAGE!!kib-pkg_name!!COLOR_RESET!...
 
-powershell -ExecutionPolicy Bypass -Command "& { try { $ErrorActionPreference = 'Stop'; $owner='Kali-in-Batch'; $repo='pkg'; $targetDir='packages/!kib-pkg_name!'; $localDir='!kaliroot!\tmp\!kib-pkg_name!_package'; if(Test-Path $localDir){Remove-Item $localDir -Recurse -Force}; function Download-GitHubDirectory { param($owner,$repo,$path,$localPath); $apiUrl=\"https://api.github.com/repos/$owner/$repo/contents/$path\"; try { $headers = @{}; if($env:GITHUB_TOKEN) { $headers['Authorization'] = \"token $env:GITHUB_TOKEN\" }; $response = Invoke-RestMethod -Uri $apiUrl -Headers $headers -TimeoutSec 30; if(-not(Test-Path $localPath)){New-Item -ItemType Directory -Path $localPath -Force | Out-Null}; foreach($item in $response) { $itemLocalPath = Join-Path $localPath $item.name; if($item.type -eq 'file') { Write-Host \"Downloading: $($item.name)\"; Invoke-WebRequest -Uri $item.download_url -OutFile $itemLocalPath -TimeoutSec 30 } elseif($item.type -eq 'dir') { Download-GitHubDirectory $owner $repo \"$path/$($item.name)\" $itemLocalPath } } } catch { Write-Error \"Failed to download $path : $_\"; throw } }; Download-GitHubDirectory $owner $repo $targetDir $localDir; Write-Host 'Download completed successfully.' } catch { Write-Error \"PowerShell download failed: $_\"; exit 1 } }"
+powershell -ExecutionPolicy Bypass -Command "& { try { $ErrorActionPreference = 'Stop'; $owner='KIB-in-Batch'; $repo='pkg'; $targetDir='packages/!kib-pkg_name!'; $localDir='!kibroot!\tmp\!kib-pkg_name!_package'; if(Test-Path $localDir){Remove-Item $localDir -Recurse -Force}; function Download-GitHubDirectory { param($owner,$repo,$path,$localPath); $apiUrl=\"https://api.github.com/repos/$owner/$repo/contents/$path\"; try { $headers = @{}; if($env:GITHUB_TOKEN) { $headers['Authorization'] = \"token $env:GITHUB_TOKEN\" }; $response = Invoke-RestMethod -Uri $apiUrl -Headers $headers -TimeoutSec 30; if(-not(Test-Path $localPath)){New-Item -ItemType Directory -Path $localPath -Force | Out-Null}; foreach($item in $response) { $itemLocalPath = Join-Path $localPath $item.name; if($item.type -eq 'file') { Write-Host \"Downloading: $($item.name)\"; Invoke-WebRequest -Uri $item.download_url -OutFile $itemLocalPath -TimeoutSec 30 } elseif($item.type -eq 'dir') { Download-GitHubDirectory $owner $repo \"$path/$($item.name)\" $itemLocalPath } } } catch { Write-Error \"Failed to download $path : $_\"; throw } }; Download-GitHubDirectory $owner $repo $targetDir $localDir; Write-Host 'Download completed successfully.' } catch { Write-Error \"PowerShell download failed: $_\"; exit 1 } }"
 
 if %errorlevel% neq 0 (
     echo !COLOR_ERROR!Failed to download package !COLOR_PACKAGE!!kib-pkg_name!!COLOR_RESET!.
@@ -363,30 +363,43 @@ if %errorlevel% neq 0 (
 )
 
 rem Verify the download was successful
-if not exist "!kaliroot!\tmp\!kib-pkg_name!_package" (
+if not exist "!kibroot!\tmp\!kib-pkg_name!_package" (
     echo !COLOR_ERROR!Error: Package directory was not created.!COLOR_RESET!
     exit /b 1
 )
 
-if not exist "!kaliroot!\usr\share\%1" mkdir "!kaliroot!\usr\share\%1" >nul 2>&1
-curl -s -f https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%1/VERSION.txt >"!kaliroot!\usr\share\%1\VERSION.txt" 2>nul
+if not exist "!kibroot!\usr\share\%1" mkdir "!kibroot!\usr\share\%1" >nul 2>&1
+curl -s -f https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/main/packages/%1/VERSION.txt >"!kibroot!\usr\share\%1\VERSION.txt" 2>nul
 
 rem Check if contents are "404: Not Found"
 
-set /p vercontents=<"!kaliroot!\usr\share\%1\VERSION.txt"
+set /p vercontents=<"!kibroot!\usr\share\%1\VERSION.txt"
 
 if "%vercontents%" == "404: Not Found" (
     echo !COLOR_ERROR!No version found!COLOR_RESET!
     exit /b 1
 )
 
+rem Make sure there is a MAXVER.txt
+
+if not exist "!kibroot!\usr\share\%1\MAXVER.txt" (
+    echo !COLOR_ERROR!No MAXVER.txt found!COLOR_RESET!
+    exit /b 1
+) else (
+    set /p maxver=<"!kibroot!\usr\share\%1\MAXVER.txt"
+    if not "!maxver!"=="10" (
+        echo !COLOR_ERROR!Package !COLOR_PACKAGE!%1!COLOR_RESET! cannot run on this version of KIB in Batch.!COLOR_RESET!
+        exit /b 1
+    )
+)
+
 rem Run INSTALL.sh if it exists
-if exist "!kaliroot!\tmp\!kib-pkg_name!_package\INSTALL.sh" (
+if exist "!kibroot!\tmp\!kib-pkg_name!_package\INSTALL.sh" (
 
     rem Display install script contents
     echo !COLOR_INFO!I will show install script contents. Press any key to continue...!COLOR_RESET!
     pause >nul
-    type "!kaliroot!\tmp\!kib-pkg_name!_package\INSTALL.sh"
+    type "!kibroot!\tmp\!kib-pkg_name!_package\INSTALL.sh"
 
     echo !COLOR_INFO!Do you want to run the install script? [Y/N]!COLOR_RESET!
     choice /c yn /n /m ""
@@ -399,14 +412,14 @@ if exist "!kaliroot!\tmp\!kib-pkg_name!_package\INSTALL.sh" (
     echo !COLOR_INFO!Running install script for !COLOR_PACKAGE!!kib-pkg_name!!COLOR_RESET!...
     
     rem Check if bash exists
-    if not exist "!kaliroot!\usr\bin\bash.exe" (
+    if not exist "!kibroot!\usr\bin\bash.exe" (
         echo !COLOR_ERROR!Bash not found!COLOR_RESET!
         exit /b 1
     ) else (
-        set bash_path=!kaliroot!\usr\bin\bash.exe
+        set bash_path=!kibroot!\usr\bin\bash.exe
     )
     
-    "!bash_path!" -c "cd !kaliroot!/tmp/!kib-pkg_name!_package; !kaliroot!/tmp/!kib-pkg_name!_package/INSTALL.sh"
+    "!bash_path!" -c "cd !kibroot!/tmp/!kib-pkg_name!_package; !kibroot!/tmp/!kib-pkg_name!_package/INSTALL.sh"
     
     if !errorlevel! neq 0 (
         echo !COLOR_ERROR!Error: Install script returned error code !errorlevel!!COLOR_RESET!
@@ -424,7 +437,7 @@ rem Add to installed packages
 call :add_to_installed "!kib-pkg_name!"
 
 rem Clean up
-rmdir /s /q "!kaliroot!\tmp\!kib-pkg_name!_package" 2>nul
+rmdir /s /q "!kibroot!\tmp\!kib-pkg_name!_package" 2>nul
 
 echo !COLOR_SUCCESS!Package !COLOR_PACKAGE!!kib-pkg_name!!COLOR_RESET!!COLOR_SUCCESS! installed successfully.!COLOR_RESET!
 goto :eof
@@ -465,20 +478,20 @@ if %errorlevel% neq 0 (
 echo !COLOR_INFO!Removing package !COLOR_PACKAGE!%2!COLOR_RESET!...
 
 rem Clean up any existing uninstall script
-if exist "!kaliroot!\tmp\%2_uninstall.sh" (
-    del "!kaliroot!\tmp\%2_uninstall.sh"
+if exist "!kibroot!\tmp\%2_uninstall.sh" (
+    del "!kibroot!\tmp\%2_uninstall.sh"
 )
 
 rem Download and run UNINSTALL.sh if it exists
-curl -f -s https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/UNINSTALL.sh -o "!kaliroot!\tmp\%2_uninstall.sh" 2>nul
+curl -f -s https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/main/packages/%2/UNINSTALL.sh -o "!kibroot!\tmp\%2_uninstall.sh" 2>nul
 
 if %errorlevel% equ 0 (
-    if exist "!kaliroot!\tmp\%2_uninstall.sh" (
+    if exist "!kibroot!\tmp\%2_uninstall.sh" (
         echo !COLOR_INFO!I will show uninstall script contents. Press any key to continue...!COLOR_RESET!
 
         pause >nul
 
-        type "!kaliroot!\tmp\%2_uninstall.sh"
+        type "!kibroot!\tmp\%2_uninstall.sh"
 
         echo !COLOR_INFO!Do you want to run the uninstall script? [Y/N]!COLOR_RESET!
         choice /c yn /n /m ""
@@ -491,16 +504,16 @@ if %errorlevel% equ 0 (
         echo !COLOR_INFO!Running uninstall script for !COLOR_PACKAGE!%2!COLOR_RESET!...
         
         rem Find bash interpreter
-        if exist "!kaliroot!\usr\bin\bash.exe" (
-            set bash_path=!kaliroot!\usr\bin\bash.exe
-        ) else if exist "!kaliroot!\bin\bash.exe" (
-            set bash_path=!kaliroot!\bin\bash.exe
+        if exist "!kibroot!\usr\bin\bash.exe" (
+            set bash_path=!kibroot!\usr\bin\bash.exe
+        ) else if exist "!kibroot!\bin\bash.exe" (
+            set bash_path=!kibroot!\bin\bash.exe
         ) else (
             echo !COLOR_ERROR!Unable to find bash interpreter.!COLOR_RESET!
             exit /b 1
         )
         
-        "!bash_path!" "!kaliroot!\tmp\%2_uninstall.sh"
+        "!bash_path!" "!kibroot!\tmp\%2_uninstall.sh"
     )
 ) else (
     echo !COLOR_INFO!No uninstall script found for !COLOR_PACKAGE!%2!COLOR_RESET!.
@@ -510,7 +523,7 @@ rem Remove from installed packages
 call :remove_from_installed "%2"
 
 rem Remove the folder in /usr/share
-rmdir /s /q "!kaliroot!\usr\share\%2" 2>nul
+rmdir /s /q "!kibroot!\usr\share\%2" 2>nul
 
 echo !COLOR_SUCCESS!Package !COLOR_PACKAGE!%2!COLOR_RESET!!COLOR_SUCCESS! removed successfully.!COLOR_RESET!
 exit /b
@@ -572,24 +585,24 @@ if %errorlevel% neq 0 exit /b 1
 echo !COLOR_INFO!Checking for updates to !COLOR_PACKAGE!%2!COLOR_RESET!...
 
 rem Clean up any existing version file
-if exist "!kaliroot!\tmp\%2_new_version.txt" (
-    del "!kaliroot!\tmp\%2_new_version.txt"
+if exist "!kibroot!\tmp\%2_new_version.txt" (
+    del "!kibroot!\tmp\%2_new_version.txt"
 )
 
 rem Get current version
-curl -f -s https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/VERSION.txt -o "!kaliroot!\tmp\%2_new_version.txt" 2>nul
+curl -f -s https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/main/packages/%2/VERSION.txt -o "!kibroot!\tmp\%2_new_version.txt" 2>nul
 
 if %errorlevel% neq 0 (
     echo !COLOR_ERROR!Cannot determine version for package !COLOR_PACKAGE!%2!COLOR_RESET!
     exit /b 1
 )
 
-set /p new_version=<"!kaliroot!\tmp\%2_new_version.txt"
+set /p new_version=<"!kibroot!\tmp\%2_new_version.txt"
 
 rem Try to get current installed version
 set current_version=0.0.0
-if exist "!kaliroot!\usr\share\%2\VERSION.txt" (
-    set /p current_version=<"!kaliroot!\usr\share\%2\VERSION.txt"
+if exist "!kibroot!\usr\share\%2\VERSION.txt" (
+    set /p current_version=<"!kibroot!\usr\share\%2\VERSION.txt"
 )
 
 echo Current version: !COLOR_VERSION!!current_version!!COLOR_RESET!
@@ -599,7 +612,7 @@ rem Compare versions
 call :compare_versions !current_version! !new_version!
 if %errorlevel% neq 0 (
     echo !COLOR_INFO!Package !COLOR_PACKAGE!%2!COLOR_RESET!!COLOR_INFO! is already up to date.!COLOR_RESET!
-    del "!kaliroot!\tmp\%2_new_version.txt" 2>nul
+    del "!kibroot!\tmp\%2_new_version.txt" 2>nul
     exit /b
 )
 
@@ -611,7 +624,7 @@ call :install_dependencies %2
 rem Install the updated package
 call :install_single_package "%2"
 
-del "!kaliroot!\tmp\%2_new_version.txt" 2>nul
+del "!kibroot!\tmp\%2_new_version.txt" 2>nul
 echo !COLOR_SUCCESS!Package !COLOR_PACKAGE!%2!COLOR_RESET!!COLOR_SUCCESS! upgraded successfully.!COLOR_RESET!
 exit /b
 
@@ -619,12 +632,12 @@ exit /b
 
 rem Search for packages
 echo !COLOR_INFO!Searching for packages containing "!COLOR_PACKAGE!%2!COLOR_RESET!!COLOR_INFO!"...!COLOR_RESET!
-if not exist "%APPDATA%\kali_in_batch\packages.list" (
+if not exist "%APPDATA%\kib_in_batch\packages.list" (
     echo !COLOR_ERROR!Package cache not found. Please run: !COLOR_COMMAND!%~0 update!COLOR_RESET!
     exit /b 1
 )
 
-findstr /i /c:"%2" "%APPDATA%\kali_in_batch\packages.list"
+findstr /i /c:"%2" "%APPDATA%\kib_in_batch\packages.list"
 if %errorlevel% neq 0 (
     echo !COLOR_INFO!No packages found matching !COLOR_PACKAGE!"%2"!COLOR_RESET!!COLOR_INFO!.!COLOR_RESET!
 )
@@ -634,14 +647,14 @@ exit /b
 :list
 
 rem List all installed packages
-if not exist "%APPDATA%\kali_in_batch\installed.packages.list" (
+if not exist "%APPDATA%\kib_in_batch\installed.packages.list" (
     echo !COLOR_INFO!No packages are currently installed.!COLOR_RESET!
     exit /b
 )
 
 ::echo !COLOR_HEADER!Installed packages:!COLOR_RESET!
 set count=0
-for /f "usebackq delims=" %%a in ("%APPDATA%\kali_in_batch\installed.packages.list") do (
+for /f "usebackq delims=" %%a in ("%APPDATA%\kib_in_batch\installed.packages.list") do (
     rem Strip out spaces from the package name
     set "package=%%~a"
     set "package=!package: =!"
@@ -659,7 +672,7 @@ exit /b
 
 :list-available
 
-type "%APPDATA%\kali_in_batch\packages.list" 2>nul
+type "%APPDATA%\kib_in_batch\packages.list" 2>nul
 
 exit /b
 
@@ -667,10 +680,10 @@ exit /b
 
 echo !COLOR_INFO!Loading package metadata...!COLOR_RESET!
 
-curl -# https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%~2/DESCRIPTION.txt -o "!kaliroot!\tmp\%~2_description.txt"
+curl -# https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/main/packages/%~2/DESCRIPTION.txt -o "!kibroot!\tmp\%~2_description.txt"
 
-if exist "!kaliroot!\tmp\%~2_description.txt" (
-    set /p description=<"!kaliroot!\tmp\%~2_description.txt" 2>nul
+if exist "!kibroot!\tmp\%~2_description.txt" (
+    set /p description=<"!kibroot!\tmp\%~2_description.txt" 2>nul
     if "!description!"=="404: Not Found" (
         set "description=Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
     )
@@ -679,19 +692,19 @@ if exist "!kaliroot!\tmp\%~2_description.txt" (
 )
 
 rem Get current version
-curl -f -s https://raw.githubusercontent.com/Kali-in-Batch/pkg/refs/heads/main/packages/%2/VERSION.txt -o "!kaliroot!\tmp\%2_new_version.txt" 2>nul
+curl -f -s https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/main/packages/%2/VERSION.txt -o "!kibroot!\tmp\%2_new_version.txt" 2>nul
 
 if %errorlevel% neq 0 (
     echo !COLOR_ERROR!Cannot determine version for package !COLOR_PACKAGE!%2!COLOR_RESET!
     exit /b 1
 )
 
-set /p new_version=<"!kaliroot!\tmp\%2_new_version.txt"
+set /p new_version=<"!kibroot!\tmp\%2_new_version.txt"
 
 rem Try to get current installed version
 set current_version=0.0.0
-if exist "!kaliroot!\usr\share\%2\VERSION.txt" (
-    set /p current_version=<"!kaliroot!\usr\share\%2\VERSION.txt"
+if exist "!kibroot!\usr\share\%2\VERSION.txt" (
+    set /p current_version=<"!kibroot!\usr\share\%2\VERSION.txt"
 )
 
 echo.
