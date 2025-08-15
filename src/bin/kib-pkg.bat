@@ -203,7 +203,7 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
-curl -f -s https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/v3-kib-10/packages.list >"%APPDATA%\kib_in_batch\packages.list"
+curl -f -s https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/main/packages.list >"%APPDATA%\kib_in_batch\packages.list"
 
 if %errorlevel% neq 0 (
     echo !COLOR_ERROR!Failed to update package database. Check your internet connection.!COLOR_RESET!
@@ -289,7 +289,7 @@ if exist "!kibroot!\tmp\%1_dependencies.txt" (
     del "!kibroot!\tmp\%1_dependencies.txt"
 )
 
-curl -f -s https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/v3-kib-10/packages/%1/DEPENDENCIES.txt -o "!kibroot!\tmp\%1_dependencies.txt" 2>nul
+curl -f -s https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/main/packages/%1/DEPENDENCIES.txt -o "!kibroot!\tmp\%1_dependencies.txt" 2>nul
 
 if %errorlevel% neq 0 (
     echo !COLOR_INFO!No dependencies found for !COLOR_PACKAGE!%1!COLOR_RESET!
@@ -351,7 +351,7 @@ if exist "!kibroot!\tmp\!kib-pkg_name!_package" (
 rem Download the entire package directory using PowerShell
 echo !COLOR_INFO!Downloading package files for !COLOR_PACKAGE!!kib-pkg_name!!COLOR_RESET!...
 
-powershell -ExecutionPolicy Bypass -Command "& { try { $ErrorActionPreference = 'Stop'; $owner='KIB-in-Batch'; $repo='pkg'; $targetDir='packages/!kib-pkg_name!'; $localDir='!kibroot!\tmp\!kib-pkg_name!_package'; if(Test-Path $localDir){Remove-Item $localDir -Recurse -Force}; function Download-GitHubDirectory { param($owner,$repo,$path,$localPath); $apiUrl=\"https://api.github.com/repos/$owner/$repo/contents/$path\?ref=v3-kib-10\"; try { $headers = @{}; if($env:GITHUB_TOKEN) { $headers['Authorization'] = \"token $env:GITHUB_TOKEN\" }; $response = Invoke-RestMethod -Uri $apiUrl -Headers $headers -TimeoutSec 30; if(-not(Test-Path $localPath)){New-Item -ItemType Directory -Path $localPath -Force | Out-Null}; foreach($item in $response) { $itemLocalPath = Join-Path $localPath $item.name; if($item.type -eq 'file') { Write-Host \"Downloading: $($item.name)\"; Invoke-WebRequest -Uri \"$item.download_url\?ref=v3-kib-10\" -OutFile $itemLocalPath -TimeoutSec 30 } elseif($item.type -eq 'dir') { Download-GitHubDirectory $owner $repo \"$path/$($item.name)\" $itemLocalPath } } } catch { Write-Error \"Failed to download $path : $_\"; throw } }; Download-GitHubDirectory $owner $repo $targetDir $localDir; Write-Host 'Download completed successfully.' } catch { Write-Error \"PowerShell download failed: $_\"; exit 1 } }"
+powershell -ExecutionPolicy Bypass -Command "& { try { $ErrorActionPreference = 'Stop'; $owner='KIB-in-Batch'; $repo='pkg'; $targetDir='packages/!kib-pkg_name!'; $localDir='!kibroot!\tmp\!kib-pkg_name!_package'; if(Test-Path $localDir){Remove-Item $localDir -Recurse -Force}; function Download-GitHubDirectory { param($owner,$repo,$path,$localPath); $apiUrl=\"https://api.github.com/repos/$owner/$repo/contents/$path\"; try { $headers = @{}; if($env:GITHUB_TOKEN) { $headers['Authorization'] = \"token $env:GITHUB_TOKEN\" }; $response = Invoke-RestMethod -Uri $apiUrl -Headers $headers -TimeoutSec 30; if(-not(Test-Path $localPath)){New-Item -ItemType Directory -Path $localPath -Force | Out-Null}; foreach($item in $response) { $itemLocalPath = Join-Path $localPath $item.name; if($item.type -eq 'file') { Write-Host \"Downloading: $($item.name)\"; Invoke-WebRequest -Uri $item.download_url -OutFile $itemLocalPath -TimeoutSec 30 } elseif($item.type -eq 'dir') { Download-GitHubDirectory $owner $repo \"$path/$($item.name)\" $itemLocalPath } } } catch { Write-Error \"Failed to download $path : $_\"; throw } }; Download-GitHubDirectory $owner $repo $targetDir $localDir; Write-Host 'Download completed successfully.' } catch { Write-Error \"PowerShell download failed: $_\"; exit 1 } }"
 
 if %errorlevel% neq 0 (
     echo !COLOR_ERROR!Failed to download package !COLOR_PACKAGE!!kib-pkg_name!!COLOR_RESET!.
@@ -369,7 +369,7 @@ if not exist "!kibroot!\tmp\!kib-pkg_name!_package" (
 )
 
 if not exist "!kibroot!\usr\share\%1" mkdir "!kibroot!\usr\share\%1" >nul 2>&1
-curl -s -f https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/v3-kib-10/packages/%1/VERSION.txt >"!kibroot!\usr\share\%1\VERSION.txt" 2>nul
+curl -s -f https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/main/packages/%1/VERSION.txt >"!kibroot!\usr\share\%1\VERSION.txt" 2>nul
 
 rem Check if contents are "404: Not Found"
 
@@ -382,13 +382,13 @@ if "%vercontents%" == "404: Not Found" (
 
 rem Make sure there is a MAXVER.txt
 
-if not exist "!kibroot!\tmp\!kib-pkg_name!_package\MAXVER.txt" (
+if not exist "!kibroot!\usr\share\%1\MAXVER.txt" (
     echo !COLOR_ERROR!No MAXVER.txt found!COLOR_RESET!
     exit /b 1
 ) else (
-    set /p maxver=<"!kibroot!\tmp\!kib-pkg_name!_package\MAXVER.txt"
+    set /p maxver=<"!kibroot!\usr\share\%1\MAXVER.txt"
     if not "!maxver!"=="10" (
-        echo !COLOR_ERROR!Package !COLOR_PACKAGE!%1!COLOR_RESET!!COLOR_ERROR! cannot run on this version of KIB in Batch.!COLOR_RESET!
+        echo !COLOR_ERROR!Package !COLOR_PACKAGE!%1!COLOR_RESET! cannot run on this version of KIB in Batch.!COLOR_RESET!
         exit /b 1
     )
 )
@@ -483,7 +483,7 @@ if exist "!kibroot!\tmp\%2_uninstall.sh" (
 )
 
 rem Download and run UNINSTALL.sh if it exists
-curl -f -s https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/v3-kib-10/packages/%2/UNINSTALL.sh -o "!kibroot!\tmp\%2_uninstall.sh" 2>nul
+curl -f -s https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/main/packages/%2/UNINSTALL.sh -o "!kibroot!\tmp\%2_uninstall.sh" 2>nul
 
 if %errorlevel% equ 0 (
     if exist "!kibroot!\tmp\%2_uninstall.sh" (
@@ -590,7 +590,7 @@ if exist "!kibroot!\tmp\%2_new_version.txt" (
 )
 
 rem Get current version
-curl -f -s https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/v3-kib-10/packages/%2/VERSION.txt -o "!kibroot!\tmp\%2_new_version.txt" 2>nul
+curl -f -s https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/main/packages/%2/VERSION.txt -o "!kibroot!\tmp\%2_new_version.txt" 2>nul
 
 if %errorlevel% neq 0 (
     echo !COLOR_ERROR!Cannot determine version for package !COLOR_PACKAGE!%2!COLOR_RESET!
@@ -680,7 +680,7 @@ exit /b
 
 echo !COLOR_INFO!Loading package metadata...!COLOR_RESET!
 
-curl -# https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/v3-kib-10/packages/%~2/DESCRIPTION.txt -o "!kibroot!\tmp\%~2_description.txt"
+curl -# https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/main/packages/%~2/DESCRIPTION.txt -o "!kibroot!\tmp\%~2_description.txt"
 
 if exist "!kibroot!\tmp\%~2_description.txt" (
     set /p description=<"!kibroot!\tmp\%~2_description.txt" 2>nul
@@ -692,7 +692,7 @@ if exist "!kibroot!\tmp\%~2_description.txt" (
 )
 
 rem Get current version
-curl -f -s https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/v3-kib-10/packages/%2/VERSION.txt -o "!kibroot!\tmp\%2_new_version.txt" 2>nul
+curl -f -s https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/main/packages/%2/VERSION.txt -o "!kibroot!\tmp\%2_new_version.txt" 2>nul
 
 if %errorlevel% neq 0 (
     echo !COLOR_ERROR!Cannot determine version for package !COLOR_PACKAGE!%2!COLOR_RESET!
