@@ -382,11 +382,11 @@ if "%vercontents%" == "404: Not Found" (
 
 rem Make sure there is a MAXVER.txt
 
-if not exist "!kibroot!\usr\share\%1\MAXVER.txt" (
+if not exist "!kibroot!\tmp\!kib-pkg_name!_package\MAXVER.txt" (
     echo !COLOR_ERROR!No MAXVER.txt found!COLOR_RESET!
     exit /b 1
 ) else (
-    set /p maxver=<"!kibroot!\usr\share\%1\MAXVER.txt"
+    set /p maxver=<"!kibroot!\tmp\!kib-pkg_name!_package\MAXVER.txt"
     if not "!maxver!"=="10" (
         echo !COLOR_ERROR!Package !COLOR_PACKAGE!%1!COLOR_RESET! cannot run on this version of KIB in Batch.!COLOR_RESET!
         exit /b 1
