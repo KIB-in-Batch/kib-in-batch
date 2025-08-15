@@ -7,12 +7,12 @@ Here you can see how to upgrade your KIB in Batch to the latest version.
 Checking If Your Version Is Outdated
 ====================================
 
-See the GitHub page for the latest version of KIB in Batch: <https://github.com/Kali-in-Batch/kali-in-batch>
+See the GitHub page for the latest version of KIB in Batch: <https://github.com/KIB-in-Batch/kib-in-batch>
 
 Checking If You Can Upgrade
 ===========================
 
-First, you must go to <https://github.com/Kali-in-Batch/kali-in-batch/releases/latest>
+First, you must go to <https://github.com/KIB-in-Batch/kib-in-batch/releases/latest>
 
 Check the first number of the version number. If the first number is HIGHER than the first number of your current version, you need to reinstall as it is a MAJOR update.
 
@@ -23,7 +23,7 @@ If all numbers are the same, you are on the latest version.
 Upgrading To A Minor Update
 ===========================
 
-To upgrade, simply download the source code archive from <https://github.com/Kali-in-Batch/kali-in-batch/releases/latest>, extract it and run this in PowerShell or Command Prompt in the directory you extracted the archive to:
+To upgrade, simply download the source code archive from <https://github.com/KIB-in-Batch/kib-in-batch/releases/latest>, extract it and run this in PowerShell or Command Prompt in the directory you extracted the archive to:
 
 ```code
 .\src\kali_in_batch.bat
@@ -32,7 +32,7 @@ To upgrade, simply download the source code archive from <https://github.com/Kal
 Upgrading To A Major Update
 ===========================
 
-You should first download the source code archive from <https://github.com/Kali-in-Batch/kali-in-batch/releases/latest>, extract it and run this in PowerShell or Command Prompt in the directory you extracted the archive to:
+You should first download the source code archive from <https://github.com/KIB-in-Batch/kib-in-batch/releases/latest>, extract it and run this in PowerShell or Command Prompt in the directory you extracted the archive to:
 
 ```code
 .\uninstall.bat

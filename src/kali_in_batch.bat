@@ -124,22 +124,22 @@ if %errorlevel% neq 0 (
 if not exist "%~dp0bin" (
     echo This script is not meant to be used standalone.
     pause >nul
-    start https://github.com/Kali-in-Batch/kali-in-batch/releases/latest
+    start https://github.com/KIB-in-Batch/kib-in-batch/releases/latest
     exit /b 1
 ) else if not exist "%~dp0share" (
     echo This script is not meant to be used standalone.
     pause >nul
-    start https://github.com/Kali-in-Batch/kali-in-batch/releases/latest
+    start https://github.com/KIB-in-Batch/kib-in-batch/releases/latest
     exit /b 1
 ) else if not exist "%~dp0lib" (
     echo This script is not meant to be used standalone.
     pause >nul
-    start https://github.com/Kali-in-Batch/kali-in-batch/releases/latest
+    start https://github.com/KIB-in-Batch/kib-in-batch/releases/latest
     exit /b 1
 ) else if not exist "%~dp0include" (
     echo This script is not meant to be used standalone.
     pause >nul
-    start https://github.com/Kali-in-Batch/kali-in-batch/releases/latest
+    start https://github.com/KIB-in-Batch/kib-in-batch/releases/latest
     exit /b 1
 )
 
@@ -177,7 +177,7 @@ if defined missing (
     echo.
     choice /c 1234 /n /m ""
     if errorlevel 4 (
-        start https://github.com/Kali-in-Batch/kali-in-batch
+        start https://github.com/KIB-in-Batch/kib-in-batch
         exit
     )
     if errorlevel 3 goto live_shell
@@ -428,9 +428,9 @@ for /f "usebackq delims=" %%L in ("%APPDATA%\kali_in_batch\errors.log") do (
 )
 
 gh issue create ^
-  --repo Kali-in-Batch/kali-in-batch ^
-  --title "KIB in Batch startup errors on %COMPUTERNAME%" ^
-  --body "%issue_body%"
+  --repo KIB-in-Batch/kib-in-batch ^
+  --title "KIB in Batch errors on %COMPUTERNAME%" ^
+  --body "!body!"
 
 :after_issue_prompt
 
@@ -643,9 +643,9 @@ echo.
     echo VERSION_ID="9.9.2 LTS"
     echo PRETTY_NAME="KIB in Batch 9.9.2 LTS"
     echo ANSI_COLOR="0;36"
-    echo HOME_URL="https://kali-in-batch.github.io"
-    echo SUPPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/discussions"
-    echo BUG_REPORT_URL="https://github.com/Kali-in-Batch/kali-in-batch/issues"
+    echo HOME_URL="https://kib-in-batch.github.io"
+    echo SUPPORT_URL="https://github.com/KIB-in-Batch/kib-in-batch/discussions"
+    echo BUG_REPORT_URL="https://github.com/KIB-in-Batch/kib-in-batch/issues"
 ) > "!kaliroot!\etc\os-release" 2>>"%APPDATA%\kali_in_batch\errors.log"
 
 rem Create applet symlinks so many tools don't break because something is missing from /bin

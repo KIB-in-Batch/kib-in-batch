@@ -4,15 +4,15 @@ KIB in Batch is a batch script-based environment that runs a bash shell with man
 
 *Note: This project used to be named "KIB in Batch", but has been renamed to "KIB in Batch" (a recursive acronym) to avoid confusion with the Kali Linux project and OffSec trademarks.*
 
-[![CI/CD](https://github.com/Kali-in-Batch/kali-in-batch/actions/workflows/cicd.yml/badge.svg)](https://github.com/Kali-in-Batch/kali-in-batch/actions/workflows/cicd.yml)
+[![CI/CD](https://github.com/KIB-in-Batch/kib-in-batch/actions/workflows/cicd.yml/badge.svg)](https://github.com/KIB-in-Batch/kib-in-batch/actions/workflows/cicd.yml)
 
 ⭐ If you like this project or want to support development, please give it a star!
 
 ## Installation
 
-* Download a source code archive from the [latest release](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest).
+* Download a source code archive from the [latest release](https://github.com/KIB-in-Batch/kib-in-batch/releases/latest).
 * Run [`src/kali_in_batch.bat`](./src/kali_in_batch.bat) to start the environment and perform the initial setup.
-* During the first run, you will be prompted to assign a drive letter to the root filesystem (e.g., Z:). This drive letter will be used to mount the Kali root filesystem.
+* During the first run, you will be prompted to assign a drive letter to the root filesystem (e.g., Z:). This drive letter will be used to mount the KIB root filesystem.
 * The installer will automatically download dependencies such as Nmap and Neovim using winget.
 * The environment will download and set up BusyBox automatically.
 
@@ -56,8 +56,8 @@ This project is licensed under the GPL-2.0-only License. See the [LICENSE.txt](.
 
 ## Links
 
-* [GitHub Repository](https://github.com/Kali-in-Batch/kali-in-batch)
-* [Latest Releases](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest)
+* [GitHub Repository](https://github.com/KIB-in-Batch/kib-in-batch)
+* [Latest Releases](https://github.com/KIB-in-Batch/kib-in-batch/releases/latest)
 
 ## FAQ
 
@@ -67,7 +67,7 @@ KIB in Batch is a batch script-based environment that runs a bash shell with man
 
 ### How do I install KIB in Batch?
 
-Download the latest release from the [releases page](https://github.com/Kali-in-Batch/kali-in-batch/releases/latest), run [`src/kali_in_batch.bat`](./src/kali_in_batch.bat), and follow the prompts to assign a drive letter and complete setup.
+Download the latest release from the [releases page](https://github.com/KIB-in-Batch/kib-in-batch/releases/latest), run [`src/kali_in_batch.bat`](./src/kali_in_batch.bat), and follow the prompts to assign a drive letter and complete setup.
 
 ### How do I update KIB in Batch?
 
@@ -101,7 +101,7 @@ POSIX API batch file implementations are located in `/usr/lib/posix` and the hea
 
 This is because you didn't run the file as Administrator when developer mode was disabled. Run the file as Administrator or enable developer mode to create symlinks.
 
-### Is KIB in Batch affiliated with Kali Linux?
+### Is KIB in Batch affiliated with KIB Linux?
 
 No, this project is not associated with KALI LINUX ™.
 
