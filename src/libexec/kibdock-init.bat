@@ -307,3 +307,63 @@ rem Create start script
     echo echo "If you see this message and a command shell, it means your container has successfully been deployed!"
     echo wsl -d "${CTNRNAME}_ubuntu_kib"
 ) > "%USERPROFILE%\.kibdock\images\ubuntu\start.sh"
+
+:: -- end of ubuntu -- ::
+
+:: website ::
+
+:: This image uses busybox httpd to serve the current directory on localhost.
+
+rmdir /s /q "%USERPROFILE%\.kibdock\images\website" 2>nul
+mkdir "%USERPROFILE%\.kibdock\images\website" 2>nul
+
+rem Create install script
+
+(
+    echo #!/bin/sh
+    echo.
+    echo # This is the install script for the KIB website image.
+    echo.
+    echo # DESCRIPTION: The website image is a website image.
+    echo.
+    echo # Check if CTNRNAME isn't set.
+    echo.
+    echo if [ -z "$CTNRNAME" ]; then
+    echo   echo "Error: CTNRNAME is not set. Please set it before running this script."
+    echo   exit 1
+    echo fi
+    echo.
+    echo mkdir -p "$USERPROFILE/.kibdock/containers/$CTNRNAME/usr/bin"
+    echo.
+    echo # Copy busybox.exe, it's all we need
+    echo cp -f "$USERPROFILE/kib/usr/bin/busybox.exe" "$USERPROFILE/.kibdock/containers/$CTNRNAME/usr/bin/busybox-ctnr-http.exe"
+    echo.
+    echo echo "Succesfully created the website container."
+) > "%USERPROFILE%\.kibdock\images\website\install.sh"
+
+rem Create start script
+
+(
+    echo #!/bin/sh
+    echo.
+    echo # This is the start script for the KIB website image.
+    echo.
+    echo # DESCRIPTION: The website image is a website image.
+    echo.
+    echo rm -rf "$SUBSTDRIVELETTER/website"
+    echo.
+    echo ln -sf "$(pwd)" "$SUBSTDRIVELETTER/website"
+    echo.
+    echo # Get port number
+    echo.
+    echo read -p "Enter the port number you want to use: " PORT
+    echo.
+    echo # If not defined, default to 8080
+    echo if [ -z "$PORT" ]; then
+    echo   PORT=8080
+    echo fi
+    echo.
+    echo "$SUBSTDRIVELETTER/usr/bin/busybox-ctnr-http.exe" httpd -p $PORT -h "$SUBSTDRIVELETTER/website/"
+    echo read -p "Press enter to stop the server... "
+    echo taskkill.exe /f /im busybox-ctnr-http.exe
+) > "%USERPROFILE%\.kibdock\images\website\start.sh"
