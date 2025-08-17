@@ -520,6 +520,8 @@ goto :eof
 
 :boot
 
+echo %~dp0 > "%APPDATA%\kib_in_batch\dp0.txt" 2>nul
+
 where gh >nul 2>&1
 if errorlevel 1 (
     rem GitHub CLI isn’t installed, skip
