@@ -5,7 +5,7 @@
 The following versions of KIB in Batch are supported:
 
 * 9.9.2 LTS (Supported until August 3 2026)
-* 10.0.x
+* 10.1.1
 
 ## EOL Cycles
 
