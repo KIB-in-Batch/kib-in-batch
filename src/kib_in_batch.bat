@@ -36,6 +36,37 @@ rem * %~dp0bin\kibfetch.bat - Simple neofetch-like program
 rem * %~dp0bin\chsh.bat - Changes default shell
 rem * %~dp0bin\kibdock.bat - Containerization program for KIB
 
+if defined ConEmuPID (
+    echo Running inside ConEmu
+    goto :ok
+)
+
+if defined WT_SESSION (
+    echo Running inside Windows Terminal
+    goto :ok
+)
+
+if defined MSYSTEM (
+    echo Running inside MSYS2
+    goto :ok
+)
+
+echo Please use a supported terminal emulator. The following terminals are supported:
+echo.
+echo * MSYS2
+echo * Windows Terminal
+echo * ConEmu
+pause >nul
+exit /b 1
+
+:ok
+
+rem Ensure compatibility with older Windows builds by enabling ANSI escape codes manually
+
+reg add "HKCU\Console" /f >nul
+
+reg add "HKCU\Console" /v VirtualTerminalLevel /t REG_DWORD /d 1 /f
+
 rem Color Definitions
 set "COLOR_RESET=[0m"
 set "COLOR_BLACK=[30m"
@@ -570,7 +601,7 @@ if not exist "%USERPROFILE%\kib" (
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
 
 echo.
-echo Welcome to KIB in Batch 10.1.0 ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to KIB in Batch 10.1.1 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 ::                                                                 |
@@ -702,6 +733,8 @@ echo.
     echo export LC_IDENTIFICATION=C.UTF-8
     echo export LC_ALL=C.UTF-8
     echo.
+    echo export HOME="!kibroot!/home/!username!"
+    echo.
     echo ## KIB Linux shell prompt ##
     echo.
     echo # Check if ROOT is 1
@@ -819,11 +852,11 @@ echo.
 
 (
     echo NAME="KIB in Batch"
-    echo VERSION="10.1.0"
+    echo VERSION="10.1.1"
     echo ID=kibbatch
     echo ID_LIKE=linux
-    echo VERSION_ID="10.1.0"
-    echo PRETTY_NAME="KIB in Batch 10.1.0"
+    echo VERSION_ID="10.1.1"
+    echo PRETTY_NAME="KIB in Batch 10.1.1"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kib-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/KIB-in-Batch/kib-in-batch/discussions"
@@ -851,7 +884,7 @@ if exist "%APPDATA%\kib_in_batch\VERSION.txt" (
     del "%APPDATA%\kib_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 10.1.0>"%APPDATA%\kib_in_batch\VERSION.txt"
+echo 10.1.1>"%APPDATA%\kib_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -950,7 +983,7 @@ if "%~1"=="automated" (
 :login
 
 echo.
-echo KIB in Batch 10.1.0
+echo KIB in Batch 10.1.1
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root
