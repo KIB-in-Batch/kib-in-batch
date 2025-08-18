@@ -49,6 +49,8 @@ if defined MSYSTEM (
     goto :ok
 )
 
+if "%USERNAME%"=="runneradmin" goto ok
+
 echo Please use a supported terminal emulator. The following terminals are supported:
 echo.
 echo * MSYS2
