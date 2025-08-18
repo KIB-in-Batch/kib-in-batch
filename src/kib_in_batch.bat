@@ -38,18 +38,20 @@ rem * %~dp0bin\kibdock.bat - Containerization program for KIB
 
 if defined ConEmuPID (
     echo Running inside ConEmu
-    goto :ok
+    goto ok
 )
 
 if defined WT_SESSION (
     echo Running inside Windows Terminal
-    goto :ok
+    goto ok
 )
 
 if defined MSYSTEM (
     echo Running inside MSYS2
-    goto :ok
+    goto ok
 )
+
+if "%USERNAME%"=="runneradmin" goto ok
 
 echo Please use a supported terminal emulator. The following terminals are supported:
 echo.
