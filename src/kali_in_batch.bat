@@ -34,6 +34,37 @@ rem * %~dp0bin\whoami.bat - Displays the current user
 rem * %~dp0bin\msfconsole.bat - Uses the Windows Subsystem for Linux to launch the Metasploit Framework
 rem * %~dp0bin\kibfetch.bat - Simple neofetch-like program
 
+if defined ConEmuPID (
+    echo Running inside ConEmu
+    goto :ok
+)
+
+if defined WT_SESSION (
+    echo Running inside Windows Terminal
+    goto :ok
+)
+
+if defined MSYSTEM (
+    echo Running inside MSYS2
+    goto :ok
+)
+
+echo Please use a supported terminal emulator. The following terminals are supported:
+echo.
+echo * MSYS2
+echo * Windows Terminal
+echo * ConEmu
+pause >nul
+exit /b 1
+
+:ok
+
+rem Ensure compatibility with older Windows builds by enabling ANSI escape codes manually
+
+reg add "HKCU\Console" /f >nul
+
+reg add "HKCU\Console" /v VirtualTerminalLevel /t REG_DWORD /d 1 /f
+
 rem Color Definitions
 set "COLOR_RESET=[0m"
 set "COLOR_BLACK=[30m"
@@ -572,6 +603,8 @@ echo.
     echo #  instead.            #
     echo #                      #
     echo ########################
+    echo.
+    echo export HOME="!kibroot!/home/!username!"
     echo.
     echo ## Kali Linux shell prompt ##
     echo.
