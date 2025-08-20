@@ -53,7 +53,7 @@ jobs:
           - Suggestions for improvement
           - Security considerations if applicable
           
-          Keep your response concise and helpful. Format it as markdown.
+          Keep your response concise and helpful. Format it as markdown. Lines starting with "-" are REMOVED lines, Lines starting with "+" are ADDED lines. ONLY FOCUS ON REMOVED AND ADDED LINES.
           
           Here's the diff:
           EOF
