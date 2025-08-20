@@ -5,9 +5,10 @@ on:
   push:
     tags:
       - '*'
+
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
@@ -19,13 +20,10 @@ jobs:
       
       - name: Build standalone executable
         run: python mkstandalone.py
-      
-      - name: Install zip utility
-        run: sudo apt-get update && sudo apt-get install -y zip
-      
+
       - name: Compress ./src to kib_in_batch.zip
-        run: zip -r kib_in_batch.zip src
-      
+        run: Compress-Archive -Path src -DestinationPath kib_in_batch.zip
+
       - name: Publish Release & Upload Files
         uses: softprops/action-gh-release@v2
         with:
@@ -36,3 +34,4 @@ jobs:
             LICENSE.txt
             uninstall.bat
             README.md
+
