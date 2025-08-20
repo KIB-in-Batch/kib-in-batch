@@ -21,6 +21,7 @@ jobs:
         run: python mkstandalone.py
 
       - name: Verify standalone batch file exists
+        shell: cmd
         run: |
           if not exist build\kib-standalone.bat (
             echo Standalone batch file not found!
@@ -28,4 +29,5 @@ jobs:
           )
 
       - name: Run standalone batch file
+        shell: cmd
         run: build\kib-standalone.bat automated
