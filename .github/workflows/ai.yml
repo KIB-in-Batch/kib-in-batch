@@ -33,7 +33,7 @@ jobs:
         run: |
           curl -fsSL \
           -H "Accept: application/vnd.github.v3.diff" \
-          -H "Authorization: Bearer $GITHUB_TOKEN" \
+          -H "Authorization: Bearer $APP_TOKEN" \
           https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }} \
           > pr_diff.txt
     
