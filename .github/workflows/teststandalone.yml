@@ -1,0 +1,31 @@
+name: Test KIB Batch Standalone
+permissions:
+  contents: read
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-standalone:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13.3'
+
+      - name: Run standalone build script
+        run: python mkstandalone.py
+
+      - name: Verify standalone batch file exists
+        run: |
+          if not exist build\kib-standalone.bat (
+            echo Standalone batch file not found!
+            exit /b 1
+          )
+
+      - name: Run standalone batch file
+        run: build\kib-standalone.bat automated

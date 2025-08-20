@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.13.3'
       
       - name: Build standalone executable
         run: python mkstandalone.py
@@ -32,7 +32,6 @@ jobs:
           tag_name: ${{ github.ref_name }}
           files: |
             kib_in_batch.zip
-            build/kib-standalone.bat
             LICENSE.txt
             uninstall.bat
             README.md
