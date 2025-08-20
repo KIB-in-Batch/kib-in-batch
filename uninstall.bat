@@ -1,5 +1,6 @@
 @echo off
 
+
 set /p kibroot=<"%APPDATA%\kib_in_batch\kibroot.txt"
 
 echo Deleting %APPDATA%\kib_in_batch...
