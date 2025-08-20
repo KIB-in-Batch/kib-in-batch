@@ -1,33 +1,38 @@
-name: Release KIB Batch ZIP
-
+name: Release KIB Batch Standalone
 permissions:
   contents: write
-
 on:
   push:
     tags:
       - '*'
-
 jobs:
   release:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
-
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      
+      - name: Build standalone executable
+        run: python mkstandalone.py
+      
       - name: Install zip utility
         run: sudo apt-get update && sudo apt-get install -y zip
-
+      
       - name: Compress ./src to kib_in_batch.zip
         run: zip -r kib_in_batch.zip src
-
-      - name: Publish Release & Upload ZIP
+      
+      - name: Publish Release & Upload Files
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           files: |
             kib_in_batch.zip
+            build/kib-standalone.bat
             LICENSE.txt
             uninstall.bat
             README.md
