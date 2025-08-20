@@ -30,4 +30,8 @@ jobs:
 
       - name: Run standalone batch file
         shell: cmd
-        run: build\kib-standalone.bat automated
+        run: |
+          echo 1 | build\kib-standalone.bat automated
+          if errorlevel 1 (
+            exit /b 1
+          )
