@@ -31,6 +31,7 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           files: |
+            kib-standalone.bat
             kib_in_batch.zip
             LICENSE.txt
             uninstall.bat
