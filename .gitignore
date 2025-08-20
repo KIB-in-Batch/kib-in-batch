@@ -16,3 +16,4 @@
 *.tar.*
 bashbug
 .vscode/
+build/

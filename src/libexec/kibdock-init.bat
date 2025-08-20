@@ -21,6 +21,8 @@ rem You should have received a copy of the GNU General Public License
 rem along with this program; if not, write to the Free Software
 rem Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
+rem Do not use any of the scripts directly. Instead, use the kibdock program in the KIB in Batch shell.
+
 if exist "%USERPROFILE%\.kibdock" goto skip_kibdock_creation
 
 mkdir "%USERPROFILE%\.kibdock" >nul 2>&1
@@ -54,6 +56,8 @@ mkdir "%USERPROFILE%\.kibdock\images\windows_minimal" >nul 2>&1
     echo     echo "Error: CTNRNAME must be set."
     echo     exit 1
     echo fi
+    echo.
+    echo echo "WARNING: Windows Defender doesn't quite like Windows containers. It might quarantine BusyBox."
     echo.
     echo mkdir -p "$USERPROFILE/.kibdock/containers/$CTNRNAME"
     echo mkdir -p "$USERPROFILE/.kibdock/containers/$CTNRNAME/Windows"
@@ -240,7 +244,7 @@ mkdir "%USERPROFILE%\.kibdock\images\windows_minimal" >nul 2>&1
     echo.
     echo # Run the cmd.exe.
     echo.
-    echo echo "Welcome to KIBDock on KIB in Batch 10.1.1. Image: windows_minimal"
+    echo echo "Welcome to KIBDock on KIB in Batch 10.2.0. Image: windows_minimal"
     echo echo "If you see this message and a command shell, it means your container has successfully been deployed!"
     echo cd "$USERPROFILE"
     echo "$SUBSTDRIVELETTER\Windows\System32\cmd.exe"
@@ -303,7 +307,7 @@ rem Create start script
     echo # DESCRIPTION: The Ubuntu image is a Ubuntu image.
     echo # Ubuntu is a trademark of Canonical Ltd.
     echo.
-    echo echo "Welcome to KIBDock on KIB in Batch 10.1.1. Image: ubuntu"
+    echo echo "Welcome to KIBDock on KIB in Batch 10.2.0. Image: ubuntu"
     echo echo "If you see this message and a command shell, it means your container has successfully been deployed!"
     echo wsl -d "${CTNRNAME}_ubuntu_kib"
 ) > "%USERPROFILE%\.kibdock\images\ubuntu\start.sh"
@@ -367,3 +371,143 @@ rem Create start script
     echo read -p "Press enter to stop the server... "
     echo taskkill.exe /f /im busybox-ctnr-http.exe
 ) > "%USERPROFILE%\.kibdock\images\website\start.sh"
+
+:: -- end of website -- ::
+
+:: -- windows_functional -- ::
+
+rmdir /s /q "%USERPROFILE%\.kibdock\images\windows_functional" >nul 2>&1
+
+mkdir "%USERPROFILE%\.kibdock\images\windows_functional" >nul 2>&1
+
+(
+    echo #!/bin/sh
+    echo.
+    echo # This is the install script for the KIB Windows Functional image.
+    echo.
+    echo # DESCRIPTION: The Windows Functional image is a Windows image.
+    echo # Windows is a trademark of Microsoft Corporation.
+    echo.
+    echo # Check if CTNRNAME isn't set.
+    echo if [ -z "$CTNRNAME" ]; then
+    echo     echo "Error: CTNRNAME must be set."
+    echo     exit 1
+    echo fi
+    echo.
+    echo echo "WARNING: Windows Defender doesn't quite like Windows containers. It might quarantine BusyBox."
+    echo.
+    echo mkdir -p "$USERPROFILE/.kibdock/containers/$CTNRNAME"
+    echo mkdir -p "$USERPROFILE/.kibdock/containers/$CTNRNAME/Program Files"
+    echo mkdir -p "$USERPROFILE/.kibdock/containers/$CTNRNAME/Program Files (x86)"
+    echo mkdir -p "$USERPROFILE/.kibdock/containers/$CTNRNAME/ProgramData"
+    echo mkdir -p "$USERPROFILE/.kibdock/containers/$CTNRNAME/Users/$USERNAME/Desktop"
+    echo mkdir -p "$USERPROFILE/.kibdock/containers/$CTNRNAME/Users/$USERNAME/Documents"
+    echo mkdir -p "$USERPROFILE/.kibdock/containers/$CTNRNAME/Users/$USERNAME/AppData/Local/Temp"
+    echo mkdir -p "$USERPROFILE/.kibdock/containers/$CTNRNAME/Users/$USERNAME/AppData/Local/Microsoft"
+    echo mkdir -p "$USERPROFILE/.kibdock/containers/$CTNRNAME/Users/$USERNAME/AppData/Roaming"
+    echo ln -sf "$USERPROFILE/.kibdock/containers/$CTNRNAME/Users" "$USERPROFILE/.kibdock/containers/$CTNRNAME/Documents and Settings"
+    echo.
+    echo # Symlink entire Windows system directories instead of individual files
+    echo echo "Creating comprehensive Windows system directory symlinks..."
+    echo.
+    echo # Main Windows directories
+    echo ln -sf "$SYSTEMROOT" "$USERPROFILE/.kibdock/containers/$CTNRNAME/Windows"
+    echo.
+    echo # Program Files directories
+    echo echo "Linking Program Files directories..."
+    echo if [ -d "$SYSTEMDRIVE/Program Files/Common Files" ]; then
+    echo     ln -sf "$SYSTEMDRIVE/Program Files/Common Files" "$USERPROFILE/.kibdock/containers/$CTNRNAME/Program Files/Common Files"
+    echo fi
+    echo if [ -d "$SYSTEMDRIVE/Program Files/WindowsApps" ]; then
+    echo     ln -sf "$SYSTEMDRIVE/Program Files/WindowsApps" "$USERPROFILE/.kibdock/containers/$CTNRNAME/Program Files/WindowsApps"
+    echo fi
+    echo if [ -d "$SYSTEMDRIVE/Program Files/Windows Defender" ]; then
+    echo     ln -sf "$SYSTEMDRIVE/Program Files/Windows Defender" "$USERPROFILE/.kibdock/containers/$CTNRNAME/Program Files/Windows Defender"
+    echo fi
+    echo if [ -d "$SYSTEMDRIVE/Program Files/Windows Security" ]; then
+    echo     ln -sf "$SYSTEMDRIVE/Program Files/Windows Security" "$USERPROFILE/.kibdock/containers/$CTNRNAME/Program Files/Windows Security"
+    echo fi
+    echo if [ -d "$SYSTEMDRIVE/Program Files/Microsoft Office" ]; then
+    echo     ln -sf "$SYSTEMDRIVE/Program Files/Microsoft Office" "$USERPROFILE/.kibdock/containers/$CTNRNAME/Program Files/Microsoft Office"
+    echo fi
+    echo if [ -d "$SYSTEMDRIVE/Program Files/Windows NT" ]; then
+    echo     ln -sf "$SYSTEMDRIVE/Program Files/Windows NT" "$USERPROFILE/.kibdock/containers/$CTNRNAME/Program Files/Windows NT"
+    echo fi
+    echo if [ -d "$SYSTEMDRIVE/Program Files/Windows Kits" ]; then
+    echo     ln -sf "$SYSTEMDRIVE/Program Files/Windows Kits" "$USERPROFILE/.kibdock/containers/$CTNRNAME/Program Files/Windows Kits"
+    echo fi
+    echo if [ -d "$SYSTEMDRIVE/Program Files/Windows Photo Viewer" ]; then
+    echo     ln -sf "$SYSTEMDRIVE/Program Files/Windows Photo Viewer" "$USERPROFILE/.kibdock/containers/$CTNRNAME/Program Files/Windows Photo Viewer"
+    echo fi
+    echo.
+    echo # Program Files ^(x86^) directories
+    echo if [ -d "$SYSTEMDRIVE/Program Files (x86)/Common Files" ]; then
+    echo     ln -sf "$SYSTEMDRIVE/Program Files (x86)/Common Files" "$USERPROFILE/.kibdock/containers/$CTNRNAME/Program Files (x86)/Common Files"
+    echo fi
+    echo if [ -d "$SYSTEMDRIVE/Program Files (x86)/Microsoft Office" ]; then
+    echo     ln -sf "$SYSTEMDRIVE/Program Files (x86)/Microsoft Office" "$USERPROFILE/.kibdock/containers/$CTNRNAME/Program Files (x86)/Microsoft Office"
+    echo fi
+    echo if [ -d "$SYSTEMDRIVE/Program Files (x86)/Windows Kits" ]; then
+    echo     ln -sf "$SYSTEMDRIVE/Program Files (x86)/Windows Kits" "$USERPROFILE/.kibdock/containers/$CTNRNAME/Program Files (x86)/Windows Kits"
+    echo fi
+    echo if [ -d "$SYSTEMDRIVE/Program Files (x86)/Windows NT" ]; then
+    echo     ln -sf "$SYSTEMDRIVE/Program Files (x86)/Windows NT" "$USERPROFILE/.kibdock/containers/$CTNRNAME/Program Files (x86)/Windows NT"
+    echo fi
+    echo.
+    echo # User profile AppData links
+    echo if [ -d "$USERPROFILE/AppData/Local/Microsoft/WindowsApps" ]; then
+    echo     ln -sf "$USERPROFILE/AppData/Local/Microsoft/WindowsApps" "$USERPROFILE/.kibdock/containers/$CTNRNAME/Users/$USERNAME/AppData/Local/Microsoft/WindowsApps"
+    echo fi
+) > "%USERPROFILE%\.kibdock\images\windows_functional\install.sh"
+
+(
+    echo #!/bin/sh
+    echo.
+    echo # This is the start script for the KIB Windows Functional image.
+    echo.
+    echo # DESCRIPTION: The Windows Functional image is a Windows image.
+    echo # Windows is a trademark of Microsoft Corporation.
+    echo.
+    echo # Make sure SUBSTDRIVELETTER is set.
+    echo.
+    echo if [ -z "$SUBSTDRIVELETTER" ]; then
+    echo     echo "Error: SUBSTDRIVELETTER must be set."
+    echo     exit 1
+    echo fi
+    echo.
+    echo # Set environment variables. These do the container isolation by making apps access directories of the container.
+    echo.
+    echo export SYSTEMDRIVE="$SUBSTDRIVELETTER"
+    echo export SYSTEMROOT="$SUBSTDRIVELETTER\Windows"
+    echo export USERPROFILE="$SUBSTDRIVELETTER\Users\%USERNAME%"
+    echo export APPDATA="$SUBSTDRIVELETTER\Users\%USERNAME%\AppData\Roaming"
+    echo export LOCALAPPDATA="$SUBSTDRIVELETTER\Users\%USERNAME%\AppData\Local"
+    echo export TEMP="$SUBSTDRIVELETTER\Users\%USERNAME%\AppData\Local\Temp"
+    echo export HOMEDRIVE="$SUBSTDRIVELETTER"
+    echo export HOMEPATH="\Users\%USERNAME%"
+    echo export USERNAME="%USERNAME%"
+    echo export PROGRAMFILES="$SUBSTDRIVELETTER\Program Files"
+    echo export COMMONPROGRAMFILES="$SUBSTDRIVELETTER\Program Files\Common Files"
+    echo export PATH="$SUBSTDRIVELETTER\Windows;$SUBSTDRIVELETTER\Windows\System32;$SUBSTDRIVELETTER\Windows\System32\WindowsPowerShell\v1.0;$HOMEDRIVE$HOMEPATH\AppData\Local\Microsoft\WindowsApps;%USERPROFILE%\kib\usr\bin"
+    echo.
+    echo # Run the cmd.exe.
+    echo.
+    echo echo "Welcome to KIBDock on KIB in Batch 10.2.0. Image: windows_functional"
+    echo echo "If you see this message and a command shell, it means your container has successfully been deployed!"
+    echo cd "$USERPROFILE"
+    echo export SYSTEMDRIVE="$SUBSTDRIVELETTER"
+    echo export SYSTEMROOT="$SUBSTDRIVELETTER\Windows"
+    echo export USERPROFILE="$SUBSTDRIVELETTER\Users\%USERNAME%"
+    echo export APPDATA="$SUBSTDRIVELETTER\Users\%USERNAME%\AppData\Roaming"
+    echo export LOCALAPPDATA="$SUBSTDRIVELETTER\Users\%USERNAME%\AppData\Local"
+    echo export TEMP="$SUBSTDRIVELETTER\Users\%USERNAME%\AppData\Local\Temp"
+    echo export HOMEDRIVE="$SUBSTDRIVELETTER"
+    echo export HOMEPATH="\Users\%USERNAME%"
+    echo export USERNAME="%USERNAME%"
+    echo export PROGRAMFILES="$SUBSTDRIVELETTER\Program Files"
+    echo export COMMONPROGRAMFILES="$SUBSTDRIVELETTER\Program Files\Common Files"
+    echo export PATH="$SUBSTDRIVELETTER\Windows;$SUBSTDRIVELETTER\Windows\System32;$SUBSTDRIVELETTER\Windows\System32\WindowsPowerShell\v1.0;$HOMEDRIVE$HOMEPATH\AppData\Local\Microsoft\WindowsApps;%USERPROFILE%\kib\usr\bin"
+    echo "$SUBSTDRIVELETTER\Windows\System32\cmd.exe"
+) > "%USERPROFILE%\.kibdock\images\windows_functional\start.sh"
+
+:: -- end of windows_functional -- ::
