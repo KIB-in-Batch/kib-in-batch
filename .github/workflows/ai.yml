@@ -24,15 +24,21 @@ jobs:
       - name: Start Ollama service
         run: |
           ollama serve &
-          sleep 10
+          sleep 4
           ollama pull llama3.2:3b
+
 
       - name: Get PR diff
         id: pr-diff
         run: |
-          git fetch origin ${{ github.base_ref }} --depth=1
-          git diff origin/${{ github.base_ref }}..HEAD > pr_diff.txt
+          curl -fsSL \
+          -H "Accept: application/vnd.github.v3.diff" \
+          -H "Authorization: Bearer $GITHUB_TOKEN" \
+          https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }} \
+          > pr_diff.txt
+    
           head -n 3000 pr_diff.txt > limited_diff.txt
+
 
       - name: Generate comment with Ollama
         id: generate-comment
