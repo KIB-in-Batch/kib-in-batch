@@ -73,7 +73,7 @@ def escape_contents(contents):
                 out.append(ch)
             else:
                 out.append(replacements.get(ch, ch))
-        return ''.join(out).rstrip('\r\n').rstrip()
+        return ''.join(out).rstrip('\r\n')
 
     for i in range(len(contents)):
         contents[i] = escape_line(contents[i])
@@ -112,11 +112,11 @@ def main():
                 if line == '':
                     f.write(f'    echo.\n')
                 else:
-                    f.write(f'    echo {line.rstrip()}\n')
+                    f.write(f'    echo {line}\n')
             f.write(f') > "%KIB_HOME%\\{os.path.relpath(file, src_dir)}"\n')
 
     with open(batch_file, 'a', encoding='utf-8') as f:
-        f.write('call "%KIB_HOME%\\kib_in_batch.bat"\n')
+        f.write('call "%KIB_HOME%\\kib_in_batch.bat" %*\n')
     print(f"Standalone batch file '{batch_file}' created successfully.")
 
 if __name__ == '__main__':
