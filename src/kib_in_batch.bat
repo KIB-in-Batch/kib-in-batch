@@ -833,7 +833,7 @@ echo.
     echo        return $1
     echo     fi
     echo.
-    echo     exit $1
+    echo     command exit $1 # Changed to command exit to fix stack overflow error
     echo }
     echo.
     echo ## Change to ~ ##
