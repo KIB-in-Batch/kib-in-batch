@@ -26,7 +26,7 @@ jobs:
 
       - name: Generate reply with Ollama
         id: generate-reply
-      - env:
+        env:
           USER_COMMENT: ${{ github.event.comment.body }}
         run: |
 
