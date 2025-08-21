@@ -9,6 +9,7 @@ on:
 jobs:
   ollama-comment:
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request_target'
     permissions:
       contents: read
       pull-requests: read  # comment posting is done with app token, not GITHUB_TOKEN
