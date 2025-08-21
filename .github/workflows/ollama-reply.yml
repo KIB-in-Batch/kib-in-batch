@@ -26,9 +26,9 @@ jobs:
 
       - name: Generate reply with Ollama
         id: generate-reply
+      - env:
+          USER_COMMENT: ${{ github.event.comment.body }}
         run: |
-          # Capture the user comment text (GitHub Actions will interpolate this)
-          USER_COMMENT='${{ github.event.comment.body }}'
 
           PROMPT=$(cat <<EOF
           You are Ollama bot. A GitHub issue/PR comment mentioned you:
