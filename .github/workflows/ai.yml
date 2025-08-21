@@ -99,8 +99,7 @@ jobs:
   ollama-reply:
     runs-on: ubuntu-latest
     if: |
-      contains(github.event.comment.body, '@ollama-comment') &&
-      github.event.issue.pull_request
+      contains(github.event.comment.body, '@ollama-comment')
     permissions:
       issues: write
       pull-requests: write
