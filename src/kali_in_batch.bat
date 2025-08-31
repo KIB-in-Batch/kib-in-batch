@@ -184,6 +184,37 @@ if !errorlevel! neq 0 (
     exit /b 1
 )
 
+mkdir "%TEMP%\dummy.kib.d"
+
+mklink /d "%~dp0test" "%TEMP%\dummy.kib.d"
+
+rem Check if symlink creation is available
+
+if errorlevel 1 (
+    echo !COLOR_ERROR!CRITICAL: Symlink creation is not available. Requesting elevation...!COLOR_RESET!
+    rmdir /s /q "%~dp0test" >nul 2>&1
+    rmdir /s /q "%TEMP%\dummy.kib.d" >nul 2>&1
+    net session >nul 2>&1
+    if errorlevel 1 (
+        echo ATTEMPT 1: Using sudo for Windows.
+        "%SystemRoot%\System32\sudo.exe" "%~f0"
+        if errorlevel 1 (
+            echo ATTEMPT 2: Using PowerShell
+            rem Elevate using powershell
+            powershell -Command "Start-Process -FilePath '%~f0' -Verb RunAs" >nul 2>&1
+        )
+    ) else (
+        echo Still cannot create symlinks. Please check you are using NTFS, or using Windows Vista or newer.
+        pause >nul
+        exit /b 1
+    )
+    exit /b 1
+)
+
+rmdir /s /q "%~dp0test" >nul 2>&1
+rmdir /s /q "%TEMP%\dummy.kib.d" >nul 2>&1
+
+
 cls
 set "username=%USERNAME%"
 title KIB in Batch
