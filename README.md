@@ -144,7 +144,7 @@ $ kibdock deploy
 Enter container name: mycontainer
 Deploying container "mycontainer"...
 Enter drive letter for container: X:
-Welcome to KIBDock on KIB in Batch 10.2.2. Image: ubuntu
+Welcome to KIBDock on KIB in Batch 10.2.3. Image: ubuntu
 If you see this message and a command shell, it means your container has successfully been deployed
 wsl: Failed to translate 'Z:\home\benja'
 Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.6.87.2-microsoft-standard-WSL2 x86_64)
@@ -183,7 +183,7 @@ $ kibdock deploy
 Enter container name: mycontainer_win
 Deploying container "mycontainer_win"...
 Enter drive letter for container: X:
-Welcome to KIBDock on KIB in Batch 10.2.2. Image: windows_minimal
+Welcome to KIBDock on KIB in Batch 10.2.3. Image: windows_minimal
 If you see this message and a command shell, it means your container has successfully been deployed
 Microsoft Windows [Versión 10.0.26100.4946]
 (c) Microsoft Corporation. Todos los derechos reservados.
