@@ -598,10 +598,10 @@ rem It handles essential checks to make sure KIB in Batch can boot properly.
 
 if not exist "%USERPROFILE%\kib" (
     echo Your installation is broken
-    goto wipe
+    goto live_shell
 ) else if not exist "%APPDATA%\kib_in_batch" (
     echo Your installation is broken
-    goto wipe
+    goto live_shell
 )
 
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
@@ -610,6 +610,7 @@ echo.
 echo Welcome to KIB in Batch 10.2.3 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
+if not exist "%APPDATA%\kib_in_batch\kibroot.txt" goto live_shell
 ::                                                                 |
 <nul set /p "=Assigning drive letter...                            "
 
