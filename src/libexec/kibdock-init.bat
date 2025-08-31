@@ -244,7 +244,7 @@ mkdir "%USERPROFILE%\.kibdock\images\windows_minimal" >nul 2>&1
     echo.
     echo # Run the cmd.exe.
     echo.
-    echo echo "Welcome to KIBDock on KIB in Batch 10.2.2. Image: windows_minimal"
+    echo echo "Welcome to KIBDock on KIB in Batch 10.2.3. Image: windows_minimal"
     echo echo "If you see this message and a command shell, it means your container has successfully been deployed!"
     echo cd "$USERPROFILE"
     echo "$SUBSTDRIVELETTER\Windows\System32\cmd.exe"
@@ -307,7 +307,7 @@ rem Create start script
     echo # DESCRIPTION: The Ubuntu image is a Ubuntu image.
     echo # Ubuntu is a trademark of Canonical Ltd.
     echo.
-    echo echo "Welcome to KIBDock on KIB in Batch 10.2.2. Image: ubuntu"
+    echo echo "Welcome to KIBDock on KIB in Batch 10.2.3. Image: ubuntu"
     echo echo "If you see this message and a command shell, it means your container has successfully been deployed!"
     echo wsl -d "${CTNRNAME}_ubuntu_kib"
 ) > "%USERPROFILE%\.kibdock\images\ubuntu\start.sh"
@@ -492,7 +492,7 @@ mkdir "%USERPROFILE%\.kibdock\images\windows_functional" >nul 2>&1
     echo.
     echo # Run the cmd.exe.
     echo.
-    echo echo "Welcome to KIBDock on KIB in Batch 10.2.2. Image: windows_functional"
+    echo echo "Welcome to KIBDock on KIB in Batch 10.2.3. Image: windows_functional"
     echo echo "If you see this message and a command shell, it means your container has successfully been deployed!"
     echo cd "$USERPROFILE"
     echo export SYSTEMDRIVE="$SUBSTDRIVELETTER"
