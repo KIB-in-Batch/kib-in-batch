@@ -740,8 +740,6 @@ echo.
     echo export LC_IDENTIFICATION=C.UTF-8
     echo export LC_ALL=C.UTF-8
     echo.
-    echo export HOME="!kibroot!/home/!username!"
-    echo.
     echo ## KIB Linux shell prompt ##
     echo.
     echo # Check if ROOT is 1
