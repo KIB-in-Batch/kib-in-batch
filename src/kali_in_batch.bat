@@ -516,10 +516,10 @@ rem It handles essential checks to make sure KIB in Batch can boot properly.
 
 if not exist "%USERPROFILE%\kali" (
     echo Your installation is broken
-    goto wipe
+    goto live_shell
 ) else if not exist "%APPDATA%\kali_in_batch" (
     echo Your installation is broken
-    goto wipe
+    goto live_shell
 )
 
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
@@ -528,6 +528,9 @@ echo.
 echo Welcome to KIB in Batch 9.9.2 LTS ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
+
+if not exist "%APPDATA%\kali_in_batch\kaliroot.txt" goto live_shell
+
 ::                                                                 |
 <nul set /p "=Assigning drive letter...                            "
 
@@ -636,8 +639,6 @@ echo.
     echo #  instead.            #
     echo #                      #
     echo ########################
-    echo.
-    echo export HOME="!kibroot!/home/!username!"
     echo.
     echo ## Kali Linux shell prompt ##
     echo.
