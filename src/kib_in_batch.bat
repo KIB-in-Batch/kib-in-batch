@@ -200,23 +200,10 @@ if exist "%APPDATA%\kib_in_batch\VERSION.txt" (
     )
 )
 
-if "%PROCESSOR_ARCHITECTURE%"=="x86" (
-    echo !COLOR_ERROR!CRITICAL: KIB in Batch is 64-bit only. Please use a supported processor.!COLOR_RESET!
-    pause >nul
-    exit /b 1
-) else if "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
-    set archType=64-bit
-) else if "%PROCESSOR_ARCHITECTURE%"=="ARM64" (
-    set archType=ARM64
-) else (
-    set archType=Unknown
-)
-
-if /i "!archType!"=="ARM64" (
-    echo !COLOR_WARNING!Running KIB in Batch on ARM64 may work, but is unsupported. Proceed with caution.!COLOR_RESET!
-) else if /i "!archType!"=="ARM" (
-    echo !COLOR_ERROR!CRITICAL: KIB in Batch is not supported on ARM-based systems that are 32-bit. Please use a 64-bit ARM-based system.!COLOR_RESET!
-    pause >nul
+if not "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
+    cls
+    echo This app cannot run on your PC.
+    pause
     exit /b 1
 )
 
