@@ -200,25 +200,16 @@ if exist "%APPDATA%\kib_in_batch\VERSION.txt" (
     )
 )
 
-if "%PROCESSOR_ARCHITECTURE%"=="x86" (
-    echo !COLOR_ERROR!CRITICAL: KIB in Batch is 64-bit only. Please use a supported processor.!COLOR_RESET!
-    pause >nul
+if not "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
+    cls
+    echo This app cannot run on your PC.
+    pause
     exit /b 1
-) else if "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
-    set archType=64-bit
-) else if "%PROCESSOR_ARCHITECTURE%"=="ARM64" (
-    set archType=ARM64
-) else (
-    set archType=Unknown
 )
 
-if /i "!archType!"=="ARM64" (
-    echo !COLOR_WARNING!Running KIB in Batch on ARM64 may work, but is unsupported. Proceed with caution.!COLOR_RESET!
-) else if /i "!archType!"=="ARM" (
-    echo !COLOR_ERROR!CRITICAL: KIB in Batch is not supported on ARM-based systems that are 32-bit. Please use a 64-bit ARM-based system.!COLOR_RESET!
-    pause >nul
-    exit /b 1
-)
+mkdir "%TEMP%\dummy.kib.d"
+
+mklink /d "%~dp0test" "%TEMP%\dummy.kib.d"
 
 rem Check if symlink creation is available
 
@@ -594,18 +585,19 @@ rem It handles essential checks to make sure KIB in Batch can boot properly.
 
 if not exist "%USERPROFILE%\kib" (
     echo Your installation is broken
-    goto wipe
+    goto live_shell
 ) else if not exist "%APPDATA%\kib_in_batch" (
     echo Your installation is broken
-    goto wipe
+    goto live_shell
 )
 
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
 
 echo.
-echo Welcome to KIB in Batch 10.2.1 ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to KIB in Batch 10.2.4 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
+if not exist "%APPDATA%\kib_in_batch\kibroot.txt" goto live_shell
 ::                                                                 |
 <nul set /p "=Assigning drive letter...                            "
 
@@ -735,8 +727,6 @@ echo.
     echo export LC_IDENTIFICATION=C.UTF-8
     echo export LC_ALL=C.UTF-8
     echo.
-    echo export HOME="!kibroot!/home/!username!"
-    echo.
     echo ## KIB Linux shell prompt ##
     echo.
     echo # Check if ROOT is 1
@@ -854,11 +844,11 @@ echo.
 
 (
     echo NAME="KIB in Batch"
-    echo VERSION="10.2.1"
+    echo VERSION="10.2.4"
     echo ID=kibbatch
     echo ID_LIKE=linux
-    echo VERSION_ID="10.2.1"
-    echo PRETTY_NAME="KIB in Batch 10.2.1"
+    echo VERSION_ID="10.2.4"
+    echo PRETTY_NAME="KIB in Batch 10.2.4"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kib-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/KIB-in-Batch/kib-in-batch/discussions"
@@ -886,7 +876,7 @@ if exist "%APPDATA%\kib_in_batch\VERSION.txt" (
     del "%APPDATA%\kib_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 10.2.1>"%APPDATA%\kib_in_batch\VERSION.txt"
+echo 10.2.4>"%APPDATA%\kib_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -985,7 +975,7 @@ if "%~1"=="automated" (
 :login
 
 echo.
-echo KIB in Batch 10.2.1
+echo KIB in Batch 10.2.4
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root

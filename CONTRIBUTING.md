@@ -1,83 +1,52 @@
-# Contributing to KIB in Batch
+# Contributing Guidelines
 
-The KIB in Batch project welcomes contributions from anyone, but they must follow the guidelines below:
+These are the guidelines for contributing for *KIB in Batch*.
 
-* Make sure your contributions match the coding style of the code they change or interact with.
-* Do not use any compiled languages as the project is written in Windows Batch. Header files in [./src/include](./src/include/) are an exception, but they are only to be used by apps that run in the environment.
-* Make sure to use meaningful commit messages and have proper inline comments.
+## Open-Source doesn't mean Open-Contribution
 
-  * Good:
+*KIB in Batch* is Open-Source software. That doesn't mean it is open to any contributions.
 
-    ```bat
-    rem Set foo to bar as it is needed to do baz
-    set foo=bar
-    ```
+## When you should not contribute
 
-  * Bad:
+1. When you dislike Linus Torvalds, the creator of Git and Linux.
+2. When you don't know how to use Git.
+3. When you don't use *KIB in Batch* in any meaningful way (using it as a shell, testing it).
+4. When you dislike Open-Source as a concept.
+5. When you disagree with Libre Software.
+6. When you don't know how to write Batch files.
+7. When you don't know how Microsoft Windows functions and works.
+8. When you don't know how each component of *KIB in Batch* interacts with eachother and the operating system.
 
-    ```bat
-    rem do something
-    set foo=bar
-    ```
-  
-  * Good:
+## Contributing
 
-    ```bat
-    git commit -a -m "Added setting foo to bar as it is needed to do baz"
-    ```
-  
-  * Bad:
+### 1. Installing GitHub CLI
 
-    ```bat
-    git commit -a -m "Added something"
-    ```
+You can also use the web interface. However, we will use GitHub CLI as it's easier to represent.
 
-  * Descriptive commit messages are expected unless the change is trivial (e.g., typo fixes) or covers multiple unrelated areas (e.g., large refactors).
+Assuming you are on a Microsoft Windows system, you may install GitHub CLI like this:
 
-## How to Contribute
-
-### Step 1: Fork the Repository
-
-Fork the repository [using this link](https://github.com/Kali-in-Batch/kib-in-batch/fork).
-
-### Step 2: Clone the Repository
-
-Clone the forked repository to your local machine using the following command (replace `your-username` with your actual GitHub username):
-
-```bat
-git clone https://github.com/your-username/kib-in-batch.git
+```powershell
+winget install -e --id GitHub.cli
 ```
 
-### Step 3: Create a New Branch
+### 2. Authenticating GitHub CLI
 
-Create a new branch for your contribution using the following command (replace `your-branch-name` with a meaningful name for your branch):
+Use `gh auth login`.
 
-```bat
-git checkout -b your-branch-name
+### 3. Forking the repository
+
+Use `gh repo fork KIB-in-Batch/kib-in-batch`. It prompts you to clone the fork. To that, you must accept and then change to the directory using a cd command.
+
+### 4. Making your changes
+
+Use a proper text editor to make changes:
+
+```powershell
+nvim
 ```
 
-### Step 4: Make Changes
+Commit the changes using Git. Then, you must push the changes. We will not provide instructions for these, you can see why [above](#when-you-should-not-contribute) at number 2. Use a descriptive commit message.
 
-For example, try fixing a bug or add a new feature. Make sure to follow the guidelines above.
+### 5. Creating the pull request
 
-### Step 5: Commit Changes
-
-Commit your changes using the following command (replace `your-commit-message` with a descriptive commit message):
-
-```bat
-git commit -a -m "Your commit message"
-```
-
-### Step 6: Push Changes
-
-Push your changes to your forked repository using the following command (replace `your-branch-name` with the name of your branch):
-
-```bat
-git push origin your-branch-name
-```
-
-### Step 7: Create a Pull Request
-
-Create a pull request using [this link](https://github.com/Kali-in-Batch/kib-in-batch/compare).
-
-If the CI/CD fails, close the pull request until you fix it as to not waste the maintainers' time.
+Use the GitHub web interface.
