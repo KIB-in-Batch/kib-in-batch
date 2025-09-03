@@ -184,6 +184,27 @@ if !errorlevel! neq 0 (
     exit /b 1
 )
 
+rem Check if %APPDATA%\kib_in_batch\VERSION.txt exists
+
+if exist "%APPDATA%\kib_in_batch\VERSION.txt" (
+    rem Split by . using a for loop
+    for /f "tokens=1 delims=." %%a in ('type "%APPDATA%\kib_in_batch\VERSION.txt"') do (
+        set /a "version=%%a"
+        if !version! lss 9 (
+            echo Please reinstall KIB in Batch. This release has breaking changes.
+            pause >nul
+            exit /b 1
+        )
+    )
+)
+
+if not "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
+    cls
+    echo This app cannot run on your PC.
+    pause
+    exit /b 1
+)
+
 mkdir "%TEMP%\dummy.kib.d"
 
 mklink /d "%~dp0test" "%TEMP%\dummy.kib.d"
