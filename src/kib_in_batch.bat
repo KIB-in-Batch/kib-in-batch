@@ -594,7 +594,7 @@ if not exist "%USERPROFILE%\kib" (
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
 
 echo.
-echo Welcome to KIB in Batch 10.2.3 ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to KIB in Batch 10.2.4 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 if not exist "%APPDATA%\kib_in_batch\kibroot.txt" goto live_shell
@@ -844,11 +844,11 @@ echo.
 
 (
     echo NAME="KIB in Batch"
-    echo VERSION="10.2.3"
+    echo VERSION="10.2.4"
     echo ID=kibbatch
     echo ID_LIKE=linux
-    echo VERSION_ID="10.2.3"
-    echo PRETTY_NAME="KIB in Batch 10.2.3"
+    echo VERSION_ID="10.2.4"
+    echo PRETTY_NAME="KIB in Batch 10.2.4"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kib-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/KIB-in-Batch/kib-in-batch/discussions"
@@ -876,7 +876,7 @@ if exist "%APPDATA%\kib_in_batch\VERSION.txt" (
     del "%APPDATA%\kib_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 10.2.3>"%APPDATA%\kib_in_batch\VERSION.txt"
+echo 10.2.4>"%APPDATA%\kib_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -975,7 +975,7 @@ if "%~1"=="automated" (
 :login
 
 echo.
-echo KIB in Batch 10.2.3
+echo KIB in Batch 10.2.4
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root
