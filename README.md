@@ -200,4 +200,4 @@ Linux® is a registered trademark of Linus Torvalds.
 KALI LINUX ™ is a trademark of OffSec.
 KALI ™ is a trademark of OffSec.
 
-We are not affilitated or associated in any way with Offensive Security or Kali Linux. This project is a community-driven effort to bring a Linux-like environment to Windows using batch scripts. We are not responsible for any misuse of the tools included in this project.
+We are not affilitated or associated in any way with the trademark holders of the trademarks mentioned.
