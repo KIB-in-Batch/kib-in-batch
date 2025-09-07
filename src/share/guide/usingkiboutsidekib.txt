@@ -97,7 +97,7 @@ drwxrwxr-x    2 benja    benja          0 Jul 21 17:19 var/
 Z:\>\bin\kibfetch.bat
 ██   ██ ██ ██████         benja@ACERB
 ██  ██  ██ ██   ██        -------------------------------
-█████   ██ ██████         OS: KIB in Batch 10.2.4
+█████   ██ ██████         OS: KIB in Batch 10.2.5
 ██  ██  ██ ██   ██        Kernel: KIB_Windows_NT
 ██   ██ ██ ██████         KIB in Batch Root: Z:/
                           CPU Architecture: AMD64
@@ -145,7 +145,7 @@ After that, you can just run things like:
 C:\Users\benja>kibfetch
 ██   ██ ██ ██████         benja@ACERB
 ██  ██  ██ ██   ██        -------------------------------
-█████   ██ ██████         OS: KIB in Batch 10.2.4
+█████   ██ ██████         OS: KIB in Batch 10.2.5
 ██  ██  ██ ██   ██        Kernel: KIB_Windows_NT
 ██   ██ ██ ██████         KIB in Batch Root: Z:/
                           CPU Architecture: AMD64
