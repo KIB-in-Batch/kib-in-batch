@@ -24,7 +24,7 @@ File System
     * If you forgot your chosen drive letter, do this:
 
     ```code
-    cd $KALIROOT/ # KALIROOT is set to your chosen drive letter
+    cd $KIBROOT/ # KIBROOT is set to your chosen drive letter
     ```endcode
 
 Permissions
