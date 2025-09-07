@@ -6,8 +6,6 @@ KIB in Batch is a batch script-based environment that runs a bash shell with man
 
 [![CI/CD](https://github.com/KIB-in-Batch/kib-in-batch/actions/workflows/cicd.yml/badge.svg)](https://github.com/KIB-in-Batch/kib-in-batch/actions/workflows/cicd.yml)
 
-⭐ If you like this project or want to support development, please give it a star!
-
 ## Installation
 
 * Download a source code archive from the [latest release](https://github.com/KIB-in-Batch/kib-in-batch/releases/latest).
