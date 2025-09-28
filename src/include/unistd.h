@@ -130,6 +130,7 @@ static inline unsigned int sleep(unsigned int seconds) {
     snprintf(cmd, sizeof(cmd), "%s/usr/lib/posix/sleep.bat %d", kibroot, seconds);
     // Execute the command
     system(cmd);
+    return 0;
 }
 
 static inline int chdir(const char* path) {
@@ -195,7 +196,17 @@ static inline int posix_execl(const char *path, const char *arg, ...) {
 
 #define execl posix_execl
 
+#if defined(_MSC_VER)
+    #define DEPRECATED(msg) __declspec(deprecated(msg))
+#elif defined(__GNUC__) || defined(__clang__)
+    #define DEPRECATED(msg) __attribute__((deprecated(msg)))
+#else
+    #define DEPRECATED(msg)
+#endif
+
+DEPRECATED("fork() is deprecated due to the complexity of properly implementing it.")
 static inline pid_t fork(void) {
+    fprintf(stderr, "Warning: fork() is deprecated and may not work as expected.\n");
     if (getenv("FORK_CHILD")) {
         return 0; // Child process, don't fork
     }
