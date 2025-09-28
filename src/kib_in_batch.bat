@@ -598,8 +598,20 @@ echo Welcome to KIB in Batch 10.2.5 ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 if not exist "%APPDATA%\kib_in_batch\kibroot.txt" goto live_shell
+
 ::                                                                 |
 <nul set /p "=Assigning drive letter...                            "
+
+if not "!kibroot:~1,1!"==":" (
+    rem Cause a boot loop
+    <nul set /p "=[ !COLOR_ERROR!FAILED!COLOR_RESET! ]"
+    echo.
+    echo Press any key to continue...
+    pause >nul
+    del "%APPDATA%\kib_in_batch\kibroot.txt" >nul 2>&1
+    cls
+    goto boot
+)
 
 rem Check if the !kibroot! virtual drive letter is still assigned
 if exist !kibroot! (
@@ -607,6 +619,16 @@ if exist !kibroot! (
 ) else (
     rem Fix for KIB in Batch not booting after a Windows reboot due to it deleting the virtual drive
     subst !kibroot! "%USERPROFILE%\kib" >nul 2>>"%APPDATA%\kib_in_batch\errors.log"
+    if errorlevel 1 (
+        rem Cause a boot loop
+        <nul set /p "=[ !COLOR_ERROR!FAILED!COLOR_RESET! ]"
+        echo.
+        echo Press any key to continue...
+        pause >nul
+        del "%APPDATA%\kib_in_batch\kibroot.txt" >nul 2>&1
+        cls
+        goto boot
+    )
 )
 
 <nul set /p "=[ !COLOR_SUCCESS!OK!COLOR_RESET! ]"
@@ -727,15 +749,9 @@ echo.
     echo export LC_IDENTIFICATION=C.UTF-8
     echo export LC_ALL=C.UTF-8
     echo.
-    echo ## KIB Linux shell prompt ##
+    echo ## Shell prompt ##
     echo.
-    echo # Check if ROOT is 1
-    echo.
-    echo if [ "$ROOT" == "1" ]; then
-    echo     PS1=$'\[\e[34m\]┌──^(\[\e[31m\]root㉿\h\[\e[34m\]^)-[\[\e[0m\]\w\[\e[34m\]]\n\[\e[34m\]└─\[\e[31m\]# \[\e[0m\]'
-    echo else
-    echo     PS1=$'\[\e[32m\]┌──^(\[\e[34m\]\u㉿\h\[\e[32m\]^)-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]$ \[\e[0m\]'
-    echo fi
+    echo PS1='\[\e[32m\]$USER@\h\[\e[0m\]:\[\e[34m\]\w\e[0m\$ '
     echo.
     echo ## Changes to PATH ##
     echo.
@@ -755,6 +771,7 @@ echo.
     echo alias la='ls -A'
     echo alias l='ls -lhF'
     echo alias apt='kib-pkg'
+    echo alias apt-get='kib-pkg'
     echo.
     echo ## Functions ##
     echo.   
@@ -784,7 +801,7 @@ echo.
     echo     export ROOT="1"
     echo     export USER="root"
     echo     export HOME="!kibroot!/root"
-    echo     PS1=$'\[\e[34m\]┌──^(\[\e[31m\]root㉿\h\[\e[34m\]^)-[\[\e[0m\]\w\[\e[34m\]]\n\[\e[34m\]└─\[\e[31m\]# \[\e[0m\]'
+    echo     #PS1=$'\[\e[34m\]┌──^(\[\e[31m\]root㉿\h\[\e[34m\]^)-[\[\e[0m\]\w\[\e[34m\]]\n\[\e[34m\]└─\[\e[31m\]# \[\e[0m\]'
     echo }
     echo.
     echo unsu^(^) {
@@ -807,7 +824,7 @@ echo.
     echo     export ROOT="0"
     echo     export USER="$USERNAME"
     echo     export HOME="!kibroot!/home/$USERNAME"
-    echo     PS1=$'\[\e[32m\]┌──^(\[\e[34m\]\u㉿\h\[\e[32m\]^)-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]$ \[\e[0m\]'
+    echo     #PS1=$'\[\e[32m\]┌──^(\[\e[34m\]\u㉿\h\[\e[32m\]^)-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]$ \[\e[0m\]'
     echo }
     echo.
     echo exit^(^) {
@@ -819,7 +836,7 @@ echo.
     echo        export ROOT="0"
     echo        export USER="$USERNAME"
     echo        export HOME="!kibroot!/home/$USERNAME"
-    echo        PS1=$'\[\e[32m\]┌──^(\[\e[34m\]\u㉿\h\[\e[32m\]^)-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]$ \[\e[0m\]'
+    echo        #PS1=$'\[\e[32m\]┌──^(\[\e[34m\]\u㉿\h\[\e[32m\]^)-[\[\e[0m\]\w\[\e[32m\]]\n\[\e[32m\]└─\[\e[34m\]$ \[\e[0m\]'
     echo        return $1
     echo     fi
     echo.
@@ -1038,12 +1055,6 @@ if not exist "!HOME!\.bashrc" (
 set "ENV=C:/Users/!username!/kib/etc/.kibenv"
 
 if not exist "!HOME!\.hushlogin" (
-rem    echo ██   ██  █████  ██      ██     ██ ███    ██     ██████   █████  ████████  ██████ ██   ██
-rem    echo ██  ██  ██   ██ ██      ██     ██ ████   ██     ██   ██ ██   ██    ██    ██      ██   ██
-rem    echo █████   ███████ ██      ██     ██ ██ ██  ██     ██████  ███████    ██    ██      ███████
-rem    echo ██  ██  ██   ██ ██      ██     ██ ██  ██ ██     ██   ██ ██   ██    ██    ██      ██   ██
-rem    echo ██   ██ ██   ██ ███████ ██     ██ ██   ████     ██████  ██   ██    ██     ██████ ██   ██
-rem    echo.
     echo For a guide on how to use KIB in Batch, run 'ls !kibroot!/usr/share/guide' and
     echo open the text file that you think will help you.
     echo.
