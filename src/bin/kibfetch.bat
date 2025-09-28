@@ -86,7 +86,7 @@ set /p kibroot=<"%APPDATA%\kib_in_batch\kibroot.txt"
 
 echo ██   ██ ██ ██████         %COLOR_DEBUG%%USER%%COLOR_RESET%@%COLOR_DEBUG%%COMPUTERNAME%%COLOR_RESET%
 echo ██  ██  ██ ██   ██        -------------------------------
-echo █████   ██ ██████         %COLOR_DEBUG%OS%COLOR_RESET%: KIB in Batch 10.2.5
+echo █████   ██ ██████         %COLOR_DEBUG%OS%COLOR_RESET%: KIB in Batch 10.2.6
 echo ██  ██  ██ ██   ██        %COLOR_DEBUG%Kernel%COLOR_RESET%: KIB_%OS%
 echo ██   ██ ██ ██████         %COLOR_DEBUG%KIB in Batch Root%COLOR_RESET%: %kibroot%/
 echo                           %COLOR_DEBUG%CPU Architecture%COLOR_RESET%: %PROCESSOR_ARCHITECTURE%

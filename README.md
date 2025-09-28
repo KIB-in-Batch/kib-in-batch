@@ -6,6 +6,10 @@ KIB in Batch is a batch script-based environment that runs a bash shell with man
 
 [![CI/CD](https://github.com/KIB-in-Batch/kib-in-batch/actions/workflows/cicd.yml/badge.svg)](https://github.com/KIB-in-Batch/kib-in-batch/actions/workflows/cicd.yml)
 
+## Upgrading an LTS version to the latest release of it
+
+To do this, download [./lts-upgrade.bat](./lts-upgrade.bat) and run the file. This file will ask you for the LTS version and download the latest release of it.
+
 ## Installation
 
 * Download a source code archive from the [latest release](https://github.com/KIB-in-Batch/kib-in-batch/releases/latest).
@@ -142,7 +146,7 @@ $ kibdock deploy
 Enter container name: mycontainer
 Deploying container "mycontainer"...
 Enter drive letter for container: X:
-Welcome to KIBDock on KIB in Batch 10.2.5. Image: ubuntu
+Welcome to KIBDock on KIB in Batch 10.2.6. Image: ubuntu
 If you see this message and a command shell, it means your container has successfully been deployed
 wsl: Failed to translate 'Z:\home\benja'
 Welcome to Ubuntu 24.04.3 LTS (GNU/Linux 6.6.87.2-microsoft-standard-WSL2 x86_64)
@@ -181,7 +185,7 @@ $ kibdock deploy
 Enter container name: mycontainer_win
 Deploying container "mycontainer_win"...
 Enter drive letter for container: X:
-Welcome to KIBDock on KIB in Batch 10.2.5. Image: windows_minimal
+Welcome to KIBDock on KIB in Batch 10.2.6. Image: windows_minimal
 If you see this message and a command shell, it means your container has successfully been deployed
 Microsoft Windows [Versión 10.0.26100.4946]
 (c) Microsoft Corporation. Todos los derechos reservados.
