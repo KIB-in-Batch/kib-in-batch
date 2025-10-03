@@ -22,6 +22,7 @@ To do this, download [./lts-upgrade.bat](./lts-upgrade.bat) and run the file. Th
 
 * Bash environment with a custom shell prompt.
 * Comes with utilities you would expect, including:
+
   * Netcat
   * Nmap
   * Whois
@@ -35,7 +36,6 @@ To do this, download [./lts-upgrade.bat](./lts-upgrade.bat) and run the file. Th
 * [Nmap](https://nmap.org/) for network scanning and discovery.
 * [KIBDock](./src/bin/kibdock.bat), our own software for managing containers.
 
-
 ## Usage
 
 1. Run [`src/kib_in_batch.bat`](./src/kib_in_batch.bat) to launch the KIB in Batch shell.
@@ -45,7 +45,7 @@ To do this, download [./lts-upgrade.bat](./lts-upgrade.bat) and run the file. Th
 
 ## Preview
 
-![Terminal window divided into three panes. Top left pane displays system information: OS: KIB in Batch 9.13.1 x86_64, Kernel: 6.6.87.2-kib, Uptime: 6 hours 42 mins. Top right pane shows CPU details: OS: KIB in Batch 9.13.1, Number of CPU cores: 12. Bottom right pane shows nmap scan results: PORT STATE SERVICE 80/tcp open http 443/tcp open https. The environment is a split terminal interface with command outputs and system diagnostics.](./assets/image.png)
+![Terminal window divided into three panes. Top left pane displays system information: OS: KIB in Batch 9.13.1 x86\_64, Kernel: 6.6.87.2-kib, Uptime: 6 hours 42 mins. Top right pane shows CPU details: OS: KIB in Batch 9.13.1, Number of CPU cores: 12. Bottom right pane shows nmap scan results: PORT STATE SERVICE 80/tcp open http 443/tcp open https. The environment is a split terminal interface with command outputs and system diagnostics.](./assets/image.png)
 
 </details>
 
@@ -70,7 +70,7 @@ Download the latest release from the [releases page](https://github.com/KIB-in-B
 
 ### How do I update KIB in Batch?
 
-For minor updates, download the latest release and run `.\src\kib_in_batch.bat`. For major updates, uninstall first using `.\uninstall.bat` then reinstall. The uninstaller creates a backup of your KIB in Batch home directory which KIB in Batch automatically detects and restores upon reinstalling.
+For minor updates, download the latest release and run `.`\src\kib_in_batch.bat`. For major updates, uninstall first using `.`\uninstall.bat` then reinstall. The uninstaller creates a backup of your KIB in Batch home directory which KIB in Batch automatically detects and restores upon reinstalling.
 
 ### How do I uninstall KIB in Batch?
 
@@ -86,7 +86,7 @@ Yes, many utilities are available in the `/usr/bin` directory and can be used fr
 
 ### What ethical hacking tools are included?
 
-KIB in Batch includes tools like Nmap, Ncat, and a Metasploit Framework wrapper (`msfconsole`) for ethical hacking and penetration testing.
+KIB in Batch includes tools like Nmap, Ncat, and a Metasploit® Framework wrapper (`msfconsole`) for ethical hacking and penetration testing.
 
 ### Is KIB in Batch a full Linux system?
 
@@ -103,6 +103,10 @@ This is because you didn't run the file as Administrator when developer mode was
 ### Is KIB in Batch affiliated with Kali Linux?
 
 No, this project is not associated with KALI LINUX ™.
+
+### When did this project start?
+
+May 2025.
 
 ### What is KIBDock?
 
@@ -201,5 +205,7 @@ UNIX® is a registered trademark of The Open Group.
 Linux® is a registered trademark of Linus Torvalds.
 KALI LINUX ™ is a trademark of OffSec.
 KALI ™ is a trademark of OffSec.
+Metasploit® is a registered trademark of Rapid7.
+Microsoft® and Windows® are registered trademarks of Microsoft Corporation.
 
 We are not affilitated or associated in any way with the trademark holders of the trademarks mentioned.
