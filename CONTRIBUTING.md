@@ -2,28 +2,19 @@
 
 These are the guidelines for contributing for *KIB in Batch*.
 
-## Open-Source doesn't mean Open-Contribution
-
-*KIB in Batch* is Open-Source software. That doesn't mean it is open to any contributions.
-
 ## When you should not contribute
 
-1. When you dislike Linus Torvalds, the creator of Git and Linux.
-2. When you don't know how to use Git.
-3. When you don't use *KIB in Batch* in any meaningful way (using it as a shell, testing it).
-4. When you dislike Open-Source as a concept.
-5. When you disagree with Libre Software.
-6. When you don't know how to write Batch files.
-7. When you don't know how Microsoft Windows functions and works.
-8. When you don't know how each component of *KIB in Batch* interacts with eachother and the operating system.
+1. When you don't know how to use Git.
+2. When you don't use *KIB in Batch* in any meaningful way (using it as a shell, testing it).
+3. When you don't know how to write Batch files.
+4. When you don't know how Microsoft Windows functions.
 
 ## Contributing
 
 ### 1. Installing GitHub CLI
 
 You can also use the web interface. However, we will use GitHub CLI as it's easier to represent.
-
-Assuming you are on a Microsoft Windows system, you may install GitHub CLI like this:
+4Assuming you are on a Microsoft Windows system, you may install GitHub CLI like this:
 
 ```powershell
 winget install -e --id GitHub.cli
