@@ -30,10 +30,10 @@ Use `gh repo fork KIB-in-Batch/kib-in-batch`. It prompts you to clone the fork. 
 
 ### 4. Making your changes
 
-Use a proper text editor to make changes:
+Use a text editor to make changes:
 
-```powershell
-nvim
+```sh
+your-text-editor # Change to your text editor
 ```
 
 Commit the changes using Git. Then, you must push the changes. We will not provide instructions for these, you can see why [above](#when-you-should-not-contribute) at number 1. Use a descriptive commit message.
