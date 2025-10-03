@@ -36,7 +36,7 @@ Use a proper text editor to make changes:
 nvim
 ```
 
-Commit the changes using Git. Then, you must push the changes. We will not provide instructions for these, you can see why [above](#when-you-should-not-contribute) at number 2. Use a descriptive commit message.
+Commit the changes using Git. Then, you must push the changes. We will not provide instructions for these, you can see why [above](#when-you-should-not-contribute) at number 1. Use a descriptive commit message.
 
 ### 5. Creating the pull request
 
