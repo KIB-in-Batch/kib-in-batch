@@ -1,8 +1,8 @@
 """
 mkstandalone.py
-* Script to build a standalone executable for the KIB in Batch project.
-* Compiles the project into one executable file.
-* Licensed under the GPL-2.0-only.
+    * Script to build a standalone executable for the KIB in Batch project.
+    * Compiles the project into one executable file.
+    * Licensed under the GPL-2.0-only.
 Copyright (C) 2025 benja2998
 
 This program is free software; you can redistribute it and/or modify
