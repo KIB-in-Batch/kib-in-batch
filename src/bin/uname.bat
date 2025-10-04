@@ -37,6 +37,7 @@ if "%1"=="" (
 
 :kernel
 
+rem Make shell scripts that only run on Linux not refuse to run
 <nul set /p "=Linux "
 goto :eof
 
@@ -64,7 +65,8 @@ goto :eof
 
 :release
 
-<nul set /p "=6.6.87.2-kib "
+rem Tell shell scripts we are on this old kernel, so they don't think they can use really new features
+<nul set /p "=5.4.300 "
 goto :eof
 
 :machine
@@ -97,12 +99,13 @@ goto :eof
 
 :os
 
+rem We love lying to shell scripts!!
 <nul set /p "=GNU/Linux "
 goto :eof
 
 :version
 
-echo Uname for KIB in Batch 10.2.6
+echo Uname for KIB in Batch 11.0.0-untagged
 echo This is GPL-2.0-only licensed free software. There is NO WARRANTY.
 goto :eof
 

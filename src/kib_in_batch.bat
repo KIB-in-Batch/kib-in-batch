@@ -23,15 +23,12 @@ rem Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 rem
 rem -- Other Scripts --
 rem
-rem * %~dp0bin\clear.bat - Clears the console
 rem * %~dp0bin\kib-pkg.bat - Manages packages
 rem * %~dp0bin\kpkg.bat - Wrapper for kib-pkg
 rem * %~dp0bin\pkg.bat - Wrapper for kib-pkg (only exists for backward compatibility)
-rem * %~dp0bin\touch.bat - Creates a new file
 rem * %~dp0bin\uname.bat - Displays system information
 rem * %~dp0bin\which.bat - Displays location of a file or directory in the PATH
 rem * %~dp0bin\whoami.bat - Displays the current user
-rem * %~dp0bin\msfconsole.bat - Uses the Windows Subsystem for Linux to launch the Metasploit Framework
 rem * %~dp0bin\kibfetch.bat - Simple neofetch-like program
 rem * %~dp0bin\chsh.bat - Changes default shell
 rem * %~dp0bin\kibdock.bat - Containerization program for KIB
@@ -192,7 +189,7 @@ if exist "%APPDATA%\kib_in_batch\VERSION.txt" (
     rem Split by . using a for loop
     for /f "tokens=1 delims=." %%a in ('type "%APPDATA%\kib_in_batch\VERSION.txt"') do (
         set /a "version=%%a"
-        if !version! lss 10 (
+        if !version! lss 11 (
             echo Please reinstall KIB in Batch. This release has breaking changes.
             pause >nul
             exit /b 1
@@ -594,7 +591,7 @@ if not exist "%USERPROFILE%\kib" (
 for /f "delims=" %%i in ('powershell -command "[System.Environment]::OSVersion.Version.ToString()"') do set kernelversion=%%i
 
 echo.
-echo Welcome to KIB in Batch 10.2.6 ^(%PROCESSOR_ARCHITECTURE%^)
+echo Welcome to KIB in Batch 11.0.0-untagged ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 if not exist "%APPDATA%\kib_in_batch\kibroot.txt" goto live_shell
@@ -759,7 +756,7 @@ echo.
     echo.
     echo ## Applet overrides ##
     echo.
-    echo export BB_OVERRIDE_APPLETS="clear touch uname which whoami msfconsole kib-pkg make file"
+    echo export BB_OVERRIDE_APPLETS="uname which whoami make file"
     echo.
     echo alias netcat="nc"
     echo.
@@ -861,11 +858,11 @@ echo.
 
 (
     echo NAME="KIB in Batch"
-    echo VERSION="10.2.6"
+    echo VERSION="11.0.0-untagged"
     echo ID=kibbatch
     echo ID_LIKE=linux
-    echo VERSION_ID="10.2.6"
-    echo PRETTY_NAME="KIB in Batch 10.2.6"
+    echo VERSION_ID="11.0.0-untagged"
+    echo PRETTY_NAME="KIB in Batch 11.0.0-untagged"
     echo ANSI_COLOR="0;36"
     echo HOME_URL="https://kib-in-batch.github.io"
     echo SUPPORT_URL="https://github.com/KIB-in-Batch/kib-in-batch/discussions"
@@ -893,7 +890,7 @@ if exist "%APPDATA%\kib_in_batch\VERSION.txt" (
     del "%APPDATA%\kib_in_batch\VERSION.txt"
 )
 rem Create VERSION.txt
-echo 10.2.6>"%APPDATA%\kib_in_batch\VERSION.txt"
+echo 11.0.0-untagged>"%APPDATA%\kib_in_batch\VERSION.txt"
 
 ::                                                                 |
 <nul set /p "=Starting Nmap service...                             "
@@ -992,7 +989,7 @@ if "%~1"=="automated" (
 :login
 
 echo.
-echo KIB in Batch 10.2.6
+echo KIB in Batch 11.0.0-untagged
 echo Kernel !kernelversion! on an %PROCESSOR_ARCHITECTURE%
 echo.
 echo Users on this system: !username!, root
