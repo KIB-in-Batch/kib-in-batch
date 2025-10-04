@@ -1,0 +1,28 @@
+name: Mirror to Codeberg
+
+on:
+  push:
+    branches:
+      - '**'  # Mirror all branches on any push
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Fetch all history
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Push to Codeberg
+        env:
+          CODEBERG_TOKEN: ${{ secrets.CODEBERG_TOKEN }}
+        run: |
+          git remote add codeberg https://USERNAME:${CODEBERG_TOKEN}@codeberg.org/USERNAME/REPO.git
+          git push --mirror codeberg
