@@ -24,5 +24,5 @@ jobs:
         env:
           CODEBERG_TOKEN: ${{ secrets.CODEBERG_TOKEN }}
         run: |
-          git remote add codeberg https://USERNAME:${CODEBERG_TOKEN}@codeberg.org/USERNAME/REPO.git
+          git remote add codeberg https://benja2998:${CODEBERG_TOKEN}@codeberg.org/KIB-in-Batch/kib-in-batch.git
           git push --mirror codeberg
