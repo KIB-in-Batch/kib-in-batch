@@ -168,12 +168,12 @@ jobs:
           name: kib-ci-logs-${{ github.run_id }}
           path: ci_logs/*
 
-          - name: Create GitHub Release
-            if: github.event_name == 'push'
-            uses: softprops/action-gh-release@v2
-            with:
-              tag_name: nightly-${{ github.sha }}
-              target_commitish: ${{ github.sha }}
-              prerelease: true
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create GitHub Release
+        if: github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nightly-${{ github.sha }}
+          target_commitish: ${{ github.sha }}
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
