@@ -547,6 +547,15 @@ if errorlevel 1 (
     goto :after_issue_prompt
 )
 
+
+if exist "%APPDATA%\kib_in_batch\cpuvars.txt" (
+    echo CPU info is cached.
+    echo If you recently changed something about your CPU, delete "%APPDATA%\kib_in_batch\cpuvars.txt".
+    echo.
+) else (
+    echo CPU info is not cached. Cache will be generated on boot, so setting up /proc will be slow.
+    echo.
+)
 echo There may have been errors logged.
 echo Would you like to file a GitHub issue with the log contents?
 choice /c YN /n /m "Create issue now? [Y/N] "
@@ -595,6 +604,8 @@ echo Welcome to KIB in Batch 11.0.0-untagged ^(%PROCESSOR_ARCHITECTURE%^)
 echo Booting system...
 echo ------------------------------------------------
 if not exist "%APPDATA%\kib_in_batch\kibroot.txt" goto live_shell
+
+set "starttime=%time%"
 
 ::                                                                 |
 <nul set /p "=Assigning drive letter...                            "
@@ -935,6 +946,93 @@ echo.
 set "busybox_path=!kibroot!\usr\bin\busybox.exe"
 
 ::                                                                 |
+<nul set /p "=Setting up /proc...                                  "
+
+if not exist "!kibroot!\proc" (
+    mkdir "!kibroot!/proc"
+)
+
+del /q /f "!kibroot!/proc/cpuinfo" >nul 2>&1
+del /q /f "!kibroot!/proc/cmdline" >nul 2>&1
+del /q /f "!kibroot!/proc/uptime" >nul 2>&1
+del /q /f "!kibroot!/proc/version" >nul 2>&1
+
+rem Set up cpuinfo
+
+set "NUMBER_OF_PROCESSORS_FOR_LOOP=%NUMBER_OF_PROCESSORS%"
+
+set /a NUMBER_OF_PROCESSORS_FOR_LOOP-=1
+
+
+set "CPU_CACHE=%APPDATA%\kib_in_batch\cpuvars.txt"
+
+if exist "%CPU_CACHE%" (
+    for /f "tokens=1,2 delims==" %%A in (%CPU_CACHE%) do set "%%A=%%B"
+) else (
+    for /f "delims=" %%a in ('powershell -Command "Get-CimInstance Win32_Processor | Select-Object -ExpandProperty Name"') do set "CPU_NAME=%%a"
+    for /f "delims=" %%a in ('powershell -Command "Get-CimInstance Win32_Processor | Select-Object -ExpandProperty Manufacturer"') do set "CPU_VENDOR=%%a"
+    for /f "delims=" %%a in ('powershell -Command "Get-CimInstance Win32_Processor | Select-Object -ExpandProperty NumberOfCores"') do set "CPU_CORES=%%a"
+    for /f "delims=" %%a in ('powershell -Command "Get-CimInstance Win32_Processor | Select-Object -ExpandProperty MaxClockSpeed"') do set "CPU_MHZ=%%a"
+    for /f %%a in ('powershell -Command "(Get-CimInstance Win32_Processor).Stepping"') do set "CPU_STEPPING=%%a"
+
+    if "!CPU_STEPPING!"=="" set "CPU_STEPPING=1"
+
+    rem Save results to cache using delayed expansion
+    >"!CPU_CACHE!" (
+        echo CPU_NAME=!CPU_NAME!
+        echo CPU_VENDOR=!CPU_VENDOR!
+        echo CPU_CORES=!CPU_CORES!
+        echo CPU_MHZ=!CPU_MHZ!
+        echo CPU_STEPPING=!CPU_STEPPING!
+    )
+)
+
+if "%CPU_STEPPING%"=="" (
+    set "CPU_STEPPING=1"
+)
+
+del /q /f "!kibroot!\proc\cpuinfo" >nul 2>&1 
+for /l %%i in (0,1,%NUMBER_OF_PROCESSORS_FOR_LOOP%) do (
+    set "HYPERTHREADS_PER_CORE="
+    set /a HYPERTHREADS_PER_CORE = NUMBER_OF_PROCESSORS / CPU_CORES
+    set /a CORE_ID = %%i / HYPERTHREADS_PER_CORE
+    rem Write the file
+    (
+        echo processor       : %%i
+        echo vendor_id       : !CPU_VENDOR!
+        echo cpu family      : !PROCESSOR_LEVEL!
+        echo model           : 141
+        echo model name      : !CPU_NAME!
+        echo stepping        : !CPU_STEPPING!
+        echo microcode       : 0xffffffff
+        echo cpu MHz         : !CPU_MHZ!
+        echo cache size      : 12288 KB
+        echo physical id     : 0
+        echo siblings        : !NUMBER_OF_PROCESSORS!
+        echo core id         : !CORE_ID!
+        echo cpu cores       : !CPU_CORES!
+        echo apicid          : %%i
+        echo initial apicid  : %%i
+        echo fpu             : yes
+        echo fpu_exception   : yes
+        echo cpuid level     : 27
+        echo wp              : yes
+        echo flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ss ht syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon rep_good nopl xtopology tsc_reliable nonstop_tsc cpuid tsc_known_freq pni pclmulqdq vmx ssse3 fma cx16 pdcm pcid sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand hypervisor lahf_lm abm 3dnowprefetch ssbd ibrs ibpb stibp ibrs_enhanced tpr_shadow ept vpid ept_ad fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq rdseed adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves vnmi avx512vbmi umip avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid movdiri movdir64b fsrm avx512_vp2intersect md_clear flush_l1d arch_capabilities
+        echo vmx flags       : vnmi invvpid ept_x_only ept_ad ept_1gb tsc_offset vtpr ept vpid unrestricted_guest ept_mode_based_exec tsc_scaling
+        echo bugs            : spectre_v1 spectre_v2 spec_store_bypass swapgs retbleed eibrs_pbrsb gds bhi
+        echo bogomips        : 5375.99
+        echo clflush size    : 64
+        echo cache_alignment : 64
+        echo address sizes   : 39 bits physical, 48 bits virtual
+        echo power management:
+        echo.
+    ) >> "!kibroot!\proc\cpuinfo"
+)
+
+<nul set /p "=[ !COLOR_SUCCESS!OK!COLOR_RESET! ]"
+echo.
+
+::                                                                 |
 <nul set /p "=Creating BusyBox symlinks...                         "
 
 call :create_symlinks
@@ -952,6 +1050,8 @@ if exist "%USERPROFILE%\.kibdock" (
 
     echo.
 )
+
+set "endtime=%time%"
 
 rem Check if %~1 isn't "automated"
 
@@ -972,9 +1072,12 @@ if not "%~1"=="automated" (
 
 :skip_bb_update
 
+rem Calculate elapsed time
+call :time_diff "%starttime%" "%endtime%" elapsed >nul 2>&1
+
 echo ------------------------------------------------
 
-echo !COLOR_SUCCESS!System boot completed.!COLOR_RESET!
+echo !COLOR_SUCCESS!System boot completed. Boot time: !elapsed!!COLOR_RESET!
 if "%~1"=="automated" (
     del "!kibroot!\tmp\VERSION.txt" >nul 2>>"%APPDATA%\kib_in_batch\errors.log"
     set "USER=!username!"
@@ -1101,4 +1204,43 @@ for /f "tokens=*" %%a in ('!busybox_path! --list ^| findstr /i /v "busybox" ^| f
     )
 )
 
+goto :eof
+
+rem Function to calculate time difference between %1=start and %2=end in HH:MM:SS.xx format, output in variable %3
+:time_diff
+setlocal
+set "start=%~1"
+set "end=%~2"
+
+rem Parse start time
+for /f "tokens=1-4 delims=:.," %%a in ("%start%") do (
+    set /a "sh=1%%a - 100"
+    set /a "sm=1%%b - 100"
+    set /a "ss=1%%c - 100"
+    set /a "sf=1%%d - 100"
+)
+
+rem Parse end time
+for /f "tokens=1-4 delims=:.," %%a in ("%end%") do (
+    set /a "eh=1%%a - 100"
+    set /a "em=1%%b - 100"
+    set /a "es=1%%c - 100"
+    set /a "ef=1%%d - 100"
+)
+
+rem Convert start and end to centiseconds
+set /a "start_cs=(((sh*60)+sm)*60+ss)*100+sf"
+set /a "end_cs=(((eh*60)+em)*60+es)*100+ef"
+
+rem Calculate difference (handle midnight wrap)
+set /a "diff=end_cs - start_cs"
+if %diff% lss 0 set /a "diff+=24*60*60*100"
+
+rem Convert back to HH:MM:SS.cc
+set /a "dh=diff/(60*60*100)"
+set /a "dm=(diff/(60*100))%%60"
+set /a "ds=(diff/100)%%60"
+set /a "df=diff%%100"
+
+endlocal & set "%~3=%dh%:%dm:~-2%:%ds:~-2%.%df:~-2%"
 goto :eof
