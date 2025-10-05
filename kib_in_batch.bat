@@ -6,6 +6,7 @@ setlocal enabledelayedexpansion
 cls
 set "username=%USERNAME%"
 title KIB in Batch
+rem %APPDATA%\old_kib_in_batch wasn't actually the original name, but it got changed to that for this archive
 if not exist "%APPDATA%\old_kib_in_batch" (
     
     echo                           ---------------------------------------------------
@@ -550,3 +551,4 @@ set bash_current_dir=!bash_current_dir:X:=/x! >nul 2>&1
 set bash_current_dir=!bash_current_dir:Y:=/y! >nul 2>&1
 set bash_current_dir=!bash_current_dir:Z:=/z! >nul 2>&1
 !bash_path! -c "cd !bash_current_dir!; !command! !args! !args2! !args3! !args4! !args5! !args6! !args7! !args8! !args9! !args10! !args11! !args12! !args13! !args14! !args15! !args16! !args17! !args18! !args19! !args20! !args21! !args22! !args23! !args24! !args25! !args26!" 2>&1
+
