@@ -33,6 +33,14 @@ rem * %~dp0bin\kibfetch.bat - Simple neofetch-like program
 rem * %~dp0bin\chsh.bat - Changes default shell
 rem * %~dp0bin\kibdock.bat - Containerization program for KIB
 
+if not "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
+    cls
+    echo This app cannot run on your PC.
+    echo Press any key to continue...
+    pause >nul
+    exit /b 1
+)
+
 if defined ConEmuPID (
     echo Running inside ConEmu
     goto ok
@@ -195,13 +203,6 @@ if exist "%APPDATA%\kib_in_batch\VERSION.txt" (
             exit /b 1
         )
     )
-)
-
-if not "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
-    cls
-    echo This app cannot run on your PC.
-    pause
-    exit /b 1
 )
 
 mkdir "%TEMP%\dummy.kib.d"
