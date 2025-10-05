@@ -32,7 +32,7 @@ jobs:
           $timestamp = $env:CI_TS
           try {
             Write-Output "Installing KiB..."
-            & src\kib_in_batch.bat automated 2>&1 | Tee-Object -FilePath "ci_logs/install_$timestamp.log"
+            echo 1 | src\kib_in_batch.bat automated 2>&1 | Tee-Object -FilePath "ci_logs/install_$timestamp.log"
             if ($LASTEXITCODE -ne 0) {
               throw "src\kib_in_batch.bat exited with code $LASTEXITCODE"
             }
@@ -172,8 +172,8 @@ jobs:
         if: github.event_name == 'push'
         uses: actions/create-release@v1
         with:
-          tag_name: dev-${{ github.run_id }}
-          release_name: dev-${{ github.run_id }}
+          tag_name: dev-${{ github.sha }}
+          release_name: dev-${{ github.sha }}
           body: "Automated dev prerelease for run ${{ github.run_id }} on ${{ github.ref }}. Works on a regular machine."
           draft: false
           prerelease: true
