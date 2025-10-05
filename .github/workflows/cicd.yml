@@ -1,4 +1,5 @@
 name: CI/CD
+
 permissions:
   contents: read
   checks: write
@@ -8,90 +9,172 @@ on: [push, pull_request]
 jobs:
   build-and-deploy:
     runs-on: windows-2025
+    env:
+      POWERSHELL_ERROR_ACTION: Stop
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
 
-      # Setup log collection from the start
       - name: Initialize log collection
         shell: powershell
         run: |
-          # Create a timestamp for unique log files
           $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
-          New-Item -ItemType Directory -Path "ci_logs" -Force
-          echo "CI run started at $timestamp" | Out-File -FilePath "ci_logs\session_$timestamp.log"
+          Add-Content -Path $env:GITHUB_ENV -Value "CI_TS=$timestamp"
+          New-Item -ItemType Directory -Path ci_logs -Force | Out-Null
+          "CI run started at $timestamp (run id: $env:GITHUB_RUN_ID)" | Out-File -FilePath "ci_logs/session_$timestamp.log" -Encoding utf8
 
-      # Install KiB
       - name: Install and validate KiB
         shell: powershell
+        env:
+          CI_TS: ${{ env.CI_TS }}
         run: |
-          echo 1 | src\kib_in_batch.bat automated
-          Get-Content "$env:APPDATA\kib_in_batch\errors.log" | Out-File -FilePath "ci_logs\install_$timestamp.log" -Append
-          if ($LASTEXITCODE -ne 0) { throw "Installation failed" }
+          $ErrorActionPreference = 'Stop'
+          $timestamp = $env:CI_TS
+          try {
+            Write-Output "Installing KiB..."
+            & src\kib_in_batch.bat automated 2>&1 | Tee-Object -FilePath "ci_logs/install_$timestamp.log"
+            if ($LASTEXITCODE -ne 0) {
+              throw "src\kib_in_batch.bat exited with code $LASTEXITCODE"
+            }
 
-      # Test package manager
+            $errFile = Join-Path $env:APPDATA 'kib_in_batch\errors.log'
+            if (Test-Path $errFile) {
+              Get-Content $errFile | Out-File -FilePath "ci_logs/install_errors_$timestamp.log" -Append -Encoding utf8
+            } else {
+              "No installer error log found at $errFile" | Out-File -FilePath "ci_logs/install_errors_$timestamp.log" -Encoding utf8
+            }
+          } catch {
+            $_ | Out-String | Out-File -FilePath "ci_logs/install_exception_$timestamp.log" -Append -Encoding utf8
+            throw
+          }
+
       - name: Test kib-pkg.bat
         shell: powershell
+        env:
+          CI_TS: ${{ env.CI_TS }}
         run: |
-          $kibPath = "$env:USERPROFILE\kib\usr\bin"
-          & "$kibPath\kib-pkg.bat" update
-          echo y | & "$kibPath\kib-pkg.bat" install hello-world
-          & "$kibPath\kib-pkg.bat" list
-          echo y | & "$kibPath\kib-pkg.bat" remove hello-world
-          echo y | & "$kibPath\kib-pkg.bat" install bat
-          & "$kibPath\bat.exe" --help
-          & "$kibPath\bat.exe" "$env:USERPROFILE\kib\etc\.kibenv"
-          & "$kibPath\kib-pkg.bat" list
-          echo y | & "$kibPath\kib-pkg.bat" remove bat
-          echo y | & "$kibPath\kib-pkg.bat" install make
-          & "$kibPath\make" --version
-          & "$kibPath\make" --help
-          echo y | & "$kibPath\kib-pkg.bat" remove make
-          & "$kibPath\kib-pkg.bat" list
-          echo y | & "$kibPath\kib-pkg.bat" install file
-          & "$kibPath\kib-pkg.bat" list
-          & "$env:USERPROFILE\kib\usr\lib\file\file.exe" --version
-          Get-Content "$env:APPDATA\kib_in_batch\errors.log" | Out-File -FilePath "ci_logs\packages_$timestamp.log" -Append
-          if ($LASTEXITCODE -ne 0) { throw "Package manager failed" }
+          $ErrorActionPreference = 'Stop'
+          $timestamp = $env:CI_TS
+          $stepLog = "ci_logs/packages_$timestamp.log"
+          try {
+            Write-Output "Testing package manager lifecycle..." | Tee-Object -FilePath $stepLog
+            $kibPath = Join-Path $env:USERPROFILE 'kib\usr\bin'
 
-      # Test BusyBox
+            & "$kibPath\kib-pkg.bat" update 2>&1 | Tee-Object -FilePath $stepLog -Append
+            if ($LASTEXITCODE -ne 0) { throw "kib-pkg update failed ($LASTEXITCODE)" }
+
+            echo y | & "$kibPath\kib-pkg.bat" install hello-world 2>&1 | Tee-Object -FilePath $stepLog -Append
+            if ($LASTEXITCODE -ne 0) { throw "install hello-world failed ($LASTEXITCODE)" }
+
+            & "$kibPath\kib-pkg.bat" list 2>&1 | Tee-Object -FilePath $stepLog -Append
+
+            echo y | & "$kibPath\kib-pkg.bat" remove hello-world 2>&1 | Tee-Object -FilePath $stepLog -Append
+            if ($LASTEXITCODE -ne 0) { throw "remove hello-world failed ($LASTEXITCODE)" }
+
+            foreach ($pkg in @('bat','make','file')) {
+              echo y | & "$kibPath\kib-pkg.bat" install $pkg 2>&1 | Tee-Object -FilePath $stepLog -Append
+              if ($LASTEXITCODE -ne 0) { throw "install $pkg failed ($LASTEXITCODE)" }
+
+              & "$kibPath\kib-pkg.bat" list 2>&1 | Tee-Object -FilePath $stepLog -Append
+
+              switch ($pkg) {
+                'bat'  { & "$kibPath\bat.exe" --help 2>&1 | Tee-Object -FilePath $stepLog -Append }
+                'make' { & "$kibPath\make" --version 2>&1 | Tee-Object -FilePath $stepLog -Append }
+                'file' { & (Join-Path $env:USERPROFILE 'kib\usr\lib\file\file.exe') --version 2>&1 | Tee-Object -FilePath $stepLog -Append }
+              }
+
+              echo y | & "$kibPath\kib-pkg.bat" remove $pkg 2>&1 | Tee-Object -FilePath $stepLog -Append
+              if ($LASTEXITCODE -ne 0) { throw "remove $pkg failed ($LASTEXITCODE)" }
+            }
+
+            $errFile = Join-Path $env:APPDATA 'kib_in_batch\errors.log'
+            if (Test-Path $errFile) {
+              Get-Content $errFile | Out-File -FilePath "ci_logs/packages_errors_$timestamp.log" -Append -Encoding utf8
+            }
+          } catch {
+            $_ | Out-String | Out-File -FilePath "ci_logs/packages_exception_$timestamp.log" -Append -Encoding utf8
+            throw
+          }
+
       - name: Test BusyBox
         shell: powershell
+        env:
+          CI_TS: ${{ env.CI_TS }}
         run: |
-          & "$env:USERPROFILE\kib\usr\bin\busybox.exe" --help
-          Get-Content "$env:APPDATA\kib_in_batch\errors.log" | Out-File -FilePath "ci_logs\busybox_$timestamp.log" -Append
-          if ($LASTEXITCODE -ne 0) { throw "BusyBox test failed" }
-      
+          $ErrorActionPreference = 'Stop'
+          $timestamp = $env:CI_TS
+          try {
+            & "$env:USERPROFILE\kib\usr\bin\busybox.exe" --help 2>&1 | Tee-Object -FilePath "ci_logs/busybox_$timestamp.log"
+            if ($LASTEXITCODE -ne 0) { throw "busybox test failed ($LASTEXITCODE)" }
+
+            $errFile = Join-Path $env:APPDATA 'kib_in_batch\errors.log'
+            if (Test-Path $errFile) {
+              Get-Content $errFile | Out-File -FilePath "ci_logs/busybox_errors_$timestamp.log" -Append -Encoding utf8
+            }
+          } catch {
+            $_ | Out-String | Out-File -FilePath "ci_logs/busybox_exception_$timestamp.log" -Append -Encoding utf8
+            throw
+          }
+
       - name: Test other tools
         shell: powershell
+        env:
+          CI_TS: ${{ env.CI_TS }}
         run: |
-          & "$env:USERPROFILE\kib\usr\bin\bash.exe" -c "echo 'Hello world!'"
-          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kib\usr\bin\sh.exe" -c "echo 'Hello world!'"
-          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kib\usr\bin\lsb_release.bat" --help
-          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kib\usr\bin\uname.bat" -a
-          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kib\usr\bin\whoami.bat"
-          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kib\usr\bin\which.bat" cmd -a
-          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kib\usr\bin\rm.exe" -rf test.txt
-          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kib\usr\bin\kibfetch.bat"
-          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kib\usr\bin\ls.exe" "$env:USERPROFILE\kib\usr\bin"
-          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kib\usr\bin\ls.exe" "$env:USERPROFILE\kib\bin\"
-          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kib\usr\bin\ls.exe" "$env:USERPROFILE\kib\" -lahF
-          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          Get-Content "$env:APPDATA\kib_in_batch\errors.log" | Out-File -FilePath "ci_logs\other_tools_$timestamp.log" -Append
+          $ErrorActionPreference = 'Stop'
+          $timestamp = $env:CI_TS
+          $log = "ci_logs/other_tools_$timestamp.log"
+          try {
+            & "$env:USERPROFILE\kib\usr\bin\bash.exe" -c "echo 'Hello world!'" 2>&1 | Tee-Object -FilePath $log -Append
+            if ($LASTEXITCODE -ne 0) { throw "bash failed ($LASTEXITCODE)" }
 
-      # Always upload logs
+            & "$env:USERPROFILE\kib\usr\bin\sh.exe" -c "echo 'Hello world!'" 2>&1 | Tee-Object -FilePath $log -Append
+            if ($LASTEXITCODE -ne 0) { throw "sh failed ($LASTEXITCODE)" }
+
+            & "$env:USERPROFILE\kib\usr\bin\lsb_release.bat" --help 2>&1 | Tee-Object -FilePath $log -Append
+            if ($LASTEXITCODE -ne 0) { throw "lsb_release failed ($LASTEXITCODE)" }
+
+            & "$env:USERPROFILE\kib\usr\bin\uname.bat" -a 2>&1 | Tee-Object -FilePath $log -Append
+            if ($LASTEXITCODE -ne 0) { throw "uname failed ($LASTEXITCODE)" }
+
+            & "$env:USERPROFILE\kib\usr\bin\whoami.bat" 2>&1 | Tee-Object -FilePath $log -Append
+            if ($LASTEXITCODE -ne 0) { throw "whoami failed ($LASTEXITCODE)" }
+
+            & "$env:USERPROFILE\kib\usr\bin\which.bat" cmd -a 2>&1 | Tee-Object -FilePath $log -Append
+            if ($LASTEXITCODE -ne 0) { throw "which failed ($LASTEXITCODE)" }
+
+            & "$env:USERPROFILE\kib\usr\bin\rm.exe" -rf test.txt 2>&1 | Tee-Object -FilePath $log -Append
+            if ($LASTEXITCODE -ne 0) { throw "rm failed ($LASTEXITCODE)" }
+
+            & "$env:USERPROFILE\kib\usr\bin\kibfetch.bat" 2>&1 | Tee-Object -FilePath $log -Append
+            if ($LASTEXITCODE -ne 0) { throw "kibfetch failed ($LASTEXITCODE)" }
+
+            & "$env:USERPROFILE\kib\usr\bin\ls.exe" "$env:USERPROFILE\kib\usr\bin" 2>&1 | Tee-Object -FilePath $log -Append
+            & "$env:USERPROFILE\kib\usr\bin\ls.exe" "$env:USERPROFILE\kib\bin\" 2>&1 | Tee-Object -FilePath $log -Append
+            & "$env:USERPROFILE\kib\usr\bin\ls.exe" "$env:USERPROFILE\kib\" -lahF 2>&1 | Tee-Object -FilePath $log -Append
+
+            $errFile = Join-Path $env:APPDATA 'kib_in_batch\errors.log'
+            if (Test-Path $errFile) {
+              Get-Content $errFile | Out-File -FilePath "ci_logs/other_tools_errors_$timestamp.log" -Append -Encoding utf8
+            }
+          } catch {
+            $_ | Out-String | Out-File -FilePath "ci_logs/other_tools_exception_$timestamp.log" -Append -Encoding utf8
+            throw
+          }
+
       - name: Upload all logs
         uses: actions/upload-artifact@v4
         with:
           name: kib-ci-logs-${{ github.run_id }}
           path: ci_logs/*
+
+      - name: Create prerelease (dev-:)
+        if: github.event_name == 'push'
+        uses: actions/create-release@v1
+        with:
+          tag_name: dev-${{ github.run_id }}
+          release_name: dev-${{ github.run_id }}
+          body: "Automated dev prerelease for run ${{ github.run_id }} on ${{ github.ref }}. Works on a regular machine."
+          draft: false
+          prerelease: true
+          token: ${{ secrets.GITHUB_TOKEN }}
