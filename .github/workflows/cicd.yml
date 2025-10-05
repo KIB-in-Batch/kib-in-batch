@@ -41,53 +41,61 @@ jobs:
           )
 
       - name: Test kib-pkg.bat
-        shell: powershell
+        shell: cmd
         env:
           CI_TS: ${{ env.CI_TS }}
         run: |
-          $ErrorActionPreference = 'Stop'
-          $timestamp = $env:CI_TS
-          $stepLog = "ci_logs/packages_$timestamp.log"
-          try {
-            Write-Output "Testing package manager lifecycle..." | Tee-Object -FilePath $stepLog
-            $kibPath = Join-Path $env:USERPROFILE 'kib\usr\bin'
+          set timestamp=%CI_TS%
+          set kibPath=%USERPROFILE%\kib\usr\bin
 
-            & "$kibPath\kib-pkg.bat" update 2>&1 | Tee-Object -FilePath $stepLog -Append
-            if ($LASTEXITCODE -ne 0) { throw "kib-pkg update failed ($LASTEXITCODE)" }
+          echo Testing package manager... > ci_logs\packages_%timestamp%.log
 
-            echo y | & "$kibPath\kib-pkg.bat" install hello-world 2>&1 | Tee-Object -FilePath $stepLog -Append
-            if ($LASTEXITCODE -ne 0) { throw "install hello-world failed ($LASTEXITCODE)" }
+          %kibPath%\kib-pkg.bat update >> ci_logs\packages_%timestamp%.log 2>&1
+          if errorlevel 1 (
+            echo Update failed with exit code %errorlevel% >> ci_logs\packages_%timestamp%.log
+            exit /b %errorlevel%
+          )
 
-            & "$kibPath\kib-pkg.bat" list 2>&1 | Tee-Object -FilePath $stepLog -Append
+          echo y | %kibPath%\kib-pkg.bat install hello-world >> ci_logs\packages_%timestamp%.log 2>&1
+          if errorlevel 1 (
+            echo Install hello-world failed with exit code %errorlevel% >> ci_logs\packages_%timestamp%.log
+            exit /b %errorlevel%
+          )
 
-            echo y | & "$kibPath\kib-pkg.bat" remove hello-world 2>&1 | Tee-Object -FilePath $stepLog -Append
-            if ($LASTEXITCODE -ne 0) { throw "remove hello-world failed ($LASTEXITCODE)" }
+          %kibPath%\kib-pkg.bat list >> ci_logs\packages_%timestamp%.log 2>&1
 
-            foreach ($pkg in @('bat','make','file')) {
-              echo y | & "$kibPath\kib-pkg.bat" install $pkg 2>&1 | Tee-Object -FilePath $stepLog -Append
-              if ($LASTEXITCODE -ne 0) { throw "install $pkg failed ($LASTEXITCODE)" }
+          echo y | %kibPath%\kib-pkg.bat remove hello-world >> ci_logs\packages_%timestamp%.log 2>&1
+          if errorlevel 1 (
+            echo Remove hello-world failed with exit code %errorlevel% >> ci_logs\packages_%timestamp%.log
+            exit /b %errorlevel%
+          )
 
-              & "$kibPath\kib-pkg.bat" list 2>&1 | Tee-Object -FilePath $stepLog -Append
+          for %%p in (bat make file) do (
+            echo y | %kibPath%\kib-pkg.bat install %%p >> ci_logs\packages_%timestamp%.log 2>&1
+            if errorlevel 1 (
+              echo Install %%p failed >> ci_logs\packages_%timestamp%.log
+              exit /b %errorlevel%
+            )
 
-              switch ($pkg) {
-                'bat'  { & "$kibPath\bat.exe" --help 2>&1 | Tee-Object -FilePath $stepLog -Append }
-                'make' { & "$kibPath\make" --version 2>&1 | Tee-Object -FilePath $stepLog -Append }
-                'file' { & (Join-Path $env:USERPROFILE 'kib\usr\lib\file\file.exe') --version 2>&1 | Tee-Object -FilePath $stepLog -Append }
-              }
+            %kibPath%\kib-pkg.bat list >> ci_logs\packages_%timestamp%.log 2>&1
 
-              echo y | & "$kibPath\kib-pkg.bat" remove $pkg 2>&1 | Tee-Object -FilePath $stepLog -Append
-              if ($LASTEXITCODE -ne 0) { throw "remove $pkg failed ($LASTEXITCODE)" }
-            }
+            if "%%p"=="bat" %kibPath%\bat.exe --help >> ci_logs\packages_%timestamp%.log 2>&1
+            if "%%p"=="make" %kibPath%\make --version >> ci_logs\packages_%timestamp%.log 2>&1
+            if "%%p"=="file" %USERPROFILE%\kib\usr\lib\file\file.exe --version >> ci_logs\packages_%timestamp%.log 2>&1
 
-            $errFile = Join-Path $env:APPDATA 'kib_in_batch\errors.log'
-            if (Test-Path $errFile) {
-              Get-Content $errFile | Out-File -FilePath "ci_logs/packages_errors_$timestamp.log" -Append -Encoding utf8
-            }
-          } catch {
-            $_ | Out-String | Out-File -FilePath "ci_logs/packages_exception_$timestamp.log" -Append -Encoding utf8
-            throw
-          }
+            echo y | %kibPath%\kib-pkg.bat remove %%p >> ci_logs\packages_%timestamp%.log 2>&1
+            if errorlevel 1 (
+              echo Remove %%p failed >> ci_logs\packages_%timestamp%.log
+              exit /b %errorlevel%
+            )
+          )
 
+          if exist "%APPDATA%\kib_in_batch\errors.log" (
+            type "%APPDATA%\kib_in_batch\errors.log" >> ci_logs\packages_errors_%timestamp%.log
+          ) else (
+            echo No installer error log found >> ci_logs\packages_errors_%timestamp%.log
+          )
+  
       - name: Test BusyBox
         shell: powershell
         env:
