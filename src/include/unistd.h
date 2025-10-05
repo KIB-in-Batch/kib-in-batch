@@ -1,7 +1,9 @@
 #ifndef UNISTD_H
 #define UNISTD_H
 
-#define _CRT_SECURE_NO_WARNINGS
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 // Define POSIX types
 typedef unsigned int mode_t;
@@ -19,6 +21,7 @@ typedef long off_t;
 #include <windows.h>
 #include <io.h>  // For _get_osfhandle
 #include <fcntl.h>  // For file modes
+#define _CRT_SECURE_NO_WARNINGS 1
 #define getpid _getpid
 
 #define MAX_PATH_LEN 1024
@@ -39,6 +42,12 @@ typedef long off_t;
 #define O_TRUNC      _O_TRUNC
 #define O_TEXT       _O_TEXT
 #define O_BINARY     _O_BINARY
+
+
+// Define max data a DWORD can handle
+#ifndef DWORD_MAX
+#define DWORD_MAX 0xFFFFFFFF
+#endif
 
 static HANDLE fd_table[FD_TABLE_SIZE];
 static int fd_table_initialized = 0;
@@ -76,6 +85,8 @@ static int alloc_fd(HANDLE handle) {
 
 // Helper to get handle from descriptor
 static HANDLE get_handle(int fd) {
+    if (!fd_table_initialized) init_fd_table();
+
     if (fd < 0 || fd >= FD_TABLE_SIZE) {
         return INVALID_HANDLE_VALUE;
     }
@@ -120,16 +131,12 @@ static inline int read_kibroot(char *kibroot, size_t size) {
 }
 
 static inline unsigned int sleep(unsigned int seconds) {
-    // Get kib root
-    char kibroot[MAX_PATH_LEN];
-    if (read_kibroot(kibroot, sizeof(kibroot)) < 0)
-        return 1;
-
-    char cmd[2048];
-    // We use kibroot/usr/lib/posix/sleep.bat to sleep
-    snprintf(cmd, sizeof(cmd), "%s/usr/lib/posix/sleep.bat %d", kibroot, seconds);
-    // Execute the command
-    system(cmd);
+    DWORD ms;
+    if (seconds > (DWORD_MAX / 1000))  // prevent overflow
+        ms = DWORD_MAX;
+    else
+        ms = seconds * 1000;
+    Sleep(ms);
     return 0;
 }
 
@@ -202,102 +209,106 @@ static inline pid_t fork(void) {
 }
 
 static inline int mkdir(const char *path, mode_t mode) {
-    char kibroot[MAX_PATH_LEN];
-    if (read_kibroot(kibroot, sizeof(kibroot)) < 0)
+    wchar_t wpath[MAX_PATH];
+    if (MultiByteToWideChar(CP_UTF8, 0, path, -1, wpath, MAX_PATH) == 0) {
+        errno = EINVAL;
         return -1;
-
-    char cmd[512];
-    int needed = snprintf(NULL, 0, "%s/usr/lib/posix/mkdir.bat \"%s\" %o", kibroot, path, mode);
-    if (needed < 0 || needed >= (int)sizeof(cmd)) {
-        return -1;  // Avoid overflow
     }
-    snprintf(cmd, sizeof(cmd), "%s/usr/lib/posix/mkdir.bat \"%s\" %o", kibroot, path, mode);
-    return system(cmd);
+
+    if (CreateDirectoryW(wpath, NULL)) {
+        return 0; // Success
+    }
+
+    DWORD err = GetLastError();
+    switch (err) {
+        case ERROR_ALREADY_EXISTS:
+            errno = EEXIST;
+            break;
+        case ERROR_PATH_NOT_FOUND:
+            errno = ENOENT;
+            break;
+        case ERROR_ACCESS_DENIED:
+            errno = EACCES;
+            break;
+        default:
+            errno = EIO;
+            break;
+    }
+    return -1;
 }
 
 static inline int rmdir(const char *path) {
-    char kibroot[MAX_PATH_LEN];
-    if (read_kibroot(kibroot, sizeof(kibroot)) < 0)
+    wchar_t wpath[MAX_PATH];
+    if (MultiByteToWideChar(CP_UTF8, 0, path, -1, wpath, MAX_PATH) == 0) {
+        errno = EINVAL;
         return -1;
-
-    char cmd[512];
-    int needed = snprintf(NULL, 0, "%s/usr/lib/posix/rmdir.bat \"%s\"", kibroot, path);
-    if (needed < 0 || needed >= (int)sizeof(cmd)) {
-        return -1;  // Avoid overflow
     }
-    snprintf(cmd, sizeof(cmd), "%s/usr/lib/posix/rmdir.bat \"%s\"", kibroot, path);
-    return system(cmd);
+
+    if (RemoveDirectoryW(wpath)) {
+        return 0; // Success
+    }
+
+    DWORD err = GetLastError();
+    switch (err) {
+        case ERROR_FILE_NOT_FOUND:
+        case ERROR_PATH_NOT_FOUND:
+            errno = ENOENT;
+            break;
+        case ERROR_ACCESS_DENIED:
+            errno = EACCES;
+            break;
+        case ERROR_DIR_NOT_EMPTY:
+            errno = ENOTEMPTY;
+            break;
+        default:
+            errno = EIO;
+            break;
+    }
+    return -1;
 }
 
 static char *getcwd(char *buf, size_t size) {
-    // Handle NULL buf case properly
     int allocated = 0;
     if (!buf) {
         if (size == 0) size = MAX_PATH_LEN;
-        buf = malloc(size);
+        buf = (char *)malloc(size);
         if (!buf) {
             errno = ENOMEM;
             return NULL;
         }
         allocated = 1;
     }
-    
-    // Validate size
-    if (size == 0) {
-        errno = EINVAL;
-        return NULL;
-    }
 
-    char kibroot[MAX_PATH_LEN];
-    if (read_kibroot(kibroot, sizeof(kibroot)) < 0) {
-        if (allocated) free(buf);
-        return NULL;
-    }
-
-    /* Use a unique temp file to avoid conflicts */
-    char tmpfile[MAX_PATH_LEN];
-    snprintf(tmpfile, sizeof(tmpfile), "%s/tmp/getcwd_%d_%ld.tmp", 
-             kibroot, getpid(), (long)time(NULL));
-
-    /* Build command */
-    char cmd[MAX_PATH_LEN * 2];
-    snprintf(cmd, sizeof(cmd),
-             "\"%s/usr/lib/posix/getcwd.bat\" > %s",
-             kibroot, tmpfile);
-
-    if (system(cmd) != 0) {
+    DWORD len = GetCurrentDirectoryW(0, NULL);
+    if (len == 0) {
         if (allocated) free(buf);
         errno = EIO;
         return NULL;
     }
 
-    FILE *tmpf = fopen(tmpfile, "r");
-    if (!tmpf) {
-        if (allocated) free(buf);
-        errno = EIO;
-        return NULL;
-    }
-
-    if (!fgets(buf, (int)size, tmpf)) {
-        fclose(tmpf);
-        remove(tmpfile);  // Clean up temp file
-        if (allocated) free(buf);
-        errno = EIO;
-        return NULL;
-    }
-    fclose(tmpf);
-    remove(tmpfile);  // Clean up temp file
-
-    /* Strip trailing newline */
-    size_t len = strlen(buf);
-    while (len > 0 && (buf[len - 1] == '\n' || buf[len - 1] == '\r'))
-        buf[--len] = '\0';
-
-    /* Check if result fits in buffer */
     if (len >= size) {
         if (allocated) free(buf);
         errno = ERANGE;
         return NULL;
+    }
+
+    wchar_t wpath[MAX_PATH];
+    if (!GetCurrentDirectoryW(MAX_PATH, wpath)) {
+        if (allocated) free(buf);
+        errno = EIO;
+        return NULL;
+    }
+
+    int converted = WideCharToMultiByte(CP_UTF8, 0, wpath, -1, buf, (int)size, NULL, NULL);
+    if (converted == 0) {
+        if (allocated) free(buf);
+        errno = EINVAL;
+        return NULL;
+    }
+
+    // Normalize slashes
+    for (size_t i = 0; buf[i]; i++) {
+        if (buf[i] == '\\') buf[i] = '/';
     }
 
     return buf;
@@ -305,6 +316,7 @@ static char *getcwd(char *buf, size_t size) {
 
 // POSIX write implementation
 static inline ssize_t posix_write(int fd, const void *buf, size_t count) {
+    if (!fd_table_initialized) init_fd_table();
     HANDLE hFile = get_handle(fd);
     if (hFile == INVALID_HANDLE_VALUE) {
         errno = EBADF;
@@ -468,6 +480,7 @@ static inline int posix_close(int fd) {
 
 // POSIX read implementation
 static inline ssize_t posix_read(int fd, void *buf, size_t count) {
+    if (!fd_table_initialized) init_fd_table();
     HANDLE hFile = get_handle(fd);
     if (hFile == INVALID_HANDLE_VALUE) {
         errno = EBADF;
@@ -531,5 +544,9 @@ static inline ssize_t posix_read(int fd, void *buf, size_t count) {
 #define read posix_read
 #define write posix_write
 #define unlink _unlink
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // UNISTD_H

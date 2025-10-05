@@ -1155,6 +1155,14 @@ if not exist "!HOME!\.bashrc" (
 
 set "ENV=C:/Users/!username!/kib/etc/.kibenv"
 
+set "CPPFLAGS=-I!kibroot!/usr/include"
+set "CFLAGS=-O2 -Wall !CPPFLAGS!"
+set "CXXFLAGS=-O2 -Wall !CPPFLAGS!"
+set "LDFLAGS=-L!kibroot!/usr/lib"
+set "BUILD=x86_64-pc-kib"
+set "HOST=x86_64-pc-kib"
+::set "TARGET=x86_64-pc-kib"
+
 if not exist "!HOME!\.hushlogin" (
     echo For a guide on how to use KIB in Batch, run 'ls !kibroot!/usr/share/guide' and
     echo open the text file that you think will help you.
@@ -1202,6 +1210,7 @@ for /f "tokens=*" %%a in ('!busybox_path! --list ^| findstr /i /v "busybox" ^| f
     set "applet_path=%USERPROFILE%\kib\usr\bin\!applet!"
     if not exist "!applet_path!.bat" (
         mklink "!applet_path!.exe" "!busybox_path!" >nul 2>&1
+        mklink "!applet_path!" "!busybox_path!" >nul 2>&1
     )
 )
 
