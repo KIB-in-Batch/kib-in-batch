@@ -41,6 +41,13 @@ if not "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
     exit /b 1
 )
 
+if not exist "%~dp0..\kibposix\kibposix.dll" (
+    echo POSIX DLL not found. Please compile it.
+    echo Press any key to continue...
+    pause >nul
+    exit /b 1
+)
+
 if defined ConEmuPID (
     echo Running inside ConEmu
     goto ok
@@ -887,6 +894,9 @@ xcopy "%~dp0share\*" "!kibroot!\usr\share\" /s /y >nul 2>>"%APPDATA%\kib_in_batc
 xcopy "%~dp0libexec\*" "!kibroot!\usr\libexec\" /s /y >nul 2>>"%APPDATA%\kib_in_batch\errors.log"
 xcopy "%~dp0bin\*" "!kibroot!\usr\bin\" /s /y >nul 2>>"%APPDATA%\kib_in_batch\errors.log"
 xcopy "%~dp0include\*" "!kibroot!\usr\include\" /s /y >nul 2>>"%APPDATA%\kib_in_batch\errors.log"
+
+copy /b /y "%~dp0..\kibposix\kibposix.dll" "!kibroot!\usr\bin\kibposix.dll" >nul 2>>"%APPDATA%\kib_in_batch\errors.log"
+copy /b /y "%~dp0..\kibposix\kibposix.dll.a" "!kibroot!\usr\lib\kibposix.dll.a" >nul 2>>"%APPDATA%\kib_in_batch\errors.log"
 
 if !errorlevel! neq 0 (
     <nul set /p "=[ !COLOR_ERROR!FAILED!COLOR_RESET! ]"
