@@ -24,29 +24,21 @@ jobs:
           "CI run started at $timestamp (run id: $env:GITHUB_RUN_ID)" | Out-File -FilePath "ci_logs/session_$timestamp.log" -Encoding utf8
 
       - name: Install and validate KiB
-        shell: powershell
+        shell: cmd
         env:
           CI_TS: ${{ env.CI_TS }}
         run: |
-          $ErrorActionPreference = 'Stop'
-          $timestamp = $env:CI_TS
-          try {
-            Write-Output "Installing KiB..."
-            echo 1 | src\kib_in_batch.bat automated 2>&1 | Tee-Object -FilePath "ci_logs/install_$timestamp.log"
-            if ($LASTEXITCODE -ne 0) {
-              throw "src\kib_in_batch.bat exited with code $LASTEXITCODE"
-            }
-
-            $errFile = Join-Path $env:APPDATA 'kib_in_batch\errors.log'
-            if (Test-Path $errFile) {
-              Get-Content $errFile | Out-File -FilePath "ci_logs/install_errors_$timestamp.log" -Append -Encoding utf8
-            } else {
-              "No installer error log found at $errFile" | Out-File -FilePath "ci_logs/install_errors_$timestamp.log" -Encoding utf8
-            }
-          } catch {
-            $_ | Out-String | Out-File -FilePath "ci_logs/install_exception_$timestamp.log" -Append -Encoding utf8
-            throw
-          }
+          set timestamp=%CI_TS%
+          echo 1 | src\kib_in_batch.bat automated > ci_logs\install_%timestamp%.log 2>&1
+          if errorlevel 1 (
+            echo Installer failed with exit code %errorlevel% >> ci_logs\install_%timestamp%.log
+            exit /b %errorlevel%
+          )
+          if exist "%APPDATA%\kib_in_batch\errors.log" (
+            type "%APPDATA%\kib_in_batch\errors.log" >> ci_logs\install_errors_%timestamp%.log
+          ) else (
+            echo No installer error log found >> ci_logs\install_errors_%timestamp%.log
+          )
 
       - name: Test kib-pkg.bat
         shell: powershell
