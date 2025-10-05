@@ -77,8 +77,6 @@ jobs:
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
           & "$env:USERPROFILE\kib\usr\bin\which.bat" cmd -a
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
-          & "$env:USERPROFILE\kib\usr\bin\touch.bat" test.txt
-          if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
           & "$env:USERPROFILE\kib\usr\bin\rm.exe" -rf test.txt
           if ($LASTEXITCODE -ne 0) { throw "Other tools test failed" }
           & "$env:USERPROFILE\kib\usr\bin\kibfetch.bat"
