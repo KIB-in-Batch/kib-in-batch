@@ -1159,9 +1159,8 @@ set "CPPFLAGS=-I!kibroot!/usr/include"
 set "CFLAGS=-O2 -Wall !CPPFLAGS!"
 set "CXXFLAGS=-O2 -Wall !CPPFLAGS!"
 set "LDFLAGS=-L!kibroot!/usr/lib"
-set "BUILD=x86_64-pc-kib"
-set "HOST=x86_64-pc-kib"
-::set "TARGET=x86_64-pc-kib"
+set "BUILD=x86_64-pc-cygwin"
+set "HOST=x86_64-pc-cygwin"
 
 if not exist "!HOME!\.hushlogin" (
     echo For a guide on how to use KIB in Batch, run 'ls !kibroot!/usr/share/guide' and
