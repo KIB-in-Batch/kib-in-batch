@@ -30,7 +30,7 @@ To do this, download [./lts-upgrade.bat](./lts-upgrade.bat) and run the file. Th
 * Requests admin privileges if cannot create symlinks.
 * Simple package manager accessible via the `kib-pkg` command.
 * Custom shell prompt and aliases for common commands to enhance usability.
-* [POSIX API reimplementations](./src/lib/posix/README.md).
+* [POSIX compatibility layer](./kibposix).
 * [BusyBox](https://busybox.net/) for a lightweight, portable set of utilities.
 * [Neovim](https://neovim.io/) for a powerful, extensible text editor.
 * [Nmap](https://nmap.org/) for network scanning and discovery.
@@ -91,10 +91,6 @@ KIB in Batch includes tools like Nmap, Ncat, and a Metasploit® Framework wrappe
 ### Is KIB in Batch a full Linux system?
 
 No, it is a batch script environment that mimics many Linux utilities and behaviors but runs on Windows with some limitations.
-
-### Where can I find POSIX API reimplementations?
-
-POSIX API batch file implementations are located in `/usr/lib/posix` and the header files are located in `/usr/include`. See [src/lib/posix/README.md](./src/lib/posix/README.md) for details.
 
 ### Help, the symlinks cannot be created
 
