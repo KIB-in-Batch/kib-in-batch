@@ -168,13 +168,10 @@ jobs:
           name: kib-ci-logs-${{ github.run_id }}
           path: ci_logs/*
 
-      - name: Create prerelease (dev-:)
-        if: github.event_name == 'push'
-        uses: actions/create-release@v1
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: dev-${{ github.sha }}
-          release_name: dev-${{ github.sha }}
-          body: "Automated dev prerelease for run ${{ github.run_id }} on ${{ github.ref }}. Works on a regular machine."
-          draft: false
+          tag_name: nightly-${{ github.sha }}
           prerelease: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
