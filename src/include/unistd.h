@@ -196,58 +196,9 @@ static inline int posix_execl(const char *path, const char *arg, ...) {
 
 #define execl posix_execl
 
-#if defined(_MSC_VER)
-    #define DEPRECATED(msg) __declspec(deprecated(msg))
-#elif defined(__GNUC__) || defined(__clang__)
-    #define DEPRECATED(msg) __attribute__((deprecated(msg)))
-#else
-    #define DEPRECATED(msg)
-#endif
-
-DEPRECATED("fork() is deprecated due to the complexity of properly implementing it.")
 static inline pid_t fork(void) {
-    fprintf(stderr, "Warning: fork() is deprecated and may not work as expected.\n");
-    if (getenv("FORK_CHILD")) {
-        return 0; // Child process, don't fork
-    }
-    
-    char kibroot[MAX_PATH_LEN];
-    if (read_kibroot(kibroot, sizeof(kibroot)) < 0)
-        return -1;
-   
-    // Get command line arguments
-    extern char **__argv;
-    extern int __argc;
-   
-    char cmd[2048];  // Larger buffer for arguments
-    int pos = 0;
-   
-    // Start with setting environment variable and fork.bat path
-    int needed = snprintf(cmd + pos, sizeof(cmd) - pos, "set FORK_CHILD=1 && \"%s/usr/lib/posix/fork.bat\"", kibroot);
-    if (needed < 0 || needed >= (int)(sizeof(cmd) - pos)) {
-        return -1;
-    }
-    pos += needed;
-   
-    // Add program name (argv[0]) first
-    needed = snprintf(cmd + pos, sizeof(cmd) - pos, " \"%s\"", __argv[0]);
-    if (needed < 0 || needed >= (int)(sizeof(cmd) - pos)) {
-        return -1;
-    }
-    pos += needed;
-    
-    // Add remaining arguments from argv[1] onwards (skip duplicate argv[0])
-    for (int i = 1; i < __argc && pos < sizeof(cmd) - 1; i++) {
-        needed = snprintf(cmd + pos, sizeof(cmd) - pos, " \"%s\"", __argv[i]);
-        if (needed < 0 || needed >= (int)(sizeof(cmd) - pos)) {
-            return -1;  // Avoid overflow
-        }
-        pos += needed;
-    }
-   
-    int result = system(cmd);
-    return (result == 0) ? 123 : -1;  // Return fake PID on success, -1 on error
-    // TOOD: Make the child inherit the parent's current program counter
+    errno = ENOSYS; // Function not implemented
+    return -1;
 }
 
 static inline int mkdir(const char *path, mode_t mode) {
