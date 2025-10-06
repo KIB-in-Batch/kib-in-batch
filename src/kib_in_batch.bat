@@ -568,7 +568,7 @@ if exist "%APPDATA%\kib_in_batch\cpuvars.txt" (
     echo If you recently changed something about your CPU, delete "%APPDATA%\kib_in_batch\cpuvars.txt".
     echo.
 ) else (
-    echo CPU info is not cached. Cache will be generated on boot, so setting up /proc will be slow.
+    echo CPU info is not cached. Cache will be generated on boot, generating /proc/cpuinfo will be slow.
     echo.
 )
 echo There may have been errors logged.
@@ -964,7 +964,7 @@ echo.
 set "busybox_path=!kibroot!\usr\bin\busybox.exe"
 
 ::                                                                 |
-<nul set /p "=Setting up /proc...                                  "
+<nul set /p "=Generating /proc/cpuinfo...                          "
 
 if not exist "!kibroot!\proc" (
     mkdir "!kibroot!/proc"
@@ -1046,6 +1046,38 @@ for /l %%i in (0,1,%NUMBER_OF_PROCESSORS_FOR_LOOP%) do (
         echo.
     ) >> "!kibroot!\proc\cpuinfo"
 )
+
+<nul set /p "=[ !COLOR_SUCCESS!OK!COLOR_RESET! ]"
+echo.
+
+::                                                                 |
+<nul set /p "=Generating /proc/cmdline...                          "
+
+echo initrd=\initrd.img KIB_ROOT_INIT=1 panic=-1 nr_cpus=%NUMBER_OF_PROCESSORS% hv_utils.timesync_implicit=1 console=hvc0 debug pty.legacy_count=0 >"!kibroot!\proc\cmdline"
+
+<nul set /p "=[ !COLOR_SUCCESS!OK!COLOR_RESET! ]"
+echo.
+
+for %%f in (!kibroot!\usr\lib\kib\*.service.ini) do (
+    call :get_ini_value "%%f" "Service" "Run" command
+    call :get_ini_value "%%f" "Service" "Msg" msg
+    call :get_ini_value "%%f" "Service" "Spaces" spc
+    set "spaces="
+    set "string= "
+    for /l %%i in (1,1,!spc!) do (
+        set "spaces=!spaces!!string!"
+    )
+    <nul set /p "=!msg!!spaces!"
+    !command!
+    <nul set /p "=[ !COLOR_SUCCESS!OK!COLOR_RESET! ]"
+    echo.
+)
+
+::                                                                 |
+<nul set /p "=Generating /proc/version...                          "
+
+echo Linux version 5.4.300 ^(root@439a258ad544^) ^(KIB in Batch 11.0.0-untagged^) #1 SMP PREEMPT_DYNAMIC Thu Jun  5 18:30:46 UTC 2025 >"!kibroot!\proc\version"
+rem Linux® is the registered trademark of Linus Torvalds in the U.S. and other countries.
 
 <nul set /p "=[ !COLOR_SUCCESS!OK!COLOR_RESET! ]"
 echo.
@@ -1272,3 +1304,9 @@ set /a "df=diff%%100"
 
 endlocal & set "%~3=%dh%:%dm:~-2%:%ds:~-2%.%df:~-2%"
 goto :eof
+
+
+:get_ini_value
+for /f "usebackq delims=" %%A in (`powershell -NoProfile -Command "$p=@{};$s='';foreach($l in Get-Content '%~1'){if($l -match '^\s*\[(.+)\]'){$s=$matches[1];$p[$s]=@{}}elseif($l -match '^\s*([^=]+)=(.*)$'){$p[$s][$matches[1].Trim()]=$matches[2].Trim()}};$p['%~2']['%~3']"`) do set "v=%%A"
+set "%~4=%v%"
+exit /b
