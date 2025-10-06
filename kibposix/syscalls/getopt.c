@@ -6,7 +6,7 @@ char *optarg = NULL;
 int opterr = 1;
 int optopt = 0;
 
-int getopt(int argc, char * const argv[], const char *optstring) {
+__declspec(dllexport) int getopt(int argc, char * const argv[], const char *optstring) {
     static int argpos = 1;
     char *arg;
 
