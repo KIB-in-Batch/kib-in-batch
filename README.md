@@ -70,7 +70,7 @@ Download the latest release from the [releases page](https://github.com/KIB-in-B
 
 ### How do I update KIB in Batch?
 
-For minor updates, download the latest release and run `.`\src\kib_in_batch.bat`. For major updates, uninstall first using `.`\uninstall.bat` then reinstall. The uninstaller creates a backup of your KIB in Batch home directory which KIB in Batch automatically detects and restores upon reinstalling.
+For minor updates, download the latest release and run `.\src\kib_in_batch.bat`. For major updates, uninstall first using `.\uninstall.bat` then reinstall. The uninstaller creates a backup of your KIB in Batch home directory which KIB in Batch automatically detects and restores upon reinstalling.
 
 ### How do I uninstall KIB in Batch?
 
