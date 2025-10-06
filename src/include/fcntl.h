@@ -7,6 +7,13 @@ extern "C" {
 
 #include <sys/types.h>
 
+/* DLL import/export */
+#ifdef KIBPOSIX_BUILD_DLL
+#define KIBPOSIX_API __declspec(dllexport)
+#else
+#define KIBPOSIX_API __declspec(dllimport)
+#endif
+
 #define O_RDONLY    0x0000
 #define O_WRONLY    0x0001
 #define O_RDWR      0x0002
@@ -16,7 +23,7 @@ extern "C" {
 #define O_TRUNC     0x0400
 #define O_APPEND    0x0800
 
-int posix_open(const char *path, int flags, ...);
+KIBPOSIX_API int posix_open(const char *path, int flags, ...);
 
 #define open posix_open
 

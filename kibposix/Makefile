@@ -10,7 +10,7 @@ ALL_OBJS = $(ALL_SRCS:.c=.o)
 
 # Output files
 DLL = kibposix.dll
-IMPLIB = kibposix.dll.a
+IMPLIB = libkibposix.dll.a
 
 # Build rules
 all: $(DLL)

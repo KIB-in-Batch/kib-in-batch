@@ -25,6 +25,13 @@ extern "C" {
 #define SEEK_CUR 1
 #define SEEK_END 2
 
+/* Variables exported from kibposix.dll */
+
+KIBPOSIX_API int optind;
+KIBPOSIX_API char *optarg;
+KIBPOSIX_API int opterr;
+KIBPOSIX_API int optopt;
+
 /* Functions exported from kibposix.dll */
 KIBPOSIX_API int posix_close(int fd);
 KIBPOSIX_API ssize_t posix_read(int fd, void *buf, size_t count);

@@ -48,6 +48,13 @@ if not exist "%~dp0..\kibposix\kibposix.dll" (
     exit /b 1
 )
 
+if not exist "%~dp0..\kibposix\libkibposix.dll.a" (
+    echo POSIX DLL not found. Please compile it.
+    echo Press any key to continue...
+    pause >nul
+    exit /b 1
+)
+
 if defined ConEmuPID (
     echo Running inside ConEmu
     goto ok
@@ -896,7 +903,7 @@ xcopy "%~dp0bin\*" "!kibroot!\usr\bin\" /s /y >nul 2>>"%APPDATA%\kib_in_batch\er
 xcopy "%~dp0include\*" "!kibroot!\usr\include\" /s /y >nul 2>>"%APPDATA%\kib_in_batch\errors.log"
 
 copy /b /y "%~dp0..\kibposix\kibposix.dll" "!kibroot!\usr\bin\kibposix.dll" >nul 2>>"%APPDATA%\kib_in_batch\errors.log"
-copy /b /y "%~dp0..\kibposix\kibposix.dll.a" "!kibroot!\usr\lib\kibposix.dll.a" >nul 2>>"%APPDATA%\kib_in_batch\errors.log"
+copy /b /y "%~dp0..\kibposix\libkibposix.dll.a" "!kibroot!\usr\lib\libkibposix.dll.a" >nul 2>>"%APPDATA%\kib_in_batch\errors.log"
 
 if !errorlevel! neq 0 (
     <nul set /p "=[ !COLOR_ERROR!FAILED!COLOR_RESET! ]"
@@ -1166,11 +1173,13 @@ if not exist "!HOME!\.bashrc" (
 set "ENV=C:/Users/!username!/kib/etc/.kibenv"
 
 set "CPPFLAGS=-I!kibroot!/usr/include"
-set "CFLAGS=-O2 -Wall !CPPFLAGS!"
-set "CXXFLAGS=-O2 -Wall !CPPFLAGS!"
+set "CFLAGS=-O2 -Wall !CPPFLAGS! !kibroot!/usr/lib/libkibposix.dll.a"
+set "CXXFLAGS=-O2 -Wall !CPPFLAGS! !kibroot!/usr/lib/libkibposix.dll.a"
 set "LDFLAGS=-L!kibroot!/usr/lib"
 set "BUILD=x86_64-pc-cygwin"
 set "HOST=x86_64-pc-cygwin"
+set "CC=clang"
+set "CXX=clang++"
 
 if not exist "!HOME!\.hushlogin" (
     echo For a guide on how to use KIB in Batch, run 'ls !kibroot!/usr/share/guide' and
