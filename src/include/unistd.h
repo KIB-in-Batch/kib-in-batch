@@ -37,6 +37,7 @@ KIBPOSIX_API int execl(const char *path, const char *arg, ...);
 KIBPOSIX_API pid_t getpid(void);
 KIBPOSIX_API unsigned int sleep(unsigned int seconds);
 KIBPOSIX_API int unlink(const char *pathname);
+KIBPOSIX_API int getopt(int argc, char * const argv[], const char *optstring); 
 
 #define close posix_close
 #define read posix_read
