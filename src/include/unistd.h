@@ -44,11 +44,13 @@ KIBPOSIX_API int execl(const char *path, const char *arg, ...);
 KIBPOSIX_API pid_t getpid(void);
 KIBPOSIX_API unsigned int sleep(unsigned int seconds);
 KIBPOSIX_API int unlink(const char *pathname);
-KIBPOSIX_API int getopt(int argc, char * const argv[], const char *optstring); 
+KIBPOSIX_API int getopt(int argc, char * const argv[], const char *optstring);
+KIBPOSIX_API void posix_exit(int status);
 
 #define close posix_close
 #define read posix_read
 #define write posix_write
+#define _exit posix_exit
 
 #ifdef __cplusplus
 }
