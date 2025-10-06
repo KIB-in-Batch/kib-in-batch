@@ -16,30 +16,31 @@ static fd_entry_t fd_table[FD_TABLE_SIZE];
 static int fd_table_init = 0;
 static CRITICAL_SECTION fd_lock;
 
+// Initialize fd table and standard handles
 static void fd_init(void) {
     if (fd_table_init) return;
-    
+
     InitializeCriticalSection(&fd_lock);
-    
+
     fd_table[0].handle = GetStdHandle(STD_INPUT_HANDLE);
     fd_table[0].type = 1;
     fd_table[1].handle = GetStdHandle(STD_OUTPUT_HANDLE);
     fd_table[1].type = 1;
     fd_table[2].handle = GetStdHandle(STD_ERROR_HANDLE);
     fd_table[2].type = 1;
-    
-    for (int i = 3; i < FD_TABLE_SIZE; i++) {
+
+    for (int i = 3; i < FD_TABLE_SIZE; i++)
         fd_table[i].handle = INVALID_HANDLE_VALUE;
-    }
-    
+
     fd_table_init = 1;
 }
 
+// Allocate a file descriptor for the given handle
 int fd_alloc(HANDLE handle, int type) {
     if (!fd_table_init) fd_init();
-    
+
     EnterCriticalSection(&fd_lock);
-    
+
     int fd = -1;
     for (int i = 3; i < FD_TABLE_SIZE; i++) {
         if (fd_table[i].handle == INVALID_HANDLE_VALUE) {
@@ -50,26 +51,29 @@ int fd_alloc(HANDLE handle, int type) {
             break;
         }
     }
-    
+
     LeaveCriticalSection(&fd_lock);
-    
-    if (fd < 0) errno = EMFILE;
+
+    if (fd < 0)
+        errno = EMFILE; // Always set errno if allocation fails
+
     return fd;
 }
 
+// Get the Windows HANDLE associated with a fd
 HANDLE fd_get_handle(int fd) {
     if (!fd_table_init) fd_init();
-    
-    if (fd < 0 || fd >= FD_TABLE_SIZE) {
+
+    if (fd < 0 || fd >= FD_TABLE_SIZE)
         return INVALID_HANDLE_VALUE;
-    }
-    
+
     return fd_table[fd].handle;
 }
 
+// Free a file descriptor
 void fd_free(int fd) {
     if (fd < 0 || fd >= FD_TABLE_SIZE) return;
-    
+
     EnterCriticalSection(&fd_lock);
     fd_table[fd].handle = INVALID_HANDLE_VALUE;
     fd_table[fd].type = 0;

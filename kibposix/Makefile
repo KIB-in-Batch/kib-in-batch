@@ -1,5 +1,3 @@
-# kibposix/Makefile
-
 CC = clang
 CFLAGS = -Wall -Wextra -O2 -DKIBPOSIX_BUILD_DLL
 LDFLAGS = -shared -lkernel32 -ladvapi32 -luser32
@@ -24,6 +22,6 @@ $(DLL): $(ALL_OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f syscalls/*.o lib/*.o $(DLL) $(IMPLIB)
+	rm -f syscalls/*.o lib/*.o $(DLL) $(IMPLIB) kibposix.dll.exp
 
 .PHONY: all clean

@@ -4,68 +4,77 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <windows.h>
-#include <sys/stat.h>
+#include <stdarg.h>
 
-/* Forward declarations from lib/fd_table.c */
-extern int fd_alloc(HANDLE h);
+typedef unsigned int mode_t;
 
-__declspec(dllexport) int open(const char *pathname, int flags, ...) {
-    DWORD access = 0;
-    DWORD creation = 0;
-    DWORD attrs = FILE_ATTRIBUTE_NORMAL;
-    HANDLE hFile;
+extern int fd_alloc(HANDLE h, int type);
 
-    // Determine desired access
-    if (flags & O_RDWR)
-        access = GENERIC_READ | GENERIC_WRITE;
-    else if (flags & O_WRONLY)
-        access = GENERIC_WRITE;
-    else
-        access = GENERIC_READ;
-
-    // Determine creation disposition
+__declspec(dllexport) int posix_open(const char *pathname, int flags, ...) {
+    // Handle mode parameter for O_CREAT
+    mode_t mode = 0;
     if (flags & O_CREAT) {
-        if ((flags & O_EXCL) && (flags & O_CREAT))
-            creation = CREATE_NEW;
-        else if (flags & O_TRUNC)
-            creation = CREATE_ALWAYS;
-        else
-            creation = OPEN_ALWAYS;
-    } else {
-        if (flags & O_TRUNC)
-            creation = TRUNCATE_EXISTING;
-        else
-            creation = OPEN_EXISTING;
+        va_list args;
+        va_start(args, flags);
+        mode = va_arg(args, mode_t);
+        va_end(args);
     }
 
-    // Append means write-only but positioned at EOF
-    if (flags & O_APPEND)
-        access |= FILE_APPEND_DATA;
+    // Convert POSIX flags to Windows access flags
+    DWORD access = 0;
+    if (flags & O_RDWR) access = GENERIC_READ | GENERIC_WRITE;
+    else if (flags & O_WRONLY) access = GENERIC_WRITE;
+    else access = GENERIC_READ;  // Default to read-only
 
-    hFile = CreateFileA(
-        pathname,
+    // Convert POSIX flags to Windows creation flags
+    DWORD disposition = OPEN_EXISTING;
+    if (flags & O_CREAT) {
+        disposition = (flags & O_EXCL) ? CREATE_NEW : OPEN_ALWAYS;
+        if (flags & O_TRUNC) disposition = CREATE_ALWAYS;
+    } else if (flags & O_TRUNC) {
+        disposition = TRUNCATE_EXISTING;
+    }
+
+    // Convert path to wide characters
+    wchar_t wpath[MAX_PATH];
+    if (MultiByteToWideChar(CP_UTF8, 0, pathname, -1, wpath, MAX_PATH) == 0) {
+        errno = EINVAL;
+        return -1;
+    }
+
+    // Create the file
+    HANDLE hFile = CreateFileW(
+        wpath,
         access,
-        FILE_SHARE_READ | FILE_SHARE_WRITE,
+        FILE_SHARE_READ | FILE_SHARE_WRITE,  // Share mode
         NULL,
-        creation,
-        attrs,
+        disposition,
+        FILE_ATTRIBUTE_NORMAL,
         NULL
     );
 
     if (hFile == INVALID_HANDLE_VALUE) {
+        // Map Windows error to POSIX errno
         DWORD err = GetLastError();
         switch (err) {
             case ERROR_FILE_NOT_FOUND:
-                errno = ENOENT;
-                break;
             case ERROR_PATH_NOT_FOUND:
                 errno = ENOENT;
                 break;
             case ERROR_ACCESS_DENIED:
                 errno = EACCES;
                 break;
-            case ERROR_ALREADY_EXISTS:
+            case ERROR_FILE_EXISTS:
                 errno = EEXIST;
+                break;
+            case ERROR_DISK_FULL:
+                errno = ENOSPC;
+                break;
+            case ERROR_SHARING_VIOLATION:
+                errno = EBUSY;
+                break;
+            case ERROR_TOO_MANY_OPEN_FILES:
+                errno = EMFILE;
                 break;
             default:
                 errno = EIO;
@@ -74,6 +83,17 @@ __declspec(dllexport) int open(const char *pathname, int flags, ...) {
         return -1;
     }
 
-    // Register handle in your fd_table
-    return fd_alloc(hFile);
+    // Set append mode if requested
+    if (flags & O_APPEND) {
+        SetFilePointer(hFile, 0, NULL, FILE_END);
+    }
+
+    // Allocate new file descriptor
+    int fd = fd_alloc(hFile, 1);
+    if (fd < 0) {
+        CloseHandle(hFile);
+        return -1;
+    }
+
+    return fd;
 }

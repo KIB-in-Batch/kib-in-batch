@@ -16,7 +16,9 @@ extern "C" {
 #define O_TRUNC     0x0400
 #define O_APPEND    0x0800
 
-int open(const char *path, int flags, ...);
+int posix_open(const char *path, int flags, ...);
+
+#define open posix_open
 
 #ifdef __cplusplus
 }

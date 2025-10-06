@@ -9,15 +9,16 @@ typedef long ssize_t;
 /* Forward declarations from lib/fd_table.c */
 extern HANDLE fd_get_handle(int fd);
 
-__declspec(dllexport) ssize_t write(int fd, const void *buf, size_t count) {
-    HANDLE handle = fd_get_handle(fd);
-    if (handle == INVALID_HANDLE_VALUE) {
+__declspec(dllexport) ssize_t posix_write(int fd, const void *buf, size_t count) {
+    HANDLE hFile = fd_get_handle(fd);
+    if (hFile == INVALID_HANDLE_VALUE) {
         errno = EBADF;
         return -1;
     }
 
-    DWORD bytes_written;
-    if (!WriteFile(handle, buf, (DWORD)count, &bytes_written, NULL)) {
+    DWORD bytesWritten;
+    if (!WriteFile(hFile, buf, (DWORD)count, &bytesWritten, NULL)) {
+        // Map Windows error to POSIX errno
         DWORD err = GetLastError();
         switch (err) {
             case ERROR_ACCESS_DENIED:
@@ -29,6 +30,12 @@ __declspec(dllexport) ssize_t write(int fd, const void *buf, size_t count) {
             case ERROR_BROKEN_PIPE:
                 errno = EPIPE;
                 break;
+            case ERROR_NOT_ENOUGH_MEMORY:
+                errno = ENOMEM;
+                break;
+            case ERROR_HANDLE_DISK_FULL:
+                errno = ENOSPC;
+                break;
             default:
                 errno = EIO;
                 break;
@@ -36,5 +43,5 @@ __declspec(dllexport) ssize_t write(int fd, const void *buf, size_t count) {
         return -1;
     }
 
-    return (ssize_t)bytes_written;
+    return (ssize_t)bytesWritten;
 }
