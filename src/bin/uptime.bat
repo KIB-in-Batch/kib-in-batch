@@ -1,8 +1,10 @@
 @echo off
 
-rem uptime-service.bat
-rem    * Uptime service for the KIB in Batch project.
-rem    * Updates /proc/uptime
+setlocal enabledelayedexpansion
+
+rem uptime.bat
+rem    * uptime reimplementation for the KIB in Batch project.
+rem    * Prints the current uptime.
 rem    * Licensed under the GPL-2.0-only.
 rem Copyright (C) 2025 benja2998
 rem
@@ -19,25 +21,32 @@ rem You should have received a copy of the GNU General Public License
 rem along with this program; if not, write to the Free Software
 rem Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-title /proc/uptime service
+set "hh="
+set "mm="
+set "ss="
+set "seconds="
 
-echo This window is the service that keeps /proc/uptime updated. Do not close this window!
-
-setlocal enabledelayedexpansion
+for /f "tokens=1-4 delims=,.:" %%a in ("%TIME%") do (
+    set "hh=%%a"
+    set "mm=%%b"
+    set "ss=%%c"
+)
 
 set /p kibroot=<"%APPDATA%\kib_in_batch\kibroot.txt"
 
-set uptime=0 & rem Uptime of KIB
+set /p uptime_file=<"!kibroot!\proc\uptime"
 
-:loop
+for /f "tokens=1" %%a in ("!uptime_file!") do (
+    set "seconds=%%a"
+)
 
-set "uptime_cpus="
-set /a uptime_cpus = uptime * NUMBER_OF_PROCESSORS
+if "!seconds!"=="60" (
+    set "minutes=1 min"
+) else if "!seconds!" gtr 60 (
+    set /a minutes = seconds / 60
+    set "minutes=!minutes! min"
+) else (
+    set "minutes=!seconds! sec"
+)
 
-echo !uptime! !uptime_cpus!>"!kibroot!\proc\uptime"
-
-timeout /t 1 /nobreak >nul
-
-set /a uptime+=1
-
-goto loop
+echo  !hh!:!mm!:!ss! up !minutes!,  load average: 0.00, 0.00, 0.00

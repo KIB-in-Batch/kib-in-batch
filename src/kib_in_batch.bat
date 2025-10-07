@@ -782,7 +782,7 @@ echo.
     echo.
     echo ## Applet overrides ##
     echo.
-    echo export BB_OVERRIDE_APPLETS="uname which whoami make file"
+    echo export BB_OVERRIDE_APPLETS="uptime uname which whoami make file"
     echo.
     echo alias netcat="nc"
     echo.
@@ -1060,14 +1060,10 @@ echo.
 
 for %%f in (!kibroot!\usr\lib\kib\*.service.ini) do (
     call :get_ini_value "%%f" "Service" "Run" command
-    call :get_ini_value "%%f" "Service" "Msg" msg
-    call :get_ini_value "%%f" "Service" "Spaces" spc
-    set "spaces="
-    set "string= "
-    for /l %%i in (1,1,!spc!) do (
-        set "spaces=!spaces!!string!"
-    )
-    <nul set /p "=!msg!!spaces!"
+    call :get_ini_value "%%f" "Service" "ShortName" shortn
+    call :get_ini_value "%%f" "Service" "Protected" protect
+    rem Short name is 6 characters long
+    <nul set /p "=Starting !shortn! service...                           "
     !command!
     <nul set /p "=[ !COLOR_SUCCESS!OK!COLOR_RESET! ]"
     echo.
@@ -1246,7 +1242,7 @@ goto :eof
 
 :create_symlinks
 
-rem This subroutine creates symlinks to BusyBox
+rem This subroutine creates symlinks in /bin
 
 if not defined busybox_path (
     echo Undefined variable busybox_path
@@ -1260,8 +1256,11 @@ for /f "tokens=*" %%a in ('!busybox_path! --list ^| findstr /i /v "busybox" ^| f
     set "applet_path=%USERPROFILE%\kib\usr\bin\!applet!"
     if not exist "!applet_path!.bat" (
         mklink "!applet_path!.exe" "!busybox_path!" >nul 2>&1
-        mklink "!applet_path!" "!busybox_path!" >nul 2>&1
     )
+)
+
+for %%f in ("%USERPROFILE%\kib\usr\bin\*.exe") do (
+    mklink "%USERPROFILE%\kib\usr\bin\%%~nf" "%%f" >nul 2>&1
 )
 
 goto :eof
