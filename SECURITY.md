@@ -1,17 +1,10 @@
-# KIB in Batch Security Policy
+# *KIB in Batch* Security Policy
 
 ## Supported Versions
 
-The following versions of KIB in Batch are supported:
+The following versions of *KIB in Batch* are supported:
 
-* 9.9.2 LTS (Supported until August 3 2027)
-* 11.0.0-untagged
-
-## EOL Cycles
-
-LTS versions are supported for 24 months after they are released. After 24 months of an LTS version, a new LTS version is released, and the previous one is no longer supported.
-
-Non-LTS versions are supported until the next non-LTS version is released.
+* 11.0
 
 ## Reporting a Security Issue
 
