@@ -6,10 +6,6 @@ KIB in Batch is a batch script-based environment that runs a bash shell with man
 
 [![CI/CD](https://github.com/KIB-in-Batch/kib-in-batch/actions/workflows/cicd.yml/badge.svg)](https://github.com/KIB-in-Batch/kib-in-batch/actions/workflows/cicd.yml)
 
-## Upgrading an LTS version to the latest release of it
-
-To do this, download [./lts-upgrade.bat](./lts-upgrade.bat) and run the file. This file will ask you for the LTS version and download the latest release of it.
-
 ## Installation
 
 * Download a source code archive from the [latest release](https://github.com/KIB-in-Batch/kib-in-batch/releases/latest).
