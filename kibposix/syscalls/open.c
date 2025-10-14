@@ -5,6 +5,8 @@
 #include <fcntl.h>
 #include <windows.h>
 #include <stdarg.h>
+#include <stdlib.h>
+#include "../lib/to_win_path.h"
 
 typedef unsigned int mode_t;
 
@@ -35,14 +37,24 @@ __declspec(dllexport) int posix_open(const char *pathname, int flags, ...) {
         disposition = TRUNCATE_EXISTING;
     }
 
-    // Convert path to wide characters
+    // Convert Unix-style path to Windows-style
+    char* win_path = to_win_path(pathname);
+    if (!win_path) {
+        // errno already set by to_win_path()
+        return -1;
+    }
+
+    // Convert to wide characters
     wchar_t wpath[MAX_PATH];
-    if (MultiByteToWideChar(CP_UTF8, 0, pathname, -1, wpath, MAX_PATH) == 0) {
+    if (MultiByteToWideChar(CP_UTF8, 0, win_path, -1, wpath, MAX_PATH) == 0) {
+        free(win_path);
         errno = EINVAL;
         return -1;
     }
 
-    // Create the file
+    free(win_path); // Cleanup
+
+    // Create or open the file
     HANDLE hFile = CreateFileW(
         wpath,
         access,

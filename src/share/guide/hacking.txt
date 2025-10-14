@@ -37,17 +37,6 @@ I know that is the same command as the nc one, but Ncat has a lot more flags you
 
 Follow any additional instructions given by the commands mentioned.
 
-Any Exploitation
-================
-
-KIB in Batch comes with an msfconsole wrapper, which is a batch file that uses the Windows Subsystem for Linux to launch the Metasploit Framework.
-
-You can run it just like this:
-
-```code
-msfconsole
-```endcode
-
 End
 ===
 

@@ -18,3 +18,4 @@
 bashbug
 .vscode/
 build/
+*.kate-swp
