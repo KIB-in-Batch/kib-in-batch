@@ -11,6 +11,7 @@ ALL_OBJS = $(ALL_SRCS:.c=.o)
 # Output files
 DLL = kibposix.dll
 IMPLIB = libkibposix.dll.a
+EXPFILE = libkibposix.dll.exp
 
 # Build rules
 all: $(DLL)
@@ -22,6 +23,10 @@ $(DLL): $(ALL_OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	powershell -c "rm syscalls/*.o lib/*.o $(DLL) $(IMPLIB) kibposix.dll.exp"
+	powershell -Command "if (Test-Path 'syscalls\*.o') { Remove-Item syscalls\*.o }"
+	powershell -Command "if (Test-Path 'lib\*.o') { Remove-Item lib\*.o }"
+	powershell -Command "if (Test-Path '$(DLL)') { Remove-Item '$(DLL)' }"
+	powershell -Command "if (Test-Path '$(IMPLIB)') { Remove-Item '$(IMPLIB)' }"
+	powershell -Command "if (Test-Path '$(EXPFILE)') { Remove-Item '$(EXPFILE)' }"
 
 .PHONY: all clean
