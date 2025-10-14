@@ -22,6 +22,6 @@ $(DLL): $(ALL_OBJS)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -f syscalls/*.o lib/*.o $(DLL) $(IMPLIB) kibposix.dll.exp
+	rm syscalls/*.o lib/*.o $(DLL) $(IMPLIB) kibposix.dll.exp
 
 .PHONY: all clean
