@@ -24,7 +24,7 @@ $(DLL): $(ALL_OBJS)
 
 clean:
 	powershell -Command "if (Test-Path 'syscalls\*.o') { Remove-Item syscalls\*.o }"
-	powershell -Command "if (Test-Path 'lib\*.obj') { Remove-Item lib\*.o }"
+	powershell -Command "if (Test-Path 'lib\*.o') { Remove-Item lib\*.o }"
 	powershell -Command "if (Test-Path '$(DLL)') { Remove-Item '$(DLL)' }"
 	powershell -Command "if (Test-Path '$(IMPLIB)') { Remove-Item '$(IMPLIB)' }"
 	powershell -Command "if (Test-Path '$(EXPFILE)') { Remove-Item '$(EXPFILE)' }"
