@@ -4,6 +4,7 @@
 *.out
 *.a
 *.so
+*.obj
 *.so.*
 *.dylib
 *.o
