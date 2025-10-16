@@ -83,4 +83,6 @@ if %HASCOLORS%==1 (
     set "COLOR_PROMPT=[94m[1m"
 ) else (
     echo Warning: No color support. Please use a terminal that supports colors.
+    echo Press any key to continue...
+    pause >nul
 )
