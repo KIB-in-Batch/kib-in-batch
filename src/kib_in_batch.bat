@@ -126,12 +126,9 @@ goto :eof
 :download_busybox
 rem Usage: call :download_busybox "target_path"
 set "_target=%~1"
-if not exist "%_target%" (
-    curl -L -o "%_target%" "%BUSYBOX_URL%" -# >nul 2>>"%ERRLOG%"
-    if errorlevel 1 (
-        echo %COLOR_ERROR%Failed to download BusyBox to %_target%.%COLOR_RESET%
-        exit /b 1
-    )
+curl -L -o "%_target%" "%BUSYBOX_URL%" -# >nul 2>>"%ERRLOG%"
+if errorlevel 1 (
+    echo %COLOR_ERROR%Failed to download BusyBox to %_target%.%COLOR_RESET%
 )
 set "busybox_path=%_target%"
 goto :eof
@@ -719,13 +716,6 @@ echo.
 :skip_kibdock
 
 set "endtime=%time%"
-if not "%~1"=="automated" (
-    choice /c yn /n /m "Do you wish to update BusyBox? [Y/N] "
-    if errorlevel 1 (
-        call :download_busybox "!kibroot!\usr\bin\busybox.exe"
-        set "busybox_path=!kibroot!\usr\bin\busybox.exe"
-    )
-)
 call :time_diff "%starttime%" "%endtime%" elapsed >nul 2>&1
 
 echo ------------------------------------------------
