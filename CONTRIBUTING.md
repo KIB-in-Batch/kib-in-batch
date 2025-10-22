@@ -4,10 +4,7 @@ These are the guidelines for contributing for *KIB in Batch*.
 
 ## When you should not contribute
 
-1. When you don't know how to use Git.
-2. When you don't use *KIB in Batch* in any meaningful way (using it as a shell, testing it).
-3. When you don't know how to write Batch files.
-4. When you don't know how Microsoft Windows functions.
+1. When you don't know how to write Batch files.
 
 ## Contributing
 
@@ -33,10 +30,22 @@ Use `gh repo fork KIB-in-Batch/kib-in-batch`. It prompts you to clone the fork. 
 Use a text editor to make changes:
 
 ```sh
+git checkout dev # Important!
 your-text-editor # Change to your text editor
 ```
 
-Commit the changes using Git. Then, you must push the changes. We will not provide instructions for these, you can see why [above](#when-you-should-not-contribute) at number 1. Use a descriptive commit message.
+Commit changes:
+
+```sh
+git add .
+git commit -a
+```
+
+Push changes:
+
+```sh
+git push
+```
 
 ### 5. Creating the pull request
 
