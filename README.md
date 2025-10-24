@@ -2,7 +2,8 @@
 
 KIB in Batch is a batch script-based environment that runs a bash shell with many UNIX® utilities.
 
-*Note: This project used to be named "Kali in Batch", but has been renamed to "KIB in Batch" (a recursive acronym) to avoid confusion with the Kali Linux project and OffSec trademarks.*
+> [!NOTE]
+> *KIB in Batch* is participating in Hacktoberfest this year. When submitting pull requests, make sure you submit them to the *dev* branch!
 
 [![CI/CD](https://github.com/KIB-in-Batch/kib-in-batch/actions/workflows/cicd.yml/badge.svg)](https://github.com/KIB-in-Batch/kib-in-batch/actions/workflows/cicd.yml)
 
