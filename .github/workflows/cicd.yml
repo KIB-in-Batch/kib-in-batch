@@ -163,7 +163,7 @@ jobs:
           }
 
       - name: Upload all logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: kib-ci-logs-${{ github.run_id }}
           path: ci_logs/*
