@@ -14,7 +14,8 @@ if not "%PROCESSOR_ARCHITECTURE%"=="AMD64" (
     cls
     echo This app cannot run on your PC.
     echo Press any key to continue...
-    pause >nul
+
+pause >nul
     exit /b 1
 )
 
@@ -34,6 +35,11 @@ if %errorlevel% neq 0 (
 
 set "BUSYBOX_URL=https://github.com/KIB-in-Batch/busybox-w32/releases/latest/download/busybox64.exe"
 
+:prompt_for_token
+
+set /p "github=Enter your GitHub token. Leave blank if you are not experiencing rate limiting issues: "
+set "GITHUB_TOKEN=!github!"
+
 :prompt_for_letter
 
 set /p "driveletter=Enter drive letter to use temporarily: "
@@ -48,11 +54,9 @@ if exist "%TEMP%\kib_temp" (
     rd /s /q "%TEMP%\kib_temp"
 )
 if not exist "%TEMP%" (
-    echo What?
     mkdir "%TEMP%"
 )
 mkdir "%TEMP%\kib_temp"
-rem Change to kib_temp to lock it from being deleted
 cd "%TEMP%\kib_temp"
 subst "!driveletter!" "%TEMP%\kib_temp"
 if errorlevel 1 (
@@ -63,7 +67,7 @@ mkdir "!driveletter!\bin"
 
 :download_busybox
 
-curl -# -o "!driveletter!\bin\busybox.exe" "%BUSYBOX_URL%"
+curl -L -# -o "!driveletter!\bin\busybox.exe" "%BUSYBOX_URL%"
 
 if %errorlevel% neq 0 (
     echo Failed to download. Press any key to retry...
@@ -77,41 +81,49 @@ set "BUSYBOX_PATH=!driveletter!\bin\busybox.exe"
 
 set "pkg_name=init"
 
-rem Use word wrap in your text editor if you want to modify this
-powershell -ExecutionPolicy Bypass -Command "& { try { $ErrorActionPreference = 'Stop'; $owner='KIB-in-Batch'; $repo='pkg'; $targetDir='packages/!pkg_name!'; $localDir='!driveletter!\tmp\!pkg_name!_package'; if(Test-Path $localDir){Remove-Item $localDir -Recurse -Force}; function Download-GitHubDirectory { param($owner,$repo,$path,$localPath); $apiUrl=\"https://api.github.com/repos/$owner/$repo/contents/$path\"; try { $headers = @{}; if($env:GITHUB_TOKEN) { $headers['Authorization'] = \"token $env:GITHUB_TOKEN\" }; $response = Invoke-RestMethod -Uri $apiUrl -Headers $headers -TimeoutSec 30; if(-not(Test-Path $localPath)){New-Item -ItemType Directory -Path $localPath -Force | Out-Null}; foreach($item in $response) { $itemLocalPath = Join-Path $localPath $item.name; if($item.type -eq 'file') { Write-Host \"Downloading: $($item.name)\"; Invoke-WebRequest -Uri $item.download_url -OutFile $itemLocalPath -TimeoutSec 30 } elseif($item.type -eq 'dir') { Download-GitHubDirectory $owner $repo \"$path/$($item.name)\" $itemLocalPath } } } catch { Write-Error \"Failed to download $path : $_\"; throw } }; Download-GitHubDirectory $owner $repo $targetDir $localDir; Write-Host 'Download completed successfully.' } catch { Write-Error \"PowerShell download failed: $_\"; exit 1 } }"
+powershell -ExecutionPolicy Bypass -Command "& { try { $ErrorActionPreference = 'Stop'; $owner='KIB-in-Batch'; $repo='pkg'; $targetDir='packages-kib11/!pkg_name!'; $localDir='!driveletter!\tmp\!pkg_name!_package'; if(Test-Path $localDir){Remove-Item $localDir -Recurse -Force}; function Download-GitHubDirectory { param($owner,$repo,$path,$localPath); $apiUrl=\"https://api.github.com/repos/$owner/$repo/contents/$path\"; try { $headers = @{}; if($env:GITHUB_TOKEN) { $headers['Authorization'] = \"token $env:GITHUB_TOKEN\" }; $response = Invoke-RestMethod -Uri $apiUrl -Headers $headers -TimeoutSec 30; if(-not(Test-Path $localPath)){New-Item -ItemType Directory -Path $localPath -Force | Out-Null}; foreach($item in $response) { $itemLocalPath = Join-Path $localPath $item.name; if($item.type -eq 'file') { Write-Host \"Downloading: $($item.name)\"; Invoke-WebRequest -Uri $item.download_url -OutFile $itemLocalPath -TimeoutSec 30 } elseif($item.type -eq 'dir') { Download-GitHubDirectory $owner $repo \"$path/$($item.name)\" $itemLocalPath } } } catch { Write-Error \"Failed to download $path : $_\"; throw } }; Download-GitHubDirectory $owner $repo $targetDir $localDir; Write-Host 'Download completed successfully.' } catch { Write-Error \"PowerShell download failed: $_\"; exit 1 } }"
 
 if errorlevel 1 (
-    echo Press any key to exit...
+    echo Download failed. Press any key to exit...
     pause >nul
     subst "!driveletter!" /d
+    exit /b 1
 )
 
 :install
 
 set "pkg_path=!driveletter!\tmp\!pkg_name!_package"
-
 cd "!pkg_path!"
 
-if not exist ".\INSTALL.sh" (
-    echo Press any key to exit...
+if not exist "!pkg_path!\INSTALL.sh" (
+    echo No INSTALl.sh. Press any key to exit...
     pause >nul
     subst "!driveletter!" /d
+    exit /b 1
 )
-if not exist ".\files" (
-    echo Press any key to exit...
+if not exist "!pkg_path!\files" (
+    echo No files. Press any key to exit...
     pause >nul
     subst "!driveletter!" /d
+    exit /b 1
 )
 
-mkdir "!driveletter!\sys"
-mkdir "!driveletter!\sys\kib"
+set "pkg_path_nix=!pkg_path:\=/!"
 
-"!BUSYBOX_PATH!" bash "!pkg_path!\INSTALL.sh"
+"!BUSYBOX_PATH!" bash -c "cd !pkg_path_nix!; find . -type f -exec dos2unix {} \;"
+
+"!BUSYBOX_PATH!" bash -c "cd !pkg_path_nix!; ./INSTALL.sh"
+
+"!BUSYBOX_PATH!" bash -c "cd !driveletter!/sys/kib/files; find . -type f -exec unix2dos {} \;"
+
+"!driveletter!\sys\kib\files\kib_in_batch.bat"
 if errorlevel 1 (
-    echo Press any key to exit...
+    echo Install failed. Press any key to exit...
     pause >nul
     subst "!driveletter!" /d
+    exit /b 1
 )
 
-"!driveletter!\sys\kib\kib_in_batch.bat"
+subst "!driveletter!" /d
+
 exit /b 0
