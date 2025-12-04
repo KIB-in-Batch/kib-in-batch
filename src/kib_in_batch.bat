@@ -55,12 +55,17 @@ if exist !driveletter! (
     goto prompt_for_letter
 )
 
-if not exist "%APPDATA%\kib_in_batch" mkdir "%APPDATA\kib_in_batch"
+if not exist "%APPDATA%\kib_in_batch" (
+    mkdir "%APPDATA%\kib_in_batch"
+)
 
 echo !driveletter!>"%APPDATA%\kib_in_batch\kibroot.txt"
-echo init>"%APPDATA%\kib_in_batch\installed.packages.list"
+echo init>>"%APPDATA%\kib_in_batch\installed.packages.list"
 
-if not exist "%USERPROFILE%\kib" mkdir "%USERPROFILE%\kib"
+if not exist "%USERPROFILE%\kib" (
+    mkdir "%USERPROFILE%\kib"
+)
+
 subst "!driveletter!" "%USERPROFILE%\kib"
 if errorlevel 1 (
     echo Invalid drive letter
@@ -102,7 +107,7 @@ if not exist "!pkg_path!\INSTALL.sh" (
     echo No INSTALl.sh. Press any key to exit...
     pause >nul
     subst "!driveletter!" /d
-    exit /b 1
+    exit /b 1   
 )
 if not exist "!pkg_path!\files" (
     echo No files. Press any key to exit...
@@ -110,6 +115,11 @@ if not exist "!pkg_path!\files" (
     subst "!driveletter!" /d
     exit /b 1
 )
+
+if not exist "!driveletter!\usr" mkdir "!driveletter!\usr"
+if not exist "!driveletter!\usr\share" mkdir "!driveletter!\usr\share"
+if not exist "!driveletter!\usr\share\init" mkdir "!driveletter!\usr\share\init"
+curl -s -f https://raw.githubusercontent.com/KIB-in-Batch/pkg/refs/heads/main/packages-kib11/init/VERSION.txt >"!driveletter!\usr\share\init\VERSION.txt" 2>nul
 
 set "pkg_path_nix=!pkg_path:\=/!"
 
