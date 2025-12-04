@@ -2,6 +2,11 @@
 
 setlocal enabledelayedexpansion
 
+if exist "%USERPROFILE%\kib\sys\kib\files\kib_in_batch.bat" (
+   "%USERPROFILE%\kib\sys\kib\files\kib_in_batch.bat"
+   exit /b 0
+)
+
 ping -n 1 google.com >nul 2>&1
 if errorlevel 1 (
     echo No internet connection.
@@ -42,7 +47,7 @@ set "u8e9frh9fj42vhnmto59w5hqh5ym58tgm54oqtg5h4t=!github!"
 
 :prompt_for_letter
 
-set /p "driveletter=Enter drive letter to use temporarily: "
+set /p "driveletter=Enter drive letter to use for KIB: "
 
 if not defined driveletter goto prompt_for_letter
 if exist !driveletter! (
@@ -50,24 +55,22 @@ if exist !driveletter! (
     goto prompt_for_letter
 )
 
-if exist "%TEMP%\kib_temp" (
-    rd /s /q "%TEMP%\kib_temp"
-)
-if not exist "%TEMP%" (
-    mkdir "%TEMP%"
-)
-mkdir "%TEMP%\kib_temp"
-cd "%TEMP%\kib_temp"
-subst "!driveletter!" "%TEMP%\kib_temp"
+if not exist "%APPDATA%\kib_in_batch" mkdir "%APPDATA\kib_in_batch"
+
+echo !driveletter!>"%APPDATA%\kib_in_batch\kibroot.txt"
+echo init>"%APPDATA%\kib_in_batch\installed.packages.list"
+
+if not exist "%USERPROFILE%\kib" mkdir "%USERPROFILE%\kib"
+subst "!driveletter!" "%USERPROFILE%\kib"
 if errorlevel 1 (
     echo Invalid drive letter
     goto prompt_for_letter
 )
-mkdir "!driveletter!\bin"
+mkdir "!driveletter!\tmp_bin"
 
 :download_busybox
 
-curl -L -# -o "!driveletter!\bin\busybox.exe" "%BUSYBOX_URL%"
+curl -L -# -o "!driveletter!\tmp_bin\busybox.exe" "%BUSYBOX_URL%"
 
 if %errorlevel% neq 0 (
     echo Failed to download. Press any key to retry...
@@ -75,7 +78,7 @@ if %errorlevel% neq 0 (
     goto download_busybox
 )
 
-set "BUSYBOX_PATH=!driveletter!\bin\busybox.exe"
+set "BUSYBOX_PATH=!driveletter!\tmp_bin\busybox.exe"
 
 :try
 
@@ -116,14 +119,15 @@ set "pkg_path_nix=!pkg_path:\=/!"
 
 "!BUSYBOX_PATH!" bash -c "cd !driveletter!/sys/kib/files; find . -type f -exec unix2dos {} \;"
 
-"!driveletter!\sys\kib\files\kib_in_batch.bat"
+rd /s /q "!driveletter!\tmp_bin"
+
+subst "!driveletter!" /d
+
+"%USERPROFILE%\kib\sys\kib\files\kib_in_batch.bat"
 if errorlevel 1 (
     echo Install failed. Press any key to exit...
     pause >nul
-    subst "!driveletter!" /d
     exit /b 1
 )
-
-subst "!driveletter!" /d
 
 exit /b 0
