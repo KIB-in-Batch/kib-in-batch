@@ -131,9 +131,10 @@ set "pkg_path_nix=!pkg_path:\=/!"
 
 rd /s /q "!driveletter!\tmp_bin"
 
-subst "!driveletter!" /d
 if not exist "!driveletter!\home\%USERNAME%" mkdir "!driveletter!\home\%USERNAME%"
 robocopy "%USERPROFILE%\kalihome.bak.d" "!driveletter!\home\%USERNAME%" /E /COPY:DATS /R:0 /W:0 /NFL /NDL /NJH /NJS /NP >nul 2>&1
+
+subst "!driveletter!" /d
 
 "%USERPROFILE%\kib\sys\kib\files\kib_in_batch.bat"
 if errorlevel 1 (
