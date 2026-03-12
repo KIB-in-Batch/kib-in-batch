@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   ollama-reply:
-    if: contains(github.event.comment.body, '@ollama-comment')
+    if: contains(github.event.comment.body, '@ollama-comment') && github.event.comment.author_association == 'OWNER'
     runs-on: ubuntu-latest
     steps:
       - name: Verify script integrity
