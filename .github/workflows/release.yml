@@ -25,7 +25,7 @@ jobs:
         run: Compress-Archive -Path src -DestinationPath kib_in_batch.zip
 
       - name: Publish Release & Upload Files
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: ${{ github.ref_name }}
           files: |

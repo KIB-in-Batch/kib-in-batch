@@ -170,7 +170,7 @@ jobs:
 
       - name: Create GitHub Release
         if: github.event_name == 'push'
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: nightly-${{ github.sha }}
           target_commitish: ${{ github.sha }}
