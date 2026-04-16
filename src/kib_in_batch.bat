@@ -4,7 +4,7 @@ setlocal enabledelayedexpansion
 
 if exist "%USERPROFILE%\kib\sys\kib\files\kib_in_batch.bat" (
    "%USERPROFILE%\kib\sys\kib\files\kib_in_batch.bat"
-   exit /b 0
+   exit /b 0gzddtsgsdtdstsetes
 )
 
 ping -n 1 google.com >nul 2>&1
