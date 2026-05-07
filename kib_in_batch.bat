@@ -1,17 +1,15 @@
-echo off
-rem This branch archives the first commit of "KIB in Batch", but changed to not include any OffSec trademarks. At this time, the project was called "Kali in Batch".
-rem The project is not associated with Kali Linux or OffSec, and never was.
+@echo off
+rem Original KIB in Batch code from May 2025
 chcp 65001 >nul
 setlocal enabledelayedexpansion
 cls
 set "username=%USERNAME%"
-title KIB in Batch
-rem %APPDATA%\old_kib_in_batch wasn't actually the original name, but it got changed to that for this archive
-if not exist "%APPDATA%\old_kib_in_batch" (
+title Kali in Batch
+if not exist "%APPDATA%\kali_in_batch" (
     
     echo                           ---------------------------------------------------
     echo                          {                                                   }
-    echo                          {              KIB IN BATCH INSTALLER               }
+    echo                          {              KALI IN BATCH INSTALLER               }
     echo                          {                                                   }
     echo                          {                                                   }
     echo                          {---------------------------------------------------}
@@ -24,7 +22,7 @@ if not exist "%APPDATA%\old_kib_in_batch" (
     if errorlevel 2 exit
     if errorlevel 1 (
         cls
-        set /p "install_part=Choose a partitition or USB drive to install KIB in Batch on. Drive must be empty. Type the drive letter (e.g. E:) > "
+        set /p "install_part=Choose a partitition or USB drive to install Kali in Batch on. Drive must be empty. Type the drive letter (e.g. E:) > "
 
         echo Testing if it exists...
         timeout /t 1 /nobreak >nul
@@ -95,28 +93,28 @@ if not exist "%APPDATA%\old_kib_in_batch" (
         pause >nul
         start https://git-scm.com/downloads/win
     )
-    mkdir "%APPDATA%\old_kib_in_batch" >nul 2>nul
+    mkdir "%APPDATA%\kali_in_batch" >nul 2>nul
     @echo on
-    echo !install_part!>"%APPDATA%\old_kib_in_batch\install_part.txt"
+    echo !install_part!>"%APPDATA%\kali_in_batch\install_part.txt"
     @echo off
-	choice /c 12 /m "Done. Press 1 to continue booting, or press 2 to delete your KIB rootfs and exit."
+	choice /c 12 /m "Done. Press 1 to continue booting, or press 2 to delete your Kali rootfs and exit."
 	if errorlevel 2 goto wipe
 )
 :: Set install part to the txt file created in installer
-set /p install_part=<"%APPDATA%\old_kib_in_batch\install_part.txt"
+set /p install_part=<"%APPDATA%\kali_in_batch\install_part.txt"
 echo DEBUG: install_part=!install_part!
 pause
 cls
 goto boot
 
 :wipe
-echo Wiping KIB rootfs...
+echo Wiping Kali rootfs...
 echo.
 rmdir /s /q "!install_part!\home\!username!"
 rmdir /s /q "!install_part!\bin"
 rmdir /s /q "!install_part!\tmp"
 rmdir /s /q "!install_part!\home"
-rmdir /s /q "%APPDATA%\old_kib_in_batch"
+rmdir /s /q "%APPDATA%\kali_in_batch"
 echo Done, press any key to exit...
 pause >nul
 cls
@@ -174,9 +172,9 @@ if %errorlevel% neq 0 (
     pause >nul
     exit
 )
-set "kibrc=!cd!\.kibrc"
+set "Kalirc=!cd!\.Kalirc"
 set "home_dir=!cd!"
-if exist !kibrc! (
+if exist !Kalirc! (
     set bash_current_dir=!cd! >nul 2>&1
     set bash_current_dir=!cd:\=/! >nul 2>&1
     set bash_current_dir=!bash_current_dir:C:=/c! >nul 2>&1
@@ -203,7 +201,7 @@ if exist !kibrc! (
     set bash_current_dir=!bash_current_dir:X:=/x! >nul 2>&1
     set bash_current_dir=!bash_current_dir:Y:=/y! >nul 2>&1
     set bash_current_dir=!bash_current_dir:Z:=/z! >nul 2>&1
-    !bash_path! -c "cd !bash_current_dir!; source .kibrc" 2>&1
+    !bash_path! -c "cd !bash_current_dir!; source .Kalirc" 2>&1
     echo.
     if not exist "!home_dir!\.no_help_startup" (
         echo Hello !username!, type 'help' for a list of commands.
@@ -212,7 +210,7 @@ if exist !kibrc! (
     )
     goto shell
 ) else (
-    echo No .kibrc file found. Try creating one, it is a bash script that runs on startup.
+    echo No .Kalirc file found. Try creating one, it is a bash script that runs on startup.
     echo.
     echo Hello !username!, type 'help' for a list of commands.
     goto shell
@@ -321,7 +319,7 @@ if "!command!"=="" (
     )
 ) else if "!command!"=="uname" (
     if "!args!"=="-a" (
-        echo Version: KIB in Batch version 1.0.0
+        echo Version: Kali in Batch version 1.0.0
         for /f "tokens=4-5 delims= " %%a in ('ver') do echo OS: Windows %%a %%b
         echo Kernel: !os!
         echo Architecture: !PROCESSOR_ARCHITECTURE!
@@ -335,7 +333,7 @@ if "!command!"=="" (
         echo -o, --operating-system  display operating system name
         echo {no option}    print kernel name
     ) else if "!args!"=="--version" (
-        echo KIB in Batch version 1.0.0
+        echo Kali in Batch version 1.0.0
     ) else if "!args!"=="-o" (
         for /f "tokens=4-5 delims= " %%a in ('ver') do echo Windows %%a %%b
     ) else if "!args!"=="-p" (
@@ -357,10 +355,10 @@ if "!command!"=="" (
                 echo Package !args2! is already installed.
             ) else (
                 echo Checking databases...
-                :: Check if https://codeberg.org/KIB-in-Batch/pkg/src/branch/main/packages/!args2! exists
-                curl -s https://codeberg.org/KIB-in-Batch/pkg/src/branch/main/packages/!args2! >nul 2>&1
-                :: Check if output of https://codeberg.org/KIB-in-Batch/pkg/raw/branch/main/packages/!args2!/!args2!.sh is "Not found."
-                curl -s https://codeberg.org/KIB-in-Batch/pkg/raw/branch/main/packages/!args2!/!args2!.sh >"%install_part%\tmp\output.txt"
+                :: Check if https://codeberg.org/Kali-in-Batch/pkg/src/branch/main/packages/!args2! exists
+                curl -s https://codeberg.org/Kali-in-Batch/pkg/src/branch/main/packages/!args2! >nul 2>&1
+                :: Check if output of https://codeberg.org/Kali-in-Batch/pkg/raw/branch/main/packages/!args2!/!args2!.sh is "Not found."
+                curl -s https://codeberg.org/Kali-in-Batch/pkg/raw/branch/main/packages/!args2!/!args2!.sh >"%install_part%\tmp\output.txt"
                 set /p output=<"%install_part%\tmp\output.txt"
                 if "!output!"=="Not found." (
                     echo Package !args2! is not available.
@@ -369,7 +367,7 @@ if "!command!"=="" (
                 )
                 echo Package !args2! is available.
                 :: Download package
-                curl -s https://codeberg.org/KIB-in-Batch/pkg/raw/branch/main/packages/!args2!/!args2!.sh >"%install_part%\bin\!args2!.sh"
+                curl -s https://codeberg.org/Kali-in-Batch/pkg/raw/branch/main/packages/!args2!/!args2!.sh >"%install_part%\bin\!args2!.sh"
                 echo Package !args2! installed. Execute it by running: exec !args2!
                 del "%install_part%\tmp\output.txt"
             )
@@ -397,7 +395,7 @@ if "!command!"=="" (
             if exist "!install_part!\bin\!args2!.sh" (
                 echo Package !args2! is installed.
                 echo Upgrading package...
-                curl -s https://codeberg.org/KIB-in-Batch/pkg/raw/branch/main/packages/!args2!/!args2!.sh >"%install_part%\bin\!args2!.sh"
+                curl -s https://codeberg.org/Kali-in-Batch/pkg/raw/branch/main/packages/!args2!/!args2!.sh >"%install_part%\bin\!args2!.sh"
                 echo Package !args2! upgraded.
             ) else (
                 echo Package !args2! is not installed.
@@ -406,7 +404,7 @@ if "!command!"=="" (
     ) else if "!args!"=="search" (
         echo Press any key to open the package database...
         pause >nul
-        start https://codeberg.org/KIB-in-Batch/pkg/src/branch/main/packages/
+        start https://codeberg.org/Kali-in-Batch/pkg/src/branch/main/packages/
     )
     goto shell
 ) else if "!command!"=="new-session" (
