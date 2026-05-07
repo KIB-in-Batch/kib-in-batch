@@ -136,7 +136,7 @@ robocopy "%USERPROFILE%\kalihome.bak.d" "!driveletter!\home\%USERNAME%" /E /COPY
 
 subst "!driveletter!" /d
 
-"%USERPROFILE%\kib\sys\kib\files\kib_in_batch.bat"
+"%USERPROFILE%\kib\sys\kib\files\kib_in_batch.bat" "%1" & rem Pass arguments
 if errorlevel 1 (
     echo Install failed. Press any key to exit...
     pause >nul
