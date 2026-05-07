@@ -4,16 +4,22 @@ Guidance for AI coding agents working in this repository.
 
 ## Project Overview
 
-KIB in Batch is a lightweight UNIX-like environment installer for Microsoft Windows. The implementation in this repository is primarily Windows Batch, with GitHub Actions workflows used for Windows-based installation and package-manager validation.
+KIB in Batch is a lightweight UNIX-like environment installer for Microsoft Windows. The repository is primarily Windows Batch, with documentation and project metadata in Markdown.
 
 Key files:
 
-- `src/kib_in_batch.bat` is the main installer/launcher.
+- `src/kib_in_batch.bat` is the main installer and launcher.
 - `uninstall.bat` removes an installed KIB environment and optionally backs up the user's home directory.
-- `removeignoredfiles.bat` runs `git clean -fdX` to remove ignored build artifacts.
-- `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, and `VERSION.txt` are the main project metadata files.
-- `.github/workflows/cicd.yml` is the broadest CI workflow and installs KIB on `windows-2025`.
-- `.github/workflows/teststandalone.yml` and `.github/workflows/release.yml` reference `mkstandalone.py`; verify that file exists before relying on those workflows locally.
+- `removeignoredfiles.bat` removes ignored build artifacts by running `git clean -fdX`.
+- `README.md`, `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md`, `LICENSE.txt`, and `VERSION.txt` are the main project metadata files.
+
+## Branch And PR Workflow
+
+- Work from the `dev` branch.
+- Commit changes to `dev` or to a feature branch based on `dev`.
+- Create pull requests targeting `dev`.
+- Do not commit directly to `master`, base new work on `master`, or open pull requests that target `master` unless a maintainer explicitly requests it.
+- Keep pull requests small and focused so they are easy to review.
 
 ## Working Rules
 
@@ -36,23 +42,16 @@ Key files:
 
 This project is meant to be tested on Windows.
 
-Useful checks:
+Useful manual check:
 
 ```cmd
 src\kib_in_batch.bat
 ```
 
-For CI-like validation, inspect and mirror the relevant steps in:
-
-```text
-.github\workflows\cicd.yml
-.github\workflows\teststandalone.yml
-```
-
-The full CI install touches real user-scoped locations and creates/removes a substituted drive, so do not run it on a user's machine without confirming the expected side effects.
+The full installer touches real user-scoped locations, downloads files, and creates/removes a substituted drive. Do not run it on a user's machine without confirming the expected side effects.
 
 ## Contribution Expectations
 
-- Follow `CONTRIBUTING.md`; it instructs contributors to work from the `dev` branch.
-- Keep PRs mergeable and make sure relevant checks pass.
+- Follow `CONTRIBUTING.md`; it instructs contributors to check out `dev` before making changes.
+- Make sure relevant manual checks or CI checks pass before opening a pull request.
 - Security-sensitive changes should respect `SECURITY.md` and avoid exposing tokens, user paths beyond what is already necessary, or private installation details.
