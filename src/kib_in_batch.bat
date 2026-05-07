@@ -7,6 +7,11 @@ if exist "%USERPROFILE%\kib\sys\kib\files\kib_in_batch.bat" (
    exit /b 0
 )
 
+echo You are about to install a development version of KIB. Are you sure you want to continue?
+echo Unless you know what you're doing, go to https://kib-in-batch.github.io to get the stable version.
+choice /C YN /M "Continue"
+if errorlevel 2 exit /b 1
+
 ping -n 1 google.com >nul 2>&1
 if errorlevel 1 (
     echo No internet connection.
