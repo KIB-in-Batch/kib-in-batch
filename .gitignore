@@ -1,8 +1,11 @@
+*.exp
+*.obj
 *.exe
 *.dll
 *.out
 *.a
 *.so
+*.obj
 *.so.*
 *.dylib
 *.o
@@ -16,3 +19,5 @@
 *.tar.*
 bashbug
 .vscode/
+build/
+*.kate-swp
